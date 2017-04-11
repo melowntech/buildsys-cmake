@@ -1,0 +1,42 @@
+#!/bin/sh
+
+SQL_FILE="$1"
+
+DB_FILE="$2"
+VERSION_FILE="$3"
+
+TMP_DB_FILE="${DB_FILE}.tmp"
+
+if test -n "${VERSION_FILE}"; then
+    TMP_VERSION_FILE="${VERSION_FILE}.tmp"
+fi
+
+# remove offending files
+rm -f "${DB_FILE}" "${TMP_DB_FILE}"
+
+if test -n "${VERSION_FILE}"; then
+    rm -f "${VERSION_FILE}" "${TMP_VERSION_FILE}"
+fi
+
+# create database
+set -e
+sqlite3 "${TMP_DB_FILE}" < "${SQL_FILE}"
+set +e
+
+# create version file if asked to do so
+if test -n "${VERSION_FILE}"; then
+    # find database version
+    set -e
+    echo 'SELECT * FROM version;' | sqlite3 "${TMP_DB_FILE}" > "${TMP_VERSION_FILE}"
+    set +e
+fi
+
+set -e
+mv "${TMP_DB_FILE}" "${DB_FILE}"
+set +e
+
+if test -n "${VERSION_FILE}"; then
+    set -e
+    mv "${TMP_VERSION_FILE}" "${VERSION_FILE}"
+    set +e
+fi

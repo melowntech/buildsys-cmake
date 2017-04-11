@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+# -*- python -*-
+
+import sys
+import py_compile
+
+inFile = sys.argv[1]
+outFile = sys.argv[2]
+
+py_compile.compile(inFile, cfile=outFile, doraise=True)

@@ -1,0 +1,56 @@
+macro(buildsys_get_static_libraries var libs)
+  foreach(lib ${libs})
+    # get dependencies
+    get_target_property(TYPE ${lib} TYPE)
+    if(TYPE STREQUAL "STATIC_LIBRARY")
+      list(APPEND ${var} ${lib})
+      get_target_property(deps ${lib} LINK_LIBRARIES)
+      buildsys_get_static_libraries(${var} "${deps}")
+    endif()
+  endforeach()
+  list(REMOVE_DUPLICATES ${var})
+endmacro()
+
+macro(buildsys_position_independent first_lib)
+  buildsys_get_static_libraries(static_libs "${first_lib};${ARGN}")
+  foreach(lib ${static_libs})
+    message(STATUS "Setting PIC on target ${lib}.")
+    set_target_properties(${lib} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+  endforeach()
+endmacro()
+
+macro(buildsys_clone_pic_ libs mapping)
+  foreach(lib ${libs})
+    # get dependencies
+    get_target_property(TYPE ${lib} TYPE)
+    if(TYPE STREQUAL "STATIC_LIBRARY")
+      get_target_property(LINK_LIBRARIES ${lib} LINK_LIBRARIES)
+      buildsys_clone_pic_("${LINK_LIBRARIES}" ${mapping})
+
+      dict(GET ${mapping} ${lib} mapped)
+      if(NOT mapped)
+        set(piclib ${lib}.pic)
+        buildsys_clone_target(${lib} ${piclib} ${mapping})
+        message(STATUS "Setting PIC on target ${piclib}.")
+        set_target_properties(${lib}.pic PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+      endif()
+    endif()
+  endforeach()
+endmacro()
+
+macro(buildsys_clone_pic first_lib)
+  unset(mapping)
+  buildsys_clone_pic_("${first_lib};${ARGN}" mapping)
+endmacro()
+
+macro(buildsys_soversion target version)
+  unset(matched)
+  string(REGEX MATCH "^([0-9]+)\\.([0-9]+)\\.([0-9]+)$" matched ${version})
+  if(NOT matched)
+    message(FATAL_ERROR "Invalid format of dynamic library version "
+      "(${version}); valid format: NUMBER.NUMBER.NUMBER.")
+  endif()
+  set_target_properties(${target} PROPERTIES
+    VERSION ${version}
+    SOVERSION ${CMAKE_MATCH_1})
+endmacro()
