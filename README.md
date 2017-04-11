@@ -2,7 +2,7 @@
 
 ## About
 
-This project hold CMake-based plugin for building C++ (or C) based projects.
+This project holds CMake-based plugin for building C++ (or C) based projects.
 
 ## Usage
 
