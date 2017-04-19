@@ -4,6 +4,10 @@ macro(add_customer_sources WHAT VAR)
     message(STATUS "Building ${WHAT} customized for customer "
       "'${BUILDSYS_CUSTOMER}'.")
     set(customer ${BUILDSYS_CUSTOMER})
+  elseif(DEFINED BUILDSYS_DEFAULT_CUSTOMER_NAME)
+    message(STATUS "Building ${WHAT} without customization for "
+      "${BUILDSYS_DEFAULT_CUSTOMER_NAME}.")
+    set(customer "${BUILDSYS_DEFAULT_CUSTOMER_NAME}")
   else()
     message(STATUS "Building ${WHAT} without any customization.")
     set(customer "none")
