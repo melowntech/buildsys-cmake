@@ -74,6 +74,9 @@ disable:
 configure:
 	cmake-gui $(BUILDDIR)
 
+list-modules:
+	@(cat $(BUILDDIR)/module.list | sort)
+
 FORCE:
 
 .PHONY: FORCE purge
@@ -82,6 +85,7 @@ FORCE:
 .PHONY: arch native generic setarch
 .PHONY: set-variable unset-variable enable disable
 .PHONY: configure
+.PHONY: list-modules
 
 define bootstrap_dirs
 	@echo "* Building in $(BUILDDIR)"

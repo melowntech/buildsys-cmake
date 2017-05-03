@@ -51,6 +51,12 @@ function(module_check_version module compareOperator checkVersion result)
   endif()
 endfunction()
 
+file(WRITE ${CMAKE_BINARY_DIR}/module.list)
+
+macro(_update_module_list TYPE MODULE)
+  file(APPEND ${CMAKE_BINARY_DIR}/module.list "${TYPE}: ${MODULE}\n")
+endmacro()
+
 # Define module (library or binary)
 # Checks for dependencies and builds list of libraries it depends on
 macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
@@ -165,6 +171,8 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
 
   # add current binary dir to includes (we can find generated files)
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+  _update_module_list(${MODULE_TYPE} ${MODULE_NAME_VERSION})
 endmacro()
 
 # switch on building of target
