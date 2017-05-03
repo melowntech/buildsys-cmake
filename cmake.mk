@@ -75,7 +75,7 @@ configure:
 	cmake-gui $(BUILDDIR)
 
 list-modules:
-	@(cat $(BUILDDIR)/module.list | sort)
+	@(sort $(BUILDDIR)/module.list)
 
 FORCE:
 
