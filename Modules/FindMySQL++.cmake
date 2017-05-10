@@ -4,6 +4,11 @@
 #  MYSQL++_FOUND - system has MYSQL++
 #  MYSQL++_INCLUDE_DIRS - the MYSQL++ include directories
 #  MYSQL++_LIBRARIES - link these to use MYSQL++
+#  MYSQL++_DEFINITIONS - macro definitions to use with MYSQL++
+
+
+# we want to use #include <mysql/*> instead of #include <*>
+set(MYSQL++_DEFINITIONS -DMYSQLPP_MYSQL_HEADERS_BURIED)
 
 find_path(MYSQL++_INCLUDE_DIR
   NAMES mysql++/mysql++.h
