@@ -7,7 +7,7 @@
 
 # Use pkg-config to get hints about paths
 find_package(PkgConfig)
-pkg_check_modules(EXIF_PKGCONF QUIET exif)
+pkg_check_modules(EXIF_PKGCONF QUIET libexif)
 
 find_path(EXIF_INCLUDE_DIR
   NAMES exif-data.h
