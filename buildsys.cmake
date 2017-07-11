@@ -276,6 +276,7 @@ foreach(tool
     py2cpp
     pathstrip
     ocl2cpp
+    pandoc
     )
   include(${CMAKE_CURRENT_LIST_DIR}/tools/${tool}/${tool}.cmake)
 endforeach()
