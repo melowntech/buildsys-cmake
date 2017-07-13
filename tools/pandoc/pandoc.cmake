@@ -39,7 +39,7 @@ macro(add_website target)
 
     add_custom_command(OUTPUT ${outfile}
       COMMAND ${PANDOC_BINARY}
-      ARGS -f ${in_format} -o ${outfile} ${infile}
+      ARGS -f ${in_format} -o ${outfile} ${infile} --standalone --smart
       DEPENDS ${infile} ${PANDOC_BINARY}
       )
 
