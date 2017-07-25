@@ -1,4 +1,9 @@
 # Inspired by Qt4Macros.cmake
+#
+# Creates output file inside build directory, adds optional prefix and appends
+# or replaces extension:
+#     * .ext -> replace extentsion
+#     * ext -> append extenstion
 macro(buildsys_make_output_file infile prefix ext outfile )
   string(LENGTH ${CMAKE_CURRENT_BINARY_DIR} _binlength)
   string(LENGTH ${infile} _infileLength)
@@ -25,9 +30,19 @@ macro(buildsys_make_output_file infile prefix ext outfile )
   get_filename_component(_outfile ${_outfile} NAME)
   file(MAKE_DIRECTORY ${outpath})
 
-  if("${ext}" STREQUAL "")
+  set(_ext "${ext}")
+  string(REGEX MATCH "^\\." _hasdot "${_ext}")
+
+  # if extentsion start with dot (.) then we replace whole extentsion with new
+  # one, instead of add
+  if("${_hasdot}" STREQUAL ".")
+    get_filename_component(_outfile ${_outfile} NAME_WE)
+    string(SUBSTRING "${_ext}" 1 -1 _ext)
+  endif()
+
+  if("${_ext}" STREQUAL "")
     set(${outfile} ${outpath}/${prefix}${_outfile})
   else()
-    set(${outfile} ${outpath}/${prefix}${_outfile}.${ext})
+    set(${outfile} ${outpath}/${prefix}${_outfile}.${_ext})
   endif()
 endmacro()
