@@ -6,6 +6,9 @@ ifndef PACKAGES
 $(error Missing PACKAGES variable)
 endif
 
+# default to Release build
+CMAKE_BUILD_TYPE ?= Release
+
 # automatically add PREFIX as CMAKE_INSTALL_PREFIX
 ifdef PREFIX
 CMAKE_FLAGS += -DCMAKE_INSTALL_PREFIX:PATH=$(PREFIX)
@@ -14,9 +17,8 @@ endif
 # add version
 CMAKE_FLAGS += -DBUILDSYS_PACKAGE_VERSION=$(DEB_VERSION)
 
-ifndef CMAKE_BUILD_TYPE
-CMAKE_FLAGS += -DCMAKE_BUILD_TYPE=Release
-endif
+# add build type
+CMAKE_FLAGS += -DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE)
 
 # place debug info to debug package
 # set to NO to disable or to different package name if needed
