@@ -53,12 +53,7 @@ macro(file_to_cpp outfiles name input)
 endmacro()
 
 macro(find_file_to_cpp)
-  get_filename_component(current_dir ${CMAKE_CURRENT_LIST_FILE} PATH)
-
-  find_program(FILE_TO_CPP_BINARY
-    file2cpp
-    HINTS ${current_dir})
-
+  set(FILE_TO_CPP_BINARY ${CMAKE_CURRENT_LIST_DIR}/file2cpp)
   message(STATUS "using ${FILE_TO_CPP_BINARY} as file2cpp")
 endmacro()
 
