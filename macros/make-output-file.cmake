@@ -25,7 +25,7 @@ macro(buildsys_make_output_file infile prefix ext outfile )
   get_filename_component(_outfile ${_outfile} NAME)
   file(MAKE_DIRECTORY ${outpath})
 
-  if("${ext}" STREQUAL "")
+  if(ext STREQUAL "")
     set(${outfile} ${outpath}/${prefix}${_outfile})
   else()
     set(${outfile} ${outpath}/${prefix}${_outfile}.${ext})
