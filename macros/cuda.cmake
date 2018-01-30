@@ -1,6 +1,4 @@
 macro(enable_cuda_impl)
-  set(CUDA_NVCC_INCLUDE_DIRS "/usr/include;/home/vasek/git/vadstena/vts0/vadstena/build.stretch;/home/vasek/git/vadstena/vts0/vadstena/src;/usr/include;/usr/include/opencv;/usr/include;/usr/include;/usr/include;/usr/include/gdal;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include/eigen3;/usr/include;/usr/include/x86_64-linux-gnu;/usr/include;/usr/include;/usr/include/x86_64-linux-gnu;/home/vasek/git/vadstena/vts0/vadstena/build.stretch;/usr/include;/usr/include;/usr/include;/usr/include/jsoncpp;/usr/include;/usr/include;/usr/include/eigen3") # list (needs to be in quotes to handle spaces properly).
-
   find_package(CUDA 5.5 REQUIRED)
   include_directories(${CUDA_INCLUDE_DIRS})
   list(APPEND CUDA_LIBRARIES ${CUDA_CUDA_LIBRARY})
