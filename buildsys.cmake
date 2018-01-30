@@ -271,6 +271,7 @@ foreach(submodule
     dict
     clone
     library-support
+    opengl
 
     build-types/release
     build-types/customerdebug
