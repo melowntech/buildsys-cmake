@@ -43,8 +43,8 @@ macro(file_to_cpp outfiles name input)
   endif()
 
   add_custom_command(OUTPUT ${outfile_hpp} ${outfile_cpp}
-    COMMAND ${FILE_TO_CPP_BINARY}
-    ARGS --name ${name} ${infile} ${outfile_cpp} ${file_to_cpp_extra_args}
+    COMMAND ${PYTHON2_BINARY}
+    ARGS ${FILE_TO_CPP_BINARY} --name ${name} ${infile} ${outfile_cpp} ${file_to_cpp_extra_args}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     DEPENDS ${infile} ${FILE_TO_CPP_BINARY}
     )

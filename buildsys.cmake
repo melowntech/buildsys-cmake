@@ -249,6 +249,12 @@ macro(setup_build_system)
   setup_customer()
 endmacro()
 
+# find python2 binary to be used in tools
+find_program(PYTHON2_BINARY python2)
+if(NOT PYTHON2_BINARY)
+  message(FATAL_ERROR "Please install python2.")
+endif()
+
 # load sub modules
 foreach(submodule
     architecture
