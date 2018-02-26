@@ -3,18 +3,18 @@ macro(enable_openGL_impl_pre_3_10)
 
   foreach(lib ${ARGN})
     set(lib_name OPENGL_${lib}_LIBRARY)
-    find_library(${lib_name} NAMES ${lib})
-    if (${${lib_name}} STREQUAL ${lib_name}-NOTFOUND)
-      message(FATAL_ERROR "OpenGL library ${lib} was not found.")
+    if (NOT TARGET OpenGL::${lib})
+      find_library(${lib_name} NAMES ${lib})
+      if (${${lib_name}} STREQUAL ${lib_name}-NOTFOUND)
+        message(FATAL_ERROR "OpenGL library ${lib} was not found.")
+      endif()
+
+      message(STATUS "Found OpenGL library ${lib}: ${${lib_name}}")
+
+      add_library(OpenGL::${lib} UNKNOWN IMPORTED)
+      set_target_properties(OpenGL::${lib} PROPERTIES IMPORTED_LOCATION
+        "${${lib_name}}")
     endif()
-
-    message(STATUS "Found OpenGL library ${lib}: ${${lib_name}}")
-
-    # set(${lib_name} ${${lib_name}} )
-    set(OPENGL_${lib}_FOUND TRUE)
-    add_library(OpenGL::${lib} UNKNOWN IMPORTED)
-    set_target_properties(OpenGL::${lib} PROPERTIES IMPORTED_LOCATION
-      "${${lib_name}}")
   endforeach()
 endmacro()
 
