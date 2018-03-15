@@ -14,6 +14,8 @@ macro(enable_cuda_impl)
     set(CUDA_ARCH_BIN "2.0 3.0 3.5 5.0 6.0" CACHE STRING
       "Specify GPU architectures to build binaries for.")
 
+    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -Wno-deprecated-gpu-targets")
+
     if (CMAKE_CXX_COMPILER_ID MATCHES GNU
         AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0.0")
       message(STATUS "Too new gcc for cuda ${CUDA_VERSION_MAJOR}; "
@@ -21,7 +23,6 @@ macro(enable_cuda_impl)
       find_program(__CLANG clang++-3.8)
 
       set(CUDA_HOST_COMPILER ${__CLANG})
-      set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -Wno-deprecated-gpu-targets")
       set(__HOST_COMPILER_ID Clang)
     endif()
   endif()
