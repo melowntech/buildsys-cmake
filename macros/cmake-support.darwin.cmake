@@ -1,4 +1,4 @@
-# Linux specific stuff goes here
+# Darwin specific stuff goes here
 
 message(STATUS "Configuring build system on Darwin (Mac OS X) machine")
 
