@@ -219,7 +219,11 @@ macro(setup_build_system)
   buildsys_compile_with_install_prefix()
 
   # add this directory to the modules path
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/Modules)
+  if(WIN32)
+    list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/Modules.Win32)
+  else()
+    list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/Modules)
+  endif()
 
   if(BUILDSYS_CPP_STANDARD)
     if (BUILDSYS_CPP_STANDARD EQUAL 11)
