@@ -17,4 +17,7 @@ macro(find_pathstrip)
   message(STATUS "using ${PATHSTRIP_BINARY} as pathstrip")
 endmacro()
 
-find_pathstrip()
+if(NOT WIN32)
+  # path stripping is available only in non-windows build
+  find_pathstrip()
+endif()
