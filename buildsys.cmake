@@ -1,3 +1,9 @@
+# buildsystem as a dependency: fake dependency (e.g. BuildSystem>=1.0)
+set(MODULE_BuildSystem_VERSION 1.0)
+set(MODULE_BuildSystem_FOUND TRUE)
+set(MODULE_BuildSystem_LIBRARIES)
+set(MODULE_BuildSystem_DEFINITION)
+
 # remember buildsystem root
 set(BUILDSYS_ROOT ${CMAKE_CURRENT_LIST_DIR})
 

@@ -1,24 +1,23 @@
 # - Try to find geographiclib
 # Once done, this will define
 #
-#  GEOGRAPHICLIB_FOUND - system has GEOGRAPHICLIB
-#  GEOGRAPHICLIB_INCLUDE_DIRS - the GEOGRAPHICLIB include directories
-#  GEOGRAPHICLIB_LIBRARIES - link these to use GEOGRAPHICLIB
+#  GeographicLib_FOUND - system has GeographicLib
+#  GeographicLib_INCLUDE_DIRS - the GeographicLib include directories
+#  GeographicLib_LIBRARIES - link these to use GeographicLib
 
-find_path(GEOGRAPHICLIB_INCLUDE_DIR
+find_path(GeographicLib_INCLUDE_DIR
   NAMES GeographicLib/TransverseMercator.hpp
 )
 
 # Finally the library itself
-find_library(GEOGRAPHICLIB_LIBRARY
+find_library(GeographicLib_LIBRARY
   NAMES Geographic
 )
 
-set(GEOGRAPHICLIB_INCLUDE_DIRS ${GEOGRAPHICLIB_INCLUDE_DIR})
-set(GEOGRAPHICLIB_LIBRARIES ${GEOGRAPHICLIB_LIBRARY})
+set(GeographicLib_LIBRARIES ${GeographicLib_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GeographicLib DEFAULT_MSG
-  GEOGRAPHICLIB_LIBRARIES
-  GEOGRAPHICLIB_INCLUDE_DIRS)
-mark_as_advanced(GEOGRAPHICLIB_INCLUDE_DIR GEOGRAPHICLIB_LIBRARIES)
+  GeographicLib_LIBRARIES
+  GeographicLib_INCLUDE_DIRS)
+mark_as_advanced(GeographicLib_INCLUDE_DIR GeographicLib_LIBRARIES)
