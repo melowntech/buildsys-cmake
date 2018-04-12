@@ -1,6 +1,5 @@
 # FindJPEG
 
-# FindJsonCPP
 # we look for jpeg in Program Files/{jpeg,libjpeg,libjpeg-turbo)
 find_path(JPEG_INCLUDE_DIR jpeglib.h
   PATHS "$ENV{PROGRAMFILES}/libjpeg" "$ENV{PROGRAMFILES}/libjpeg-turbo"
