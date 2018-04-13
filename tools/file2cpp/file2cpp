@@ -7,6 +7,7 @@ import types
 import argparse
 import os.path
 
+import platform
 import os
 
 parser = argparse.ArgumentParser(description="Converts any file to C++ source.")
@@ -35,7 +36,7 @@ cpp = base + ".cpp"
 
 name = args.name.split("::")
 
-contentFile = file(ifile, "r")
+contentFile = file(ifile, "rb")
 content = contentFile.read()
 lastModified = os.fstat(contentFile.fileno()).st_mtime
 
@@ -89,6 +90,17 @@ cpp_file.write("\n};\n")
 
 hpp_file.close()
 cpp_file.close()
+
+# os.rename does not allow to overwrite a file on windows
+if platform.system() == 'Windows':
+    try:
+        os.remove(hpp)
+    except OSError:
+        pass
+    try:
+        os.remove(cpp)
+    except OSError:
+        pass
 
 os.rename(hpp + ".file2cpp", hpp)
 os.rename(cpp + ".file2cpp", cpp)
