@@ -17,7 +17,7 @@ find_library(GeographicLib_LIBRARY
 set(GeographicLib_LIBRARIES ${GeographicLib_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(GeographicLib DEFAULT_MSG
-  GeographicLib_LIBRARIES
-  GeographicLib_INCLUDE_DIR)
+find_package_handle_standard_args(GeographicLib
+  FOUND_VAR GeographicLib_FOUND
+  REQUIRED_VARS GeographicLib_LIBRARIES GeographicLib_INCLUDE_DIR)
 mark_as_advanced(GeographicLib_INCLUDE_DIR GeographicLib_LIBRARIES)
