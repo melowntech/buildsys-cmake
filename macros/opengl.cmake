@@ -5,26 +5,29 @@ macro(enable_openGL_impl_pre_3_10)
     set(lib_name OPENGL_${lib}_LIBRARY)
     if (NOT TARGET OpenGL::${lib})
       find_library(${lib_name} NAMES ${lib})
-      if (${${lib_name}} STREQUAL ${lib_name}-NOTFOUND)
+      if (NOT ${lib_name})
         message(FATAL_ERROR "OpenGL library ${lib} was not found.")
       endif()
-
-      message(STATUS "Found OpenGL library ${lib}: ${${lib_name}}")
 
       add_library(OpenGL::${lib} UNKNOWN IMPORTED)
       set_target_properties(OpenGL::${lib} PROPERTIES IMPORTED_LOCATION
         "${${lib_name}}")
+
+      message(STATUS "Found OpenGL library ${lib}: ${${lib_name}}; "
+        "using as target OpenGL::${lib}.")
+    else()
+      message(STATUS "Using OpenGL library target OpenGL::${lib}.")
     endif()
   endforeach()
 endmacro()
 
 macro(enable_openGL_impl)
-  find_package(OpenGL REQUIRED)
-  if(CMAKE_VERSION VERSION_LESS 3.10)
+  if(CMAKE_VERSION VERSION_LESS 3.11)
+    find_package(OpenGL REQUIRED)
     enable_openGL_impl_pre_3_10(${ARGN})
   else()
-    # TODO: update when 3.10 is ready
-    find_package(OpenGL REQUIRED)
+    # TODO: update when 3.11 is ready
+    find_package(OpenGL REQUIRED COMPONENTS ${ARGN})
   endif()
 endmacro()
 
