@@ -14,15 +14,19 @@ macro(setup_build_system_os_specific)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endmacro()
 
-macro(buildsys_fix_sources)
-  message(STATUS "fixing sources on windows")
+macro(buildsys_fix_symlinks directory)
+  message(STATUS "Fixing symlinks in directory ${directory}")
 
   execute_process(COMMAND ${POWERSHELL_COMMAND}
     "\"${BUILDSYS_ROOT}/macros/scripts/windows-fix-symlinks.ps1\""
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src
+    WORKING_DIRECTORY ${directory}
     RESULT_VARIABLE result)
 
   if(NOT result STREQUAL "0")
-    message(FATAL_ERROR "Cannot fix symlinks in src directory.")
+    message(FATAL_ERROR "Cannot fix symlinks.")
   endif()
+endmacro(buildsys_fix_symlinks)
+
+macro(buildsys_fix_sources)
+  buildsys_fix_symlinks(${CMAKE_CURRENT_SOURCE_DIR}/src)
 endmacro()
