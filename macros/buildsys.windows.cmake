@@ -14,7 +14,7 @@ macro(setup_build_system_os_specific)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endmacro()
 
-macro(buildsys_fix_symlinks directory)
+macro(buildsys_fix_symlinks_platform directory)
   message(STATUS "Fixing symlinks in directory ${directory}")
 
   execute_process(COMMAND ${POWERSHELL_COMMAND}
@@ -25,8 +25,8 @@ macro(buildsys_fix_symlinks directory)
   if(NOT result STREQUAL "0")
     message(FATAL_ERROR "Cannot fix symlinks.")
   endif()
-endmacro(buildsys_fix_symlinks)
+endmacro(buildsys_fix_symlinks_platform)
 
 macro(buildsys_fix_sources)
-  buildsys_fix_symlinks(${CMAKE_CURRENT_SOURCE_DIR}/src)
+  buildsys_fix_symlinks_platform(${CMAKE_CURRENT_SOURCE_DIR}/src)
 endmacro()

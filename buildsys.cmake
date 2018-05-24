@@ -308,6 +308,7 @@ foreach(submodule
     clone
     library-support
     opengl
+    symlink-fixes
 
     build-types/release
     build-types/customerdebug

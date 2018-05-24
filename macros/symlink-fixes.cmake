@@ -1,0 +1,5 @@
+macro(buildsys_fix_symlinks directory)
+  if(COMMAND buildsys_fix_symlinks_platform)
+    buildsys_fix_symlinks_platform(${directory})
+  endif()
+endmacro(buildsys_fix_symlinks)
