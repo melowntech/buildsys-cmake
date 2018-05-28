@@ -3,13 +3,16 @@ macro(enable_python VERSION)
     message(FATAL_ERROR "Please use find_package(Boost) first.")
   endif()
 
-  string(REPLACE "." "" SHORT_VERSION "${VERSION}")
+  find_package(PythonInterp ${VERSION} REQUIRED)
+
+  set(LONG_VERSION "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
+  set(SHORT_VERSION "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
 
   find_package(Boost ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION} QUIET
-    COMPONENTS python-${VERSION} python-py${SHORT_VERSION})
+    COMPONENTS python-${LONG_VERSION} python-py${SHORT_VERSION})
 
-  if(Boost_PYTHON-${VERSION}_FOUND)
-    set(PYLIB Boost_PYTHON-${VERSION})
+  if(Boost_PYTHON-${LONG_VERSION}_FOUND)
+    set(PYLIB Boost_PYTHON-${LONG_VERSION})
   elseif(Boost_PYTHON-PY${SHORT_VERSION}_FOUND)
     set(PYLIB Boost_PYTHON-PY${SHORT_VERSION})
   else()
@@ -32,7 +35,7 @@ macro(enable_python VERSION)
     set(Boost_PYTHON_${var} ${${PYLIB}_${var}})
   endforeach()
 
-  find_package(PythonLibs ${VERSION} REQUIRED)
+  find_package(PythonLibs ${PYTHON_VERSION_STRING} EXACT REQUIRED)
   if(PYTHONLIBS_FOUND)
     set(PYTHONLIBS_LIBRARIES ${PYTHON_LIBRARIES})
     set(PYTHONLIBS_INCLUDE_PATH ${PYTHON_INCLUDE_PATH})
@@ -40,11 +43,8 @@ macro(enable_python VERSION)
   endif()
 
   # find python interpteter
-  find_program(PYTHON python${VERSION})
-  if(NOT PYTHON)
-    message(FATAL_ERROR "Cannot find python${VERSION}")
-  endif()
+  set(PYTHON ${PYTHON_EXECUTABLE})
   message(STATUS "Using ${PYTHON} as python${VERSION}")
-  set(PYTHON_VERSION ${VERSION})
+  set(PYTHON_VERSION ${VERSION_LONG})
   set(PYTHON_MODULE_INSTALL_PATH "lib/python${PYTHON_VERSION}/dist-packages")
 endmacro()
