@@ -5,19 +5,17 @@ macro(enable_cuda_impl)
   set(__HOST_COMPILER_ID ${CMAKE_CXX_COMPILER_ID})
 
   if(CUDA_VERSION_MAJOR LESS 6)
+    # CUDA 5.x
     set(CUDA_ARCH_BIN "2.0 3.0 3.5" CACHE STRING
       "Specify GPU architectures to build binaries for.")
   elseif(CUDA_VERSION_MAJOR LESS 8)
+    # CUDA 7.x
     set(CUDA_ARCH_BIN "2.0 3.0 3.5 5.0" CACHE STRING
       "Specify GPU architectures to build binaries for.")
-  else()
-    if (CUDA_VERSION_MAJOR LESS 9)
-      set(CUDA_ARCH_BIN "2.0 3.0 3.5 5.0 6.0" CACHE STRING
-        "Specify GPU architectures to build binaries for.")
-    else()
-      set(CUDA_ARCH_BIN "3.0 3.5 5.0 6.0" CACHE STRING
-        "Specify GPU architectures to build binaries for.")
-    endif()
+  elseif(CUDA_VERSION_MAJOR LESS 9)
+    # CUDA 8.x
+    set(CUDA_ARCH_BIN "2.0 3.0 3.5 5.0 6.0" CACHE STRING
+      "Specify GPU architectures to build binaries for.")
 
     set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -Wno-deprecated-gpu-targets")
 
@@ -25,9 +23,31 @@ macro(enable_cuda_impl)
         AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0.0")
       message(STATUS "Too new gcc for cuda ${CUDA_VERSION_MAJOR}; "
         "forcing clang-3.8.")
-      find_program(__CLANG clang++-3.8)
+      find_program(__CLANG_CUDA8 clang++-3.8)
 
-      set(CUDA_HOST_COMPILER ${__CLANG})
+      if(NOT __CLANG_CUDA8)
+        message(FATAL_ERROR "Please, install clang-3.8")
+      endif()
+
+      set(CUDA_HOST_COMPILER ${__CLANG_CUDA8})
+      set(__HOST_COMPILER_ID Clang)
+    endif()
+  else()
+    # CUDA 9.x
+    set(CUDA_ARCH_BIN "3.0 3.5 5.0 6.0" CACHE STRING
+      "Specify GPU architectures to build binaries for.")
+
+    if (CMAKE_CXX_COMPILER_ID MATCHES GNU
+        AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0.0")
+      message(STATUS "Too new gcc for cuda ${CUDA_VERSION_MAJOR}; "
+        "forcing clang<=4.0.")
+      find_program(__CLANG_CUDA9 NAMES clang++-4.0 clang++-3.9)
+
+      if(NOT __CLANG_CUDA9)
+        message(FATAL_ERROR "Please, install clang-4.0 or clang-3.9")
+      endif()
+
+      set(CUDA_HOST_COMPILER ${__CLANG_CUDA9})
       set(__HOST_COMPILER_ID Clang)
     endif()
   endif()
