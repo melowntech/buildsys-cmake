@@ -280,6 +280,7 @@ if (WIN32)
   find_program(PYTHON2_BINARY python)
 else()
   find_program(PYTHON2_BINARY python2)
+  find_program(PYTHON3_BINARY python3)
 endif()
 if(NOT PYTHON2_BINARY)
   message(FATAL_ERROR "Please install python2.")
@@ -325,6 +326,7 @@ foreach(tool
     pathstrip
     ocl2cpp
     pandoc
+    makerunnable
     )
   include(${CMAKE_CURRENT_LIST_DIR}/tools/${tool}/${tool}.cmake)
 endforeach()
