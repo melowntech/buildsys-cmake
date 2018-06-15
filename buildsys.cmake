@@ -326,7 +326,7 @@ foreach(tool
     pathstrip
     ocl2cpp
     pandoc
-    makerunnable
+    py-runnable
     compile-pyc
     )
   include(${CMAKE_CURRENT_LIST_DIR}/tools/${tool}/${tool}.cmake)

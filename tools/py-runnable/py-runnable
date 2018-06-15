@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- python -*-
 
 import sys
@@ -10,11 +10,12 @@ import os.path
 import platform
 import os
 
-parser = argparse.ArgumentParser(description="Makes anything runnable.")
+parser = argparse.ArgumentParser(description="Makes python ZIP archive runnable.")
 
 parser.add_argument('input', nargs=1, help='Input file')
 parser.add_argument('output', nargs=1, help='Output file')
 parser.add_argument('hashbang', nargs=1, help='Prepended hashbang')
+parser.add_argument('--verbose', default=False, action='store_true')
 
 args = parser.parse_args()
 
@@ -22,7 +23,13 @@ ifile = args.input[0]
 ofile = args.output[0]
 hashbang = args.hashbang[0]
 
-tmp = ofile + ".makerunnable"
+tmp = ofile + ".pyr"
+
+if (args.verbose):
+    print("ifile:", ifile)
+    print("ofile:", ofile)
+    print("hashbang:", hashbang)
+    print("tmp:", tmp)
 
 import zipapp
 zipapp.create_archive(ifile, tmp, hashbang)
