@@ -26,7 +26,11 @@ macro(enable_cpp11)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wnon-virtual-dtor -Wno-unused-function")
     if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
       # compiler newer than 4.x
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-date-time -Wno-misleading-indentation")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-date-time")
+    endif()
+    if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0)
+      # compiler newer than 5.x
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-misleading-indentation")
     endif()
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--as-needed")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--as-needed")
