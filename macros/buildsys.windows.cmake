@@ -14,11 +14,15 @@ macro(setup_build_system_os_specific)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endmacro()
 
+set(BUILDSYS_SYMLINKS_FIX_SCRIPT
+  "${BUILDSYS_ROOT}/macros/scripts/windows-fix-symlinks.ps1"
+  CACHE STRING "Path to script used for fixing symlinks mismatches on windows")
+
 macro(buildsys_fix_symlinks_platform directory)
   message(STATUS "Fixing symlinks in directory ${directory}")
 
   execute_process(COMMAND ${POWERSHELL_COMMAND}
-    "\"${BUILDSYS_ROOT}/macros/scripts/windows-fix-symlinks.ps1\""
+    "\"${BUILDSYS_SYMLINKS_FIX_SCRIPT}\""
     WORKING_DIRECTORY ${directory}
     RESULT_VARIABLE result)
 
