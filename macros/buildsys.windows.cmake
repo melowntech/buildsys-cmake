@@ -9,6 +9,7 @@ macro(setup_build_system_os_specific)
   # damn you, MSVC!
   add_definitions(-D_USE_MATH_DEFINES)
   add_definitions(-DNOMINMAX)
+  add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
 
   # noway
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
