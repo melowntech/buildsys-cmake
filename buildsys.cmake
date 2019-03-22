@@ -27,6 +27,9 @@ macro(enable_cpp11)
     if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
       # compiler newer than 4.x
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-date-time")
+    else()
+      # 4.x or older
+      set(BUILDSYS_LIMITED_CPP11 TRUE)
     endif()
     if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0)
       # compiler newer than 5.x
