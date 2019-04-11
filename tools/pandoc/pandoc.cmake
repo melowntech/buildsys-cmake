@@ -36,7 +36,6 @@ macro(add_website target)
     _pandoc_ext2format(${infile} in_format)
     message(STATUS "add_website: ${infile} -> ${outfile}; ${in_format}")
 
-
     add_custom_command(OUTPUT ${outfile}
       COMMAND ${PANDOC_BINARY}
       ARGS -f ${in_format} -o ${outfile} ${infile} --standalone --smart
@@ -58,4 +57,21 @@ endmacro()
 macro(install_website target)
   get_target_property(outfiles ${target} BUILDSYS_WEBSITE_FILES)
   install(FILES ${outfiles} ${ARGN})
+endmacro()
+
+macro(pandoc_to_cpp outfiles name input)
+  find_pandoc()
+
+  get_filename_component(infile ${input} ABSOLUTE)
+  buildsys_make_output_file(${infile} "" html outfile)
+  _pandoc_ext2format(${infile} in_format)
+
+  add_custom_command(OUTPUT ${outfile}
+    COMMAND ${PANDOC_BINARY}
+    ARGS -f ${in_format} -o ${outfile} ${infile} --standalone --smart
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    DEPENDS ${infile} ${PANDOC_BINARY}
+    )
+
+  file_to_cpp(${outfiles} ${name} ${outfile})
 endmacro()
