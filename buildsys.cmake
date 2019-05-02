@@ -1,5 +1,5 @@
 # buildsystem as a dependency: fake dependency (e.g. BuildSystem>=1.0)
-set(BuildSystem_VERSION 1.1)
+set(BuildSystem_VERSION 1.2)
 set(BuildSystem_FOUND TRUE)
 set(BuildSystem_LIBRARIES)
 set(BuildSystem_DEFINITION)
