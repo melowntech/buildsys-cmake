@@ -301,6 +301,7 @@ foreach(submodule
     openmp
     cuda
     opencl
+    opencv
     test
     legacy
     traceback
