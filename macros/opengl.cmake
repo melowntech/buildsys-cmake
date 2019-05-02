@@ -22,7 +22,7 @@ macro(enable_openGL_impl_pre_3_10)
 endmacro()
 
 macro(enable_openGL_impl)
-  if(CMAKE_VERSION VERSION_LESS 3.11)
+  if(CMAKE_VERSION VERSION_LESS 3.10)
     find_package(OpenGL REQUIRED)
     enable_openGL_impl_pre_3_10(${ARGN})
   else()
