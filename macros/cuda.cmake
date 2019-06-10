@@ -8,14 +8,20 @@ macro(enable_cuda_impl)
     # CUDA 5.x
     set(CUDA_ARCH_BIN "2.0 3.0 3.5" CACHE STRING
       "Specify GPU architectures to build binaries for.")
+    set(CUDA_ARCH_PTX "3.5" CACHE STRING
+      "Specify PTX architectures to build PTX intermediate code for.")
   elseif(CUDA_VERSION_MAJOR LESS 8)
     # CUDA 7.x
     set(CUDA_ARCH_BIN "2.0 3.0 3.5 5.0" CACHE STRING
       "Specify GPU architectures to build binaries for.")
+    set(CUDA_ARCH_PTX "5.0" CACHE STRING
+      "Specify PTX architectures to build PTX intermediate code for.")
   elseif(CUDA_VERSION_MAJOR LESS 9)
     # CUDA 8.x
     set(CUDA_ARCH_BIN "2.0 3.0 3.5 5.0 6.0" CACHE STRING
       "Specify GPU architectures to build binaries for.")
+    set(CUDA_ARCH_PTX "6.0" CACHE STRING
+      "Specify PTX architectures to build PTX intermediate code for.")
 
     set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -Wno-deprecated-gpu-targets")
 
@@ -36,6 +42,8 @@ macro(enable_cuda_impl)
     # CUDA 9.x
     set(CUDA_ARCH_BIN "3.0 3.5 5.0 6.0" CACHE STRING
       "Specify GPU architectures to build binaries for.")
+    set(CUDA_ARCH_PTX "6.0" CACHE STRING
+      "Specify PTX architectures to build PTX intermediate code for.")
 
     if (CMAKE_CXX_COMPILER_ID MATCHES GNU
         AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0.0")
@@ -60,6 +68,8 @@ macro(enable_cuda_impl)
   # >>> copied from opencv build
   set(NVCC_FLAGS_EXTRA "")
   string(REGEX REPLACE "\\." "" ARCH_BIN_NO_POINTS "${CUDA_ARCH_BIN}")
+  string(REGEX REPLACE "\\." "" ARCH_PTX_NO_POINTS "${CUDA_ARCH_PTX}")
+
   string(REGEX MATCHALL "[0-9()]+" ARCH_LIST "${ARCH_BIN_NO_POINTS}")
   foreach(ARCH IN LISTS ARCH_LIST)
     if(ARCH MATCHES "([0-9]+)\\(([0-9]+)\\)")
@@ -69,6 +79,11 @@ macro(enable_cuda_impl)
       # User didn't explicitly specify PTX for the concrete BIN, we assume PTX=BIN
       set(NVCC_FLAGS_EXTRA ${NVCC_FLAGS_EXTRA} -gencode arch=compute_${ARCH},code=sm_${ARCH})
     endif()
+  endforeach()
+
+  string(REGEX MATCHALL "[0-9]+" ARCH_LIST "${ARCH_PTX_NO_POINTS}")
+  foreach(ARCH IN LISTS ARCH_LIST)
+    set(NVCC_FLAGS_EXTRA ${NVCC_FLAGS_EXTRA} -gencode arch=compute_${ARCH},code=compute_${ARCH})
   endforeach()
 
   set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} ${NVCC_FLAGS_EXTRA})
