@@ -1,16 +1,3 @@
-# helper macro for define_module
-macro(define_module_check_dependency name libs missing)
-  set(FOUND TRUE)
-
-  if(${name} STREQUAL Boost)
-    if(NOT Boost_FOUND)
-      list(APPEND ${missing} Boost)
-    endif()
-  else()
-    unset(FOUND)
-  endif()
-endmacro()
-
 macro(module_split_version input name compare version)
   set(rx "^([^>=<]+)([>=<]+)(.*)$")
   string(REGEX REPLACE "${rx}" "\\1" ${name} ${input})
@@ -97,8 +84,7 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
       module_split_version(${atom} atom compareOperator version)
 
       # dependency
-      define_module_check_dependency(${atom} libs missing)
-      if (NOT FOUND AND NOT ${atom}_FOUND)
+      if (NOT ${atom}_FOUND)
         if(NOT MODULE_${atom}_FOUND)
           if(TARGET ${atom})
             list(APPEND libs ${atom})
