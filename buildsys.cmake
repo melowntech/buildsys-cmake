@@ -1,5 +1,5 @@
 # buildsystem as a dependency: fake dependency (e.g. BuildSystem>=1.0)
-set(BuildSystem_VERSION 1.3)
+set(BuildSystem_VERSION 1.4)
 set(BuildSystem_FOUND TRUE)
 set(BuildSystem_LIBRARIES)
 set(BuildSystem_DEFINITION)
@@ -275,8 +275,11 @@ macro(setup_build_system)
     message(FATAL_ERROR "Unknown C++ standard ${BUILDSYS_CPP_STANDARD} requested.")
   endif()
 
+  # C++ standard as a fake dependency
   set(C++_FOUND TRUE)
   set(C++_VERSION ${BUILDSYS_CPP_STANDARD})
+  set(C++_LIBRARIES)
+  set(C++_DEFINITION)
 
   # enable C11 by default
   enable_c11()
