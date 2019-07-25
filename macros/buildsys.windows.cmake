@@ -7,11 +7,10 @@ macro(setup_build_system_os_specific)
   find_package(PowerShell REQUIRED)
 
   # damn you, MSVC!
-  add_definitions(-D_USE_MATH_DEFINES)
+  add_definitions(-DWIN32_LEAN_AND_MEAN)
   add_definitions(-DNOMINMAX)
+  add_definitions(-D_USE_MATH_DEFINES)
   add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
-
-  # noway
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endmacro()
 
