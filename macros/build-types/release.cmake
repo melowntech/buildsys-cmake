@@ -6,6 +6,7 @@ if(NOT WIN32)
     # update definitions
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -g")
+    set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -g")
   else()
     message(STATUS "Release mode: Not compiling with debug symbols as instructed.")
   endif()

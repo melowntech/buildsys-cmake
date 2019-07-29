@@ -9,10 +9,16 @@ macro(enable_python VERSION)
   set(SHORT_VERSION "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
 
   find_package(Boost ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION} QUIET
-    COMPONENTS python-${LONG_VERSION} python-py${SHORT_VERSION})
+    COMPONENTS
+    python-${LONG_VERSION}
+    python${SHORT_VERSION}
+    python-py${SHORT_VERSION}
+    )
 
   if(Boost_PYTHON-${LONG_VERSION}_FOUND)
     set(PYLIB Boost_PYTHON-${LONG_VERSION})
+  elseif(Boost_PYTHON${SHORT_VERSION}_FOUND)
+    set(PYLIB Boost_PYTHON${SHORT_VERSION})
   elseif(Boost_PYTHON-PY${SHORT_VERSION}_FOUND)
     set(PYLIB Boost_PYTHON-PY${SHORT_VERSION})
   else()
