@@ -1,3 +1,11 @@
+# sanity check: no in-tree build
+if("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
+  message(FATAL_ERROR "In-source build is disabled. Remove the already"
+    "generated files [CMakeCache.txt CMakFiles/] and start again"
+    "from dedicated build directory.")
+endif()
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+
 # buildsystem as a dependency: fake dependency (e.g. BuildSystem>=1.0)
 set(BuildSystem_VERSION 1.3)
 set(BuildSystem_FOUND TRUE)
