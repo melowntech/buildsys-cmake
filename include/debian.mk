@@ -29,7 +29,7 @@ DEB_BUILDDIR=obj-$(DEB_BUILD_GNU_TYPE)
 
 # default rule; tell debhelper we use CMake
 %:
-	dh -Scmake -B$(DEB_BUILDDIR) --parallel -O--version-info $@
+	dh $@ -Scmake -B$(DEB_BUILDDIR) --parallel -O--version-info
 
 # custom installation
 override_dh_auto_install:
@@ -43,7 +43,19 @@ override_dh_auto_install:
 override_dh_auto_configure:
 	dh_auto_configure -- $(CMAKE_FLAGS)
 
-ifneq ($(DEB_PACKAGE_DEBUG),NO)
+# debug packate: set to:
+# * keep unset to generate default package name
+# * AUTOMATIC to make modern automatic dbgsyms
+# * NO to disable generation
+# * package name to select new package name
+ifeq ($(DEB_PACKAGE_DEBUG),AUTOMATIC)
+	dh_strip --automatic-dbgsym
+else ifneq ($(DEB_PACKAGE_DEBUG),NO)
 override_dh_strip:
 	dh_strip --dbg-package=$(DEB_PACKAGE_DEBUG)
+endif
+
+ifdef CMAKE_TARGETS
+override_dh_auto_build:
+	dh_auto_build -- $(CMAKE_TARGETS)
 endif
