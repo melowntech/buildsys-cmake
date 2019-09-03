@@ -1,3 +1,11 @@
+# sanity check: no in-tree build
+if("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
+  message(FATAL_ERROR "In-source build is disabled. Remove the already"
+    "generated files [CMakeCache.txt CMakFiles/] and start again"
+    "from dedicated build directory.")
+endif()
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+
 # buildsystem as a dependency: fake dependency (e.g. BuildSystem>=1.0)
 set(BuildSystem_VERSION 1.6)
 set(BuildSystem_FOUND TRUE)
@@ -85,15 +93,15 @@ macro(enable_cpp14)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--as-needed")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--as-needed")
     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--as-needed")
-    message(STATUS "Enabled C++14 for C++ (${CMAKE_CXX_COMPILER_ID})")
   elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -stdlib=libc++ -Wno-conversion")
-    message(STATUS "Enabled C++14 for C++ (${CMAKE_CXX_COMPILER_ID})")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-braces")
   elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
     set(CMAKE_CXX_STANDARD 14)
   else()
     message(FATAL_ERROR "Unknown C++ compiler: ${CMAKE_CXX_COMPILER_ID}.")
   endif()
+  message(STATUS "Enabled C++14 for C++ (${CMAKE_CXX_COMPILER_ID})")
 endmacro()
 
 # enable C++17
@@ -105,15 +113,15 @@ macro(enable_cpp17)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--as-needed")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--as-needed")
     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--as-needed")
-    message(STATUS "Enabled C++17 for C++ (${CMAKE_CXX_COMPILER_ID})")
   elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++ -Wno-conversion")
-    message(STATUS "Enabled C++17 for C++ (${CMAKE_CXX_COMPILER_ID})")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-braces")
   elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
     set(CMAKE_CXX_STANDARD 17)
   else()
     message(FATAL_ERROR "Unknown C++ compiler: ${CMAKE_CXX_COMPILER_ID}.")
   endif()
+  message(STATUS "Enabled C++17 for C++ (${CMAKE_CXX_COMPILER_ID})")
 endmacro()
 
 # enable visibility=hidden
