@@ -24,14 +24,18 @@ try_run(rr cr ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_LIST_DIR}/FindMarkdown
   RUN_OUTPUT_VARIABLE Markdown_VERSION)
 if(NOT rr)
   string(STRIP "${Markdown_VERSION}" Markdown_VERSION)
+  string(REGEX REPLACE " +.*$" "" Markdown_VERSION "${Markdown_VERSION}")
+
 else()
   unset(Markdown_VERSION)
 endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Markdown
+  FOUND_VAR Markdown_FOUND
   VERSION_VAR Markdown_VERSION
   REQUIRED_VARS Markdown_LIBRARIES Markdown_INCLUDE_DIRS Markdown_VERSION
   )
 
 mark_as_advanced(Markdown_INCLUDE_DIR Markdown_LIBRARIES Markdown_VERSION)
+
