@@ -60,5 +60,6 @@ override_dh_auto_build:
 	dh_auto_build -- $(CMAKE_TARGETS)
 endif
 
-buildir_clean:
+# add extra clean
+debclean_extra:
 	rm -Rf $(DEB_BUILDDIR)
