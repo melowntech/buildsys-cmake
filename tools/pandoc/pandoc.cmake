@@ -34,7 +34,6 @@ macro(add_website target)
     get_filename_component(infile ${input} ABSOLUTE)
     buildsys_make_output_file(${infile} "" .html outfile)
     _pandoc_ext2format(${infile} in_format)
-    message(STATUS "add_website: ${infile} -> ${outfile}; ${in_format}")
 
     add_custom_command(OUTPUT ${outfile}
       COMMAND ${PANDOC_BINARY}
