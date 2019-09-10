@@ -60,5 +60,5 @@ override_dh_auto_build:
 	dh_auto_build -- $(CMAKE_TARGETS)
 endif
 
-override_dh_clean:
-	rm -Rf $(DEB_BUILDDIR)
+#override_dh_clean:
+#	rm -Rf $(DEB_BUILDDIR)
