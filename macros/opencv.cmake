@@ -1,0 +1,7 @@
+macro(opencv_file_infix)
+  if (OpenCV_VERSION VERSION_LESS "3.0.0")
+    set(CVX cv2)
+  else()
+    set(CVX cv3)
+  endif()
+endmacro()

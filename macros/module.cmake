@@ -1,16 +1,3 @@
-# helper macro for define_module
-macro(define_module_check_dependency name libs missing)
-  set(FOUND TRUE)
-
-  if(${name} STREQUAL Boost)
-    if(NOT Boost_FOUND)
-      list(APPEND ${missing} Boost)
-    endif()
-  else()
-    unset(FOUND)
-  endif()
-endmacro()
-
 macro(module_split_version input name compare version)
   set(rx "^([^>=<]+)([>=<]+)(.*)$")
   string(REGEX REPLACE "${rx}" "\\1" ${name} ${input})
@@ -24,28 +11,27 @@ macro(module_split_version input name compare version)
   endif()
 endmacro()
 
-function(module_check_version module compareOperator checkVersion result)
+function(module_check_version moduleVersion compareOperator checkVersion result)
   set(${result} TRUE PARENT_SCOPE)
   if(NOT checkVersion)
     return()
   endif()
 
-  set(version ${MODULE_${module}_VERSION})
-  if(NOT version)
+  if(NOT moduleVersion)
     set(${result} FALSE PARENT_SCOPE)
     return()
   endif()
 
-  if(compareOperator STREQUAL ">" AND NOT version VERSION_GREATER checkVersion)
+  if(compareOperator STREQUAL ">" AND NOT moduleVersion VERSION_GREATER checkVersion)
     set(${result} FALSE PARENT_SCOPE)
     return()
-  elseif(compareOperator STREQUAL ">=" AND version VERSION_LESS checkVersion)
+  elseif(compareOperator STREQUAL ">=" AND moduleVersion VERSION_LESS checkVersion)
     set(${result} FALSE PARENT_SCOPE)
     return()
-  elseif(compareOperator STREQUAL "=" AND NOT version VERSION_EQUAL checkVersion)
+  elseif(compareOperator STREQUAL "=" AND NOT moduleVersion VERSION_EQUAL checkVersion)
     set(${result} FALSE PARENT_SCOPE)
     return()
-  elseif(compareOperator STREQUAL "<=" AND version VERSION_GREATER checkVersion)
+  elseif(compareOperator STREQUAL "<=" AND moduleVersion VERSION_GREATER checkVersion)
     set(${result} FALSE PARENT_SCOPE)
     return()
   endif()
@@ -98,8 +84,7 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
       module_split_version(${atom} atom compareOperator version)
 
       # dependency
-      define_module_check_dependency(${atom} libs missing)
-      if (NOT FOUND AND NOT ${atom}_FOUND)
+      if (NOT ${atom}_FOUND)
         if(NOT MODULE_${atom}_FOUND)
           if(TARGET ${atom})
             list(APPEND libs ${atom})
@@ -107,8 +92,8 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
             LIST(APPEND missing ${atom})
           endif()
         else()
-          module_check_version("${atom}" "${compareOperator}" "${version}"
-            checkResult)
+          module_check_version("${MODULE_${atom}_VERSION}" "${compareOperator}"
+            "${version}" checkResult)
 
           if(NOT checkResult)
             LIST(APPEND missing ${fullAtom})
@@ -120,13 +105,20 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
           endif()
         endif()
       else()
-        # add dependency's libraries to our libraries
-        list(APPEND libs ${${atom}_LIBRARIES})
-        # TODO: split -DX to _DEFINITIONS and other stuff to _FLAGS
-        # do nothing now
+          module_check_version("${${atom}_VERSION}" "${compareOperator}" "${version}"
+            checkResult)
 
-        # add dependency's definitions to our definitions
-        # list(APPEND definitions ${${atom}_DEFINITIONS})
+          if(NOT checkResult)
+            LIST(APPEND missing ${fullAtom})
+          else()
+            # add dependency's libraries to our libraries
+            list(APPEND libs ${${atom}_LIBRARIES})
+            # TODO: split -DX to _DEFINITIONS and other stuff to _FLAGS
+            # do nothing now
+
+            # add dependency's definitions to our definitions
+            # list(APPEND definitions ${${atom}_DEFINITIONS})
+          endif()
       endif()
 
     else()
