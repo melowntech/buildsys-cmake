@@ -100,3 +100,14 @@ macro(enable_cuda)
     message(STATUS "Disabling CUDA support because of BUILDSYS_DISABLE_CUDA.")
   endif()
 endmacro()
+
+# for a given target and a list of sources, switch to nvcc compilation and enable extended lambdas
+macro(enable_cuda_lambdas TARGET)
+  if(NOT BUILDSYS_DISABLE_CUDA)
+    set_source_files_properties(${ARGN} PROPERTIES LANGUAGE CUDA)
+    target_compile_options(${TARGET} PRIVATE
+      $<$<COMPILE_LANGUAGE:CUDA>:--expt-extended-lambda -Xcompiler "-fopenmp">)
+    set_target_properties(${TARGET} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+  endif()
+endmacro()
+
