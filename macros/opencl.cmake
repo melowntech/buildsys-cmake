@@ -4,8 +4,8 @@ macro(enable_opencl_impl)
 
   add_definitions(-DHAS_OPENCL)
 
-  # we must ask for 1.1 API support
-  add_definitions(-DCL_USE_DEPRECATED_OPENCL_1_1_APIS)
+  # needef for new OpenCL instalations, ignored in older ones
+  add_definitions(-DCL_TARGET_OPENCL_VERSION=220)
 endmacro()
 
 macro(enable_opencl)
