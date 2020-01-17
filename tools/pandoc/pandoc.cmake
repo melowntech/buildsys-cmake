@@ -2,7 +2,20 @@ macro(find_pandoc)
   if(NOT PANDOC_BINARY)
     find_program(PANDOC_BINARY pandoc)
 
-    message(STATUS "using ${PANDOC_BINARY} as pandoc")
+    execute_process(COMMAND "sh" -c
+      "pandoc --version | head -n1 | cut -d' ' -f2"
+      OUTPUT_VARIABLE __pandoc_version)
+    string(STRIP ${__pandoc_version} __pandoc_version)
+
+    message(STATUS "using ${PANDOC_BINARY} (v. ${__pandoc_version}) as pandoc")
+
+    if(__pandoc_version VERSION_LESS 2)
+      set(PANDOC_EXTRA_ARGS --smart)
+      set(PANDOC_EXTRA_FORMAT)
+    else()
+      set(PANDOC_EXTRA_ARGS)
+      set(PANDOC_EXTRA_FORMAT +smart)
+    endif()
   endif()
 endmacro()
 
@@ -22,7 +35,7 @@ macro(_pandoc_ext2format file format_var)
 
   math(EXPR index "${index} + 1")
   list(GET _pandoc_ext2format_mapping ${index} value)
-  set(${format_var} ${value})
+  set(${format_var} ${value}${PANDOC_EXTRA_FORMAT})
 endmacro()
 
 macro(add_website target)
@@ -37,7 +50,7 @@ macro(add_website target)
 
     add_custom_command(OUTPUT ${outfile}
       COMMAND ${PANDOC_BINARY}
-      ARGS -f ${in_format} -o ${outfile} ${infile} --standalone --smart
+      ARGS -f ${in_format} -o ${outfile} ${infile} --standalone ${PANDOC_EXTRA_ARGS}
       DEPENDS ${infile} ${PANDOC_BINARY}
       )
 
@@ -67,7 +80,7 @@ macro(pandoc_to_cpp outfiles name input)
 
   add_custom_command(OUTPUT ${outfile}
     COMMAND ${PANDOC_BINARY}
-    ARGS -f ${in_format} -o ${outfile} ${infile} --standalone --smart
+    ARGS -f ${in_format} -o ${outfile} ${infile} --standalone ${PANDOC_EXTRA_ARGS}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     DEPENDS ${infile} ${PANDOC_BINARY}
     )
