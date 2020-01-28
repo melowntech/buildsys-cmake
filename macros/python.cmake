@@ -17,12 +17,8 @@ macro(enable_python VERSION)
 
   if(Boost_PYTHON-${LONG_VERSION}_FOUND)
     set(PYLIB Boost_PYTHON-${LONG_VERSION})
-  elseif(Boost_python-${LONG_VERSION}_FOUND)
-    set(PYLIB Boost_python-${LONG_VERSION})
-  elseif(Boost_PYTHON${SHORT_VERSION}_FOUND)
+  elseif(Boost_PYTHON${SHORT_VERSION}_FOUND OR Boost_python${SHORT_VERSION}_FOUND)
     set(PYLIB Boost_PYTHON${SHORT_VERSION})
-  elseif(Boost_python${SHORT_VERSION}_FOUND)
-    set(PYLIB Boost_python${SHORT_VERSION})
   elseif(Boost_PYTHON-PY${SHORT_VERSION}_FOUND)
     set(PYLIB Boost_PYTHON-PY${SHORT_VERSION})
   else()
@@ -44,6 +40,9 @@ macro(enable_python VERSION)
       )
     set(Boost_PYTHON_${var} ${${PYLIB}_${var}})
   endforeach()
+
+  # force for cmake-3.15
+  set(Boost_PYTHON_FOUND ON)
 
   find_package(PythonLibs ${PYTHON_VERSION_STRING} EXACT REQUIRED)
   if(PYTHONLIBS_FOUND)
