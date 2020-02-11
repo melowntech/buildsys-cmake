@@ -367,7 +367,7 @@ foreach(tool
     ocl2cpp
     pandoc
     py-runnable
-#    compile-pyc
+    compile-pyc
     )
   include(${CMAKE_CURRENT_LIST_DIR}/tools/${tool}/${tool}.cmake)
 endforeach()
