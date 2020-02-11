@@ -12,10 +12,7 @@ macro(buildsys_py_runnable src dst hashbang)
 endmacro()
 
 macro(find_py_runnable)
-  find_program(PY_RUNNABLE_BINARY
-    py-runnable
-    HINTS ${CMAKE_CURRENT_LIST_DIR})
-
+  set(PY_RUNNABLE_BINARY ${CMAKE_CURRENT_LIST_DIR}/py-runnable)
   message(STATUS "using ${PY_RUNNABLE_BINARY} as py-runnable")
 endmacro()
 

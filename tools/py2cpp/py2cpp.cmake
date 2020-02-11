@@ -1,5 +1,5 @@
 macro(py_to_pyc outfiles name input)
-  if(NOT PYTHON)
+  if(NOT PYTHON_BINARY)
     message(FATAL_ERROR "Python not enabled. Use enable_python macro first.")
   endif()
 
@@ -8,7 +8,7 @@ macro(py_to_pyc outfiles name input)
   buildsys_make_output_file(${infile} "" pyc outfile_pyc)
 
   add_custom_command(OUTPUT ${outfile_pyc}
-    COMMAND ${PYTHON}
+    COMMAND ${PYTHON_BINARY}
     ARGS ${PY_TO_PYC_BINARY} ${infile} ${outfile_pyc}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     DEPENDS ${infile}
@@ -20,10 +20,7 @@ endmacro()
 macro(find_py_to_pyc)
   get_filename_component(current_dir ${CMAKE_CURRENT_LIST_FILE} PATH)
 
-  find_program(PY_TO_PYC_BINARY
-    py2pyc
-    HINTS ${current_dir})
-
+  set(PY_TO_PYC_BINARY ${CMAKE_CURRENT_LIST_DIR}/py2pyc)
   message(STATUS "using ${PY_TO_PYC_BINARY} as py2pyc")
 endmacro()
 

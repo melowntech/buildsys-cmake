@@ -17,10 +17,7 @@ endmacro()
 macro(find_sqlite3_to_db)
   get_filename_component(current_dir ${CMAKE_CURRENT_LIST_FILE} PATH)
 
-  find_program(SQLITE3_TO_DB_BINARY
-    sqlite32db
-    HINTS ${current_dir})
-
+  set(SQLITE3_TO_DB_BINARY ${CMAKE_CURRENT_LIST_DIR}/sqlite32db)
   message(STATUS "using ${SQLITE3_TO_DB_BINARY} as sqlite32db")
 endmacro()
 

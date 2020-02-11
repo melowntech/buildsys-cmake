@@ -332,8 +332,17 @@ else()
   find_program(PYTHON2_BINARY python2)
   find_program(PYTHON3_BINARY python3)
 endif()
-if(NOT PYTHON2_BINARY)
-  message(FATAL_ERROR "Please install python2.")
+
+if(PYTHON3_BINARY)
+  set(PYTHON_BINARY ${PYTHON3_BINARY})
+else()
+  set(PYTHON_BINARY ${PYTHON2_BINARY})
+endif()
+
+if(NOT PYTHON_BINARY)
+  message(FATAL_ERROR "Please install python2 and/or python3.")
+else()
+  message(STATUS "Using ${PYTHON_BINARY} as buildsys python.")
 endif()
 
 # load sub modules
@@ -378,7 +387,7 @@ foreach(tool
     ocl2cpp
     pandoc
     py-runnable
-    compile-pyc
+#    compile-pyc
     )
   include(${CMAKE_CURRENT_LIST_DIR}/tools/${tool}/${tool}.cmake)
 endforeach()

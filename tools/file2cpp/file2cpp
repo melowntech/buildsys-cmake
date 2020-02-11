@@ -10,6 +10,13 @@ import os.path
 import platform
 import os
 
+if (sys.version_info >= (3, 0)):
+    # python 2 compatibility
+    long = int
+    byte_value=lambda arg:arg
+else:
+    byte_value=ord
+
 parser = argparse.ArgumentParser(description="Converts any file to C++ source.")
 
 parser.add_argument('--name', help="C++ variable name")
@@ -36,12 +43,12 @@ cpp = base + ".cpp"
 
 name = args.name.split("::")
 
-contentFile = file(ifile, "rb")
+contentFile = open(ifile, "rb")
 content = contentFile.read()
 lastModified = os.fstat(contentFile.fileno()).st_mtime
 
-hpp_file = file(hpp + ".file2cpp", "w")
-cpp_file = file(cpp + ".file2cpp", "w")
+hpp_file = open(hpp + ".file2cpp", "w")
+cpp_file = open(cpp + ".file2cpp", "w")
 
 # header:
 hpp_file.write("#include <ctime>\n")
@@ -54,7 +61,7 @@ hpp_file.write("    extern const unsigned char %s[%s];\n"
 # version support
 version = None
 if args.version_file:
-    version = int(file(args.version_file).read())
+    version = int(open(args.version_file).read())
 elif args.version:
     version = args.version
 
@@ -80,9 +87,9 @@ cpp_file.write("      ")
 for byte in content:
     if pos:
         if not (pos % 8): cpp_file.write("\n    ")
-        cpp_file.write(", 0x%02x" % (ord(byte), ))
+        cpp_file.write(", 0x%02x" % (byte_value(byte), ))
     else:
-        cpp_file.write("0x%02x" % (ord(byte), ))
+        cpp_file.write("0x%02x" % (byte_value(byte), ))
 
     pos += 1
 
