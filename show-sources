@@ -1,4 +1,4 @@
 #!/bin/bash
 
 readelf --debug-dump=info --dwarf-depth=1 "$@" \
-        | gawk '/DW_AT_name/ { src[i++]=$8 } END { asort(src); for (i in src) { print src[i] }}'
+        | gawk '/DW_AT_name/ { src[$8]=$8 } END { asort(src); for (i in src) { print src[i] }}'
