@@ -1,4 +1,9 @@
 macro(buildsys_binary target)
+  get_target_property(TYPE ${target} TYPE)
+  if(NOT TYPE STREQUAL "EXECUTABLE")
+    message(FATAL_ERROR "Target ${target} is not a binary.")
+  endif()
+
   set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
     ${CMAKE_BINARY_DIR}/bin)
 
@@ -12,6 +17,10 @@ endmacro()
 
 macro(buildsys_library target)
   get_target_property(TYPE ${target} TYPE)
+  if(TYPE STREQUAL "EXECUTABLE")
+    message(FATAL_ERROR "Target ${target} is not a library.")
+  endif()
+
   if(NOT TYPE STREQUAL "STATIC_LIBRARY")
     if(BUILDSYS_CUSTOMER_BUILD)
       buildsys_target_post_build_pathstrip(${target})
