@@ -3,12 +3,25 @@
 
 import sys
 
-def parseInt(s):
-    if (s.startswith("0x")):
-        return int(s, 16)
-    if (s.startswith("0")):
-        return int(s, 8)
-    return int(s)
+def get_rodata(path):
+    """
+    Get offset and size of .rodata section from given elf file
+    """
+    from elftools.elf.elffile import ELFFile
+    file = open(path, "rb")
+    elf = ELFFile(file)
+
+    def get_section(elf, name):
+        for section in elf.iter_sections():
+            if section.name == name: return section
+        return none
+
+    rodata = get_section(elf, ".rodata")
+    if rodata is None:
+        # no .rodata section -> ignore
+        return (0, 0)
+
+    return (rodata["sh_offset"], rodata["sh_size"])
 
 def process(s):
     # find last slash and erase everything before
@@ -46,11 +59,15 @@ def cutAndProcess(f, off, data, index):
     return end + 1;
 
 f = sys.argv[1]
-sbegin = parseInt(sys.argv[2])
-slen = parseInt(sys.argv[3])
-prefix = sys.argv[4]
+prefix = sys.argv[2]
+sbegin, slen = get_rodata(f)
+
+# no .rodata section -> ignore
+if not slen:
+    sys.exit(0)
 
 ifile = file(f, "r+b")
+
 ifile.seek(sbegin)
 src = ifile.read(slen)
 

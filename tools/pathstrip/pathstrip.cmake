@@ -1,7 +1,7 @@
 macro(buildsys_target_post_build_pathstrip target)
   add_custom_command(TARGET ${target}
                      POST_BUILD
-                     COMMAND "/bin/bash"
+                     COMMAND  ${PYTHON_BINARY}
                      ARGS ${PATHSTRIP_BINARY}
                      $<TARGET_FILE:${target}> ${CMAKE_SOURCE_DIR}
                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
