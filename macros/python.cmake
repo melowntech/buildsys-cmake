@@ -57,3 +57,14 @@ macro(enable_python VERSION)
   set(PYTHON_VERSION ${VERSION_LONG})
   set(PYTHON_MODULE_INSTALL_PATH "lib/python${PYTHON_VERSION}/dist-packages")
 endmacro()
+
+macro(check_python_module module found_var interpretter)
+  execute_process(COMMAND "${interpretter}" -c
+    "import sys\ntry: import ${module}\nexcept: sys.exit(-1)\nsys.exit(0)\n"
+    RESULT_VARIABLE RETURN_CODE)
+  if(RETURN_CODE EQUAL 0)
+    set(${found_var} ON)
+  else()
+    set(${found_var} OFF)
+  endif()
+endmacro()
