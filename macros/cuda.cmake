@@ -119,6 +119,8 @@ macro(enable_cuda_impl)
     list(APPEND CUDA_NVCC_FLAGS_DEBUG -g)
     list(APPEND CUDA_NVCC_FLAGS_RELEASE -O3;-g)
     list(APPEND CUDA_NVCC_FLAGS_RELWITHDEBINFO -O2;-g)
+  elseif (${__HOST_COMPILER_ID}_ STREQUAL "MSVC_") # MSVC is a keyword
+    message(STATUS "Todo configure cuda for msvc")
   else()
     message(FATAL_ERROR "Unknown C++ compiler: ${__HOST_COMPILER_ID}.")
   endif()

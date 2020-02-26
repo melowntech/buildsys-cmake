@@ -22,14 +22,16 @@ find_package(jsoncpp ${arguments})
 set(CMAKE_MODULE_PATH "${backup_CMAKE_MODULE_PATH}")
 
 # forward if found
-if(jsoncpp_FOUND)
+if (TARGET jsoncpp_lib_static)
   set(JSONCPP_LIBRARIES jsoncpp_lib_static)
   set(JSONCPP_INCLUDE_DIR $<TARGET_PROPERTY:jsoncpp_lib_static,INTERFACE_INCLUDE_DIRECTORIES>)
-  # never seen...
-  unset(jsoncpp_FOUND)
+
+  unset(jsoncpp_FOUND) # guickfix module version check
 
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(JsonCPP DEFAULT_MSG
     JSONCPP_LIBRARIES JSONCPP_INCLUDE_DIR)
   mark_as_advanced(JSONCPP_LIBRARIES JSONCPP_INCLUDE_DIR)
+else()
+  message(FATAL_ERROR "jsoncpp_lib_static was not found")
 endif()

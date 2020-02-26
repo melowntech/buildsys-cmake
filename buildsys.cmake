@@ -27,6 +27,32 @@ else()
   message(FATAL_ERROR "Unsupported platform <${CMAKE_SYSTEM_NAME}>.")
 endif()
 
+macro(cpp_msvc_overrides)
+  # disable warning: class 'type' needs to have dll-interface
+  #   to be used by clients of class 'type2'
+  add_definitions(/wd4251 /wd4275)
+
+  # disable warning: conversion from 'type' to 'type2', possible loss of data
+  add_definitions(/wd4267 /wd4244 /wd4305)
+
+  # disable warning: unary minus operator applied
+  #   to unsigned type, result still unsigned
+  add_definitions(/wd4146)
+
+  # disable warning: deprecated declaration
+  #add_definitions(/wd4996)
+
+  # enable multi process compilation
+  add_definitions(/MP)
+
+  # stricter conformance with c++ standard
+  add_definitions(/permissive-)
+
+  # avoid some especially obtrusive macro definitions in windows.h
+  add_definitions(/DWIN32_LEAN_AND_MEAN)
+  add_definitions(/DNOMINMAX)
+endmacro()
+
 # enable C++11
 macro(enable_cpp11)
   if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
@@ -64,6 +90,7 @@ macro(enable_cpp11)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-braces")
   elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
     set(CMAKE_CXX_STANDARD 11)
+    cpp_msvc_overrides()
   else()
     message(FATAL_ERROR "Unknown C++ compiler: ${CMAKE_CXX_COMPILER_ID}.")
   endif()
@@ -82,6 +109,7 @@ macro(enable_c11)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c1x")
   elseif (CMAKE_C_COMPILER_ID MATCHES MSVC)
     set(CMAKE_C_STANDARD 11)
+    cpp_msvc_overrides()
   else()
     message(FATAL_ERROR "Unknown C compiler: CMAKE_C_COMPILER_ID.")
   endif()
@@ -103,6 +131,7 @@ macro(enable_cpp14)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-braces")
   elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
     set(CMAKE_CXX_STANDARD 14)
+    cpp_msvc_overrides()
   else()
     message(FATAL_ERROR "Unknown C++ compiler: ${CMAKE_CXX_COMPILER_ID}.")
   endif()
@@ -123,6 +152,7 @@ macro(enable_cpp17)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-braces")
   elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
     set(CMAKE_CXX_STANDARD 17)
+    cpp_msvc_overrides()
   else()
     message(FATAL_ERROR "Unknown C++ compiler: ${CMAKE_CXX_COMPILER_ID}.")
   endif()
