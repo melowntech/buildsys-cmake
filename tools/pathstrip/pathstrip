@@ -1,7 +1,18 @@
 #!/usr/bin/env python
 # -*- python -*-
 
+from __future__ import print_function
+
 import sys
+
+if (sys.version_info >= (3, 0)):
+    as_buffer=lambda arg:bytes(arg, "utf-8")
+else:
+    as_buffer=lambda arg:arg
+
+slash_char = as_buffer('/');
+space_char = as_buffer(' ');
+terminator = as_buffer("\0\n\"");
 
 def get_rodata(path):
     """
@@ -25,12 +36,13 @@ def get_rodata(path):
 
 def process(s):
     # find last slash and erase everything before
-    slash = s.rfind('/')
+    global slash_char, space
+    slash = s.rfind(slash_char)
     if slash == -1:
         return s
 
     # replace everything before slash with space
-    return " " * slash
+    return space_char * slash
 
 def findFirstOf(data, index, chars):
     ret = len(data)
@@ -44,29 +56,30 @@ def findFirstOf(data, index, chars):
 
 def cutAndProcess(f, off, data, index):
     # terminator is first occurence of NUL, newline or quotes character
-    end = findFirstOf(data, index, "\0\n\"")
+    global terminator
+    end = findFirstOf(data, index, terminator)
     if end == -1:
         return len(data)
 
     s = data[index:end]
     o = process(s)
-    print >> sys.stderr \
-      , ("0x{:08x} found string '{}' ({} bytes), writing '{}' ({} bytes)"
-         .format(off + index, s, len(s), o, len(o)))
+    print(("0x{:08x} found string '{}' ({} bytes), writing '{}' ({} bytes)"
+               .format(off + index, s, len(s), o, len(o)))
+           , file=sys.stderr)
     if len(o):
         f.seek(off + index)
         f.write(o);
     return end + 1;
 
 f = sys.argv[1]
-prefix = sys.argv[2]
+prefix = as_buffer(sys.argv[2])
 sbegin, slen = get_rodata(f)
 
 # no .rodata section -> ignore
 if not slen:
     sys.exit(0)
 
-ifile = file(f, "r+b")
+ifile = open(f, "r+b")
 
 ifile.seek(sbegin)
 src = ifile.read(slen)
