@@ -159,5 +159,8 @@ macro(enable_cuda)
     enable_cuda_lambdas_impl()
   else()
     message(STATUS "Disabling CUDA support because of BUILDSYS_DISABLE_CUDA.")
+    # unset global varibale CUDA_FOUND because some 3rdparty libraries use CUDA
+    # and clutter global namespace (I'm looking at you, OpenCV).
+    set(CUDA_FOUND OFF)
   endif()
 endmacro()
