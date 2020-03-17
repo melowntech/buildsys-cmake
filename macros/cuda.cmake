@@ -148,7 +148,7 @@ macro(enable_cuda_lambdas_impl)
       "setting BUILDSYS_DISABLE_CUDA_LAMBDA variable).")
     set(_CUDA_LAMBDAS_ENABLED ON)
   else()
-    message(STATUS "Disabling CUDA lambdas support because of BUILDSYS_DISABLE_CUDA_LAMBDA")
+    message(STATUS "Disabling CUDA lambdas support because of BUILDSYS_DISABLE_CUDA_LAMBDA or no CMAKE_CUDA_COMPILER")
   endif()
 endmacro()
 
