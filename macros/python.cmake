@@ -68,3 +68,14 @@ macro(check_python_module module found_var interpretter)
     set(${found_var} OFF)
   endif()
 endmacro()
+
+macro(add_python_extension TARGET)
+  string(REPLACE "-" "_" name ${TARGET})
+
+  add_library(${TARGET} MODULE ${ARGN})
+  set_target_properties(vadstena-test-pymodule PROPERTIES
+    PREFIX ""
+    OUTPUT_NAME ${name}
+    )
+  buildsys_library(${TARGET})
+endmacro()
