@@ -24,7 +24,7 @@ set(_PLATFORM_FILE "${BUILDSYS_ROOT}/macros/buildsys.${SYSTEM_SUFFIX}.cmake")
 if(EXISTS ${_PLATFORM_FILE})
   include(${_PLATFORM_FILE})
 else()
-  message(FATAL_ERROR "Unsupported platform <${CMAKE_SYSTEM_NAME}>.")
+  message(FATAL_ERROR "Unsupported platform <${CMAKE_SYSTEM_NAME}> (missing file <${_PLATFORM_FILE}>).")
 endif()
 
 macro(cpp_msvc_overrides)
