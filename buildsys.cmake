@@ -166,6 +166,26 @@ macro(enable_hidden_visibility)
   set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 endmacro()
 
+macro(set_visibility TARGET VISIBILITY)
+  if (${VISIBILITY} STREQUAL hidden)
+    set(inline_hidden ON)
+  else()
+    set(inline_hidden OFF)
+  endif()
+  
+  set_target_properties(${TARGET} PROPERTIES
+    C_VISIBILITY_PRESET ${VISIBILITY}
+    CXX_VISIBILITY_PRESET ${VISIBILITY}
+    VISIBILITY_INLINES_HIDDEN ${inline_hidden})
+endmacro()
+
+macro(unset_visibility TARGET)
+  # unseall all visibility-related flags
+  set_property(TARGET ${TARGET} PROPERTY C_VISIBILITY_PRESET)
+  set_property(TARGET ${TARGET} PROPERTY CXX_VISIBILITY_PRESET)
+  set_property(TARGET ${TARGET} PROPERTY VISIBILITY_INLINES_HIDDEN)
+endmacro()
+
 macro(enable_threads)
   find_package(Threads REQUIRED)
   set(THREADS_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
