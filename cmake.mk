@@ -35,17 +35,17 @@ default debug release relwithdebinfo customerdebug customerrelease:
 native:
 	$(call bootstrap_dirs)
 	@echo "* Code will be compiled for current machine"
-	@(cd $(BUILDDIR) && cmake .. -DARCHITECTURE:STRING=$@)
+	@(cd $(BUILDDIR) && cmake .. -DBUILDSYS_ARCHITECTURE:STRING=$@)
 
 generic:
 	$(call bootstrap_dirs)
 	@echo "* Code will be compiled for generic machine"
-	@(cd $(BUILDDIR) && cmake .. -UARCHITECTURE)
+	@(cd $(BUILDDIR) && cmake .. -UBUILDSYS_ARCHITECTURE)
 
 setarch:
 	$(call bootstrap_dirs)
 	@echo "* Switching architecture to $(ARCH)"
-	@(cd $(BUILDDIR) && cmake .. -DARCHITECTURE:STRING=$(ARCH))
+	@(cd $(BUILDDIR) && cmake .. -DBUILDSYS_ARCHITECTURE:STRING=$(ARCH))
 
 buildtype:
 	$(call bootstrap)
@@ -53,7 +53,7 @@ buildtype:
 
 arch:
 	$(call bootstrap)
-	@echo "$(call get_cmake_variable,ARCHITECTURE)"
+	@echo "$(call get_cmake_variable,BUILDSYS_ARCHITECTURE)"
 
 set-variable:
 	$(call bootstrap_dirs)

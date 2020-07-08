@@ -336,8 +336,8 @@ macro(setup_build_system)
   endif()
 
   # apply architecture
-  if(ARCHITECTURE)
-    set_architecture(${ARCHITECTURE})
+  if(BUILDSYS_ARCHITECTURE)
+    set_architecture(${BUILDSYS_ARCHITECTURE})
   endif()
 
   # setup include dirs
