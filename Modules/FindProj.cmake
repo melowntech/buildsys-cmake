@@ -4,6 +4,7 @@
 #  PROJ_FOUND - system has Proj library
 #  PROJ_INCLUDE_DIRS - the Proj include directories
 #  PROJ_LIBRARIES - link these to use Proj library
+#  PROJ_VERSION - Proj library version
 
 # Use pkg-config to get hints about paths
 find_package(PkgConfig)
@@ -22,9 +23,11 @@ find_library(PROJ_LIBRARY
 
 set(PROJ_INCLUDE_DIRS ${PROJ_INCLUDE_DIR})
 set(PROJ_LIBRARIES ${PROJ_LIBRARY})
+set(PROJ_VERSION ${PROJ_PKGCONF_VERSION})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Proj DEFAULT_MSG
   PROJ_LIBRARIES
-  PROJ_INCLUDE_DIRS)
-mark_as_advanced(PROJ_INCLUDE_DIR PROJ_LIBRARIES)
+  PROJ_INCLUDE_DIRS
+  PROJ_VERSION)
+mark_as_advanced(PROJ_INCLUDE_DIR PROJ_LIBRARIES PROJ_VERSION)

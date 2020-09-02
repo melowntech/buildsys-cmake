@@ -7,7 +7,7 @@ endif()
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 
 # buildsystem as a dependency: fake dependency (e.g. BuildSystem>=1.0)
-set(BuildSystem_VERSION 1.6)
+set(BuildSystem_VERSION 1.9)
 set(BuildSystem_FOUND TRUE)
 set(BuildSystem_LIBRARIES)
 set(BuildSystem_DEFINITION)
@@ -24,7 +24,7 @@ set(_PLATFORM_FILE "${BUILDSYS_ROOT}/macros/buildsys.${SYSTEM_SUFFIX}.cmake")
 if(EXISTS ${_PLATFORM_FILE})
   include(${_PLATFORM_FILE})
 else()
-  message(FATAL_ERROR "Unsupported platform <${CMAKE_SYSTEM_NAME}>.")
+  message(FATAL_ERROR "Unsupported platform <${CMAKE_SYSTEM_NAME}> (missing file <${_PLATFORM_FILE}>).")
 endif()
 
 macro(cpp_msvc_overrides)
@@ -164,6 +164,26 @@ macro(enable_hidden_visibility)
   set(CMAKE_C_VISIBILITY_PRESET hidden)
   set(CMAKE_CXX_VISIBILITY_PRESET hidden)
   set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+endmacro()
+
+macro(set_visibility TARGET VISIBILITY)
+  if (${VISIBILITY} STREQUAL hidden)
+    set(inline_hidden ON)
+  else()
+    set(inline_hidden OFF)
+  endif()
+  
+  set_target_properties(${TARGET} PROPERTIES
+    C_VISIBILITY_PRESET ${VISIBILITY}
+    CXX_VISIBILITY_PRESET ${VISIBILITY}
+    VISIBILITY_INLINES_HIDDEN ${inline_hidden})
+endmacro()
+
+macro(unset_visibility TARGET)
+  # unseall all visibility-related flags
+  set_property(TARGET ${TARGET} PROPERTY C_VISIBILITY_PRESET)
+  set_property(TARGET ${TARGET} PROPERTY CXX_VISIBILITY_PRESET)
+  set_property(TARGET ${TARGET} PROPERTY VISIBILITY_INLINES_HIDDEN)
 endmacro()
 
 macro(enable_threads)
@@ -316,8 +336,8 @@ macro(setup_build_system)
   endif()
 
   # apply architecture
-  if(ARCHITECTURE)
-    set_architecture(${ARCHITECTURE})
+  if(BUILDSYS_ARCHITECTURE)
+    set_architecture(${BUILDSYS_ARCHITECTURE})
   endif()
 
   # setup include dirs
