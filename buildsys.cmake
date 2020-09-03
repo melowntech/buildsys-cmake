@@ -400,6 +400,7 @@ foreach(submodule
     library-support
     opengl
     symlink-fixes
+    tensorflow
 
     build-types/release
     build-types/customerdebug
