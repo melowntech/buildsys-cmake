@@ -73,7 +73,7 @@ macro(add_python_extension TARGET)
   string(REPLACE "-" "_" name ${TARGET})
 
   add_library(${TARGET} MODULE ${ARGN})
-  set_target_properties(vadstena-test-pymodule PROPERTIES
+  set_target_properties(${TARGET} PROPERTIES
     PREFIX ""
     OUTPUT_NAME ${name}
     )
