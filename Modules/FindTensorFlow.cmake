@@ -20,16 +20,19 @@ set(LIST_VARS TENSORFLOW_DEFINITIONS TENSORFLOW_LIBRARIES)
 list(LENGTH __var_list __var_list_len)
 math(EXPR end "${__var_list_len} - 1")
 
-foreach(i RANGE 0 ${end} 2)
-  list(GET __var_list ${i} name)
-  math(EXPR j "${i} + 1")
-  list(GET __var_list ${j} value)
+# skip if __var_list is empty
+if (__var_list_len GREATER 0)
+  foreach(i RANGE 0 ${end} 2)
+    list(GET __var_list ${i} name)
+    math(EXPR j "${i} + 1")
+    list(GET __var_list ${j} value)
 
-  if(name IN_LIST LIST_VARS)
-    string(REGEX MATCHALL "[^\t]+" value "${value}") 
-  endif()
-  set("${name}" "${value}")
-endforeach()
+    if(name IN_LIST LIST_VARS)
+      string(REGEX MATCHALL "[^\t]+" value "${value}")
+    endif()
+    set("${name}" "${value}")
+  endforeach()
+endif()
 
 find_package_handle_standard_args(TensorFlow REQUIRED_VARS
   TENSORFLOW_INCLUDE_DIR
