@@ -7,35 +7,29 @@ if(NOT PYTHON_EXECUTABLE)
   find_package_handle_standard_args(TensorFlow REQUIRED_VARS TENSORFLOW_INCLUDE_DIR)
 endif()
 
-string(TIMESTAMP THEN "%s")
-message(STATUS "TF...")
-execute_process(COMMAND "${PYTHON_EXECUTABLE}" -c
-  "try: import tensorflow; print(tensorflow.__version__, end='')\nexcept:pass\n"
-  OUTPUT_VARIABLE __tensorflow_version
-  ERROR_QUIET)
+execute_process(COMMAND "${PYTHON_EXECUTABLE}"
+  ${CMAKE_CURRENT_LIST_DIR}/FindTensorFlow.py
+  OUTPUT_VARIABLE __var_list
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  ERROR_QUIET
+  )
 
-execute_process(COMMAND "${PYTHON_EXECUTABLE}" -c
-  "try: import tensorflow; print(tensorflow.sysconfig.get_include(), end='')\nexcept:pass\n"
-  OUTPUT_VARIABLE TENSORFLOW_INCLUDE_DIR
-  ERROR_QUIET)
+# list of variables that are list (separated by TAB ('\t'))
+set(LIST_VARS TENSORFLOW_DEFINITIONS TENSORFLOW_LIBRARIES)
 
-execute_process(COMMAND "${PYTHON_EXECUTABLE}" -c
-  "try: import tensorflow; print(tensorflow.sysconfig.get_lib(), end='')\nexcept:pass\n"
-  OUTPUT_VARIABLE TENSORFLOW_LIBRARY_DIR
-  ERROR_QUIET)
+list(LENGTH __var_list __var_list_len)
+math(EXPR end "${__var_list_len} - 1")
 
-execute_process(COMMAND "${PYTHON_EXECUTABLE}" -c
-  "try: import tensorflow; print(tensorflow.sysconfig._CXX11_ABI_FLAG, end='')\nexcept:pass\n"
-  OUTPUT_VARIABLE _CXX11_ABI_FLAG
-  ERROR_QUIET)
+foreach(i RANGE 0 ${end} 2)
+  list(GET __var_list ${i} name)
+  math(EXPR j "${i} + 1")
+  list(GET __var_list ${j} value)
 
-string(TIMESTAMP NOW "%s")
-math(EXPR DIFF "${NOW} - ${THEN}")
-message(STATUS "TF... done: ${DIFF}")
-
-set(TENSORFLOW_LIBRARIES "tensorflow_framework")
-
-set(TENSORFLOW_DEFINITIONS _GLIBCXX_USE_CXX11_ABI=${_CXX11_ABI_FLAG})
+  if(name IN_LIST LIST_VARS)
+    string(REGEX MATCHALL "[^\t]+" value "${value}") 
+  endif()
+  set("${name}" "${value}")
+endforeach()
 
 find_package_handle_standard_args(TensorFlow REQUIRED_VARS
   TENSORFLOW_INCLUDE_DIR
