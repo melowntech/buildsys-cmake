@@ -102,6 +102,7 @@ macro(enable_cuda_impl)
 
   # do not propagate host flags; C++11 doesn't work
   set(CUDA_PROPAGATE_HOST_FLAGS OFF)
+  set(BUILDSYS_CUDA_HOST_OPTION "-Xcompiler ")
 
   # >>> copied from opencv build
   set(NVCC_FLAGS_EXTRA "")
@@ -148,6 +149,7 @@ macro(enable_cuda_impl)
 endmacro()
 
 set(_CUDA_LAMBDAS_ENABLED OFF)
+set(BUILDSYS_CUDA_HOST_OPTION " ")
 
 macro(enable_cuda_lambdas TARGET)
   if(_CUDA_LAMBDAS_ENABLED)
