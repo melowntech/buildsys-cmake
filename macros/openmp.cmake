@@ -1,7 +1,5 @@
 macro(enable_OpenMP_impl)
-  if((${CMAKE_CXX_COMPILER_ID} MATCHES GNU) OR MSVC)
-    find_package(OpenMP)
-  endif()
+  find_package(OpenMP)
 
   if(OPENMP_FOUND)
     message(STATUS "Found OpenMP.")
