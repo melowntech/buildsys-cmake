@@ -102,7 +102,6 @@ macro(enable_cuda_impl)
 
   # do not propagate host flags; C++11 doesn't work
   set(CUDA_PROPAGATE_HOST_FLAGS OFF)
-  set(BUILDSYS_CUDA_HOST_OPTION "-Xcompiler ")
 
   # >>> copied from opencv build
   set(NVCC_FLAGS_EXTRA "")
@@ -168,6 +167,7 @@ macro(enable_cuda_lambdas_impl)
     message(STATUS "Enabling CUDA lambdas support (can be disabled by "
       "setting BUILDSYS_DISABLE_CUDA_LAMBDA variable).")
     set(_CUDA_LAMBDAS_ENABLED ON)
+    set(BUILDSYS_CUDA_HOST_OPTION "-Xcompiler ")
   else()
     message(STATUS "Disabling CUDA lambdas support because of BUILDSYS_DISABLE_CUDA_LAMBDA or no CMAKE_CUDA_COMPILER")
   endif()
