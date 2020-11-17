@@ -87,7 +87,7 @@ macro(enable_cuda_impl)
     if (CMAKE_CXX_COMPILER_ID MATCHES GNU
         AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0.0")
       message(STATUS "Too new gcc for cuda ${CUDA_VERSION_MAJOR}; "
-        "forcing g++-<=7.")
+        "forcing g++-<=8.")
       find_program(__GPP_CUDA10 NAMES g++-8 g++-7)
 
       if(NOT __GPP_CUDA10)
