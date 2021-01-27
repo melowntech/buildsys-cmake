@@ -49,6 +49,7 @@ override_dh_auto_configure:
 # * NO to disable generation
 # * package name to select new package name
 ifeq ($(DEB_PACKAGE_DEBUG),AUTOMATIC)
+override_dh_strip:
 	dh_strip --automatic-dbgsym
 else ifneq ($(DEB_PACKAGE_DEBUG),NO)
 override_dh_strip:
