@@ -54,7 +54,7 @@ macro(enable_python VERSION)
   # find python interpteter
   set(PYTHON ${PYTHON_EXECUTABLE})
   message(STATUS "Using ${PYTHON} as python${VERSION}")
-  set(PYTHON_VERSION ${VERSION_LONG})
+  set(PYTHON_VERSION ${LONG_VERSION})
   set(PYTHON_MODULE_INSTALL_PATH "lib/python${PYTHON_VERSION}/dist-packages")
 endmacro()
 
