@@ -7,7 +7,7 @@ import tensorflow as tf
 
 res = []
 
-res.append("__tensorflow_version")
+res.append("TENSORFLOW_VERSION")
 res.append(tf.__version__)
 
 res.append("TENSORFLOW_INCLUDE_DIR")
