@@ -401,6 +401,7 @@ foreach(submodule
     opengl
     symlink-fixes
     tensorflow
+    torch
 
     build-types/release
     build-types/customerdebug
