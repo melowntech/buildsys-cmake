@@ -1,4 +1,4 @@
-macro(enable_python VERSION)
+macro(enable_python_impl VERSION)
   if(NOT Boost_FOUND)
     message(FATAL_ERROR "Please use find_package(Boost) first.")
   endif()
@@ -56,6 +56,12 @@ macro(enable_python VERSION)
   message(STATUS "Using ${PYTHON} as python${VERSION}")
   set(PYTHON_VERSION ${LONG_VERSION})
   set(PYTHON_MODULE_INSTALL_PATH "lib/python${PYTHON_VERSION}/dist-packages")
+endmacro()
+
+macro(enable_python VERSION)
+  if (NOT PYTHON_EXECUTABLE)
+    enable_python_impl(${VERSION})
+  endif()
 endmacro()
 
 macro(check_python_module module found_var interpretter)
