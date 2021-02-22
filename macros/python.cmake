@@ -59,7 +59,7 @@ macro(enable_python_impl VERSION)
 endmacro()
 
 macro(enable_python VERSION)
-  if (NOT PYTHON_EXECUTABLE)
+  if (NOT PYTHON_VERSION)
     enable_python_impl(${VERSION})
   endif()
 endmacro()
