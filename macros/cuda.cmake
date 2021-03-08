@@ -77,8 +77,8 @@ macro(enable_cuda_impl)
 
       set(CUDA_HOST_COMPILER ${__GPP_CUDA92})
     endif()
-  else()
-    # CUDA >= 10.0
+  elseif(CUDA_VERSION VERSION_LESS 11.0)
+    # CUDA >= 10.0 && < 11.0
     set(CUDA_ARCH_BIN "3.0 3.5 5.0 6.0 7.5" CACHE STRING
       "Specify GPU architectures to build binaries for.")
     set(CUDA_ARCH_PTX "6.0" CACHE STRING
@@ -95,6 +95,25 @@ macro(enable_cuda_impl)
       endif()
 
       set(CUDA_HOST_COMPILER ${__GPP_CUDA10})
+    endif()
+  else()
+    # CUDA >= 10.0
+    set(CUDA_ARCH_BIN "5.2 6.1 7.5 8.6" CACHE STRING
+      "Specify GPU architectures to build binaries for.")
+    set(CUDA_ARCH_PTX "8.6" CACHE STRING
+      "Specify PTX architectures to build PTX intermediate code for.")
+
+    if (CMAKE_CXX_COMPILER_ID MATCHES GNU
+        AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.0.0")
+      message(STATUS "Too new gcc for cuda ${CUDA_VERSION_MAJOR}; "
+        "forcing g++-<=10.")
+      find_program(__GPP_CUDA11 NAMES g++-9 g++-8 g++-7)
+
+      if(NOT __GPP_CUDA11)
+        message(FATAL_ERROR "Please, install g++-9, g++-8 or g++-7")
+      endif()
+
+      set(CUDA_HOST_COMPILER ${__GPP_CUDA11})
     endif()
   endif()
 
