@@ -10,7 +10,7 @@ find_package(PkgConfig)
 pkg_check_modules(JSONCPP_PKGCONF QUIET jsoncpp)
 
 find_path(JSONCPP_INCLUDE_DIR
-  NAMES json/features.h
+  NAMES json/features.h json/json_features.h
   PATH_SUFFIXES jsoncpp
   PATHS ${JSONCPP_PKGCONF_INCLUDE_DIRS}
   )
