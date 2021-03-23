@@ -11,6 +11,7 @@ pkg_check_modules(EXIF_PKGCONF QUIET libexif)
 
 find_path(EXIF_INCLUDE_DIR
   NAMES exif-data.h
+  PATH_SUFFIXES libexif
   PATHS ${EXIF_PKGCONF_INCLUDE_DIRS}
 )
 
