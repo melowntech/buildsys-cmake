@@ -17,46 +17,29 @@
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 #
+#
+# Modified by Vaclav Blazek <vaclav.blazek@melowntech.com>
+#
 ###############################################################################
 
-IF(LASZIP_INCLUDE_DIR)
+if(LASZIP_INCLUDE_DIR)
   # Already in cache, be silent
-  SET(LASZIP_FIND_QUIETLY TRUE)
-ENDIF()
+  set(LASZIP_FIND_QUIETLY TRUE) #
+endif()
 
-IF(WIN32)
-  SET(OSGEO4W_IMPORT_LIBRARY laszip3)
-  IF(DEFINED ENV{OSGEO4W_HOME})
-    SET(OSGEO4W_INCLUDE_DIR $ENV{OSGEO4W_ROOT}/include)
-    SET(OSGEO4W_LIB_DIR $ENV{OSGEO4W_ROOT}/lib)
-  ENDIF()
-ENDIF()
+find_path(LASZIP_INCLUDE_DIR
+  NAMES laszip/laszip_api_version.h
+  )
 
-FIND_PATH(LASZIP_INCLUDE_DIR
-  laszip_api.h
+find_library(LASZIP_LIBRARY
   NAMES laszip
-  PATHS
-  /usr/include
-  /usr/local/include
-  ${OSGEO4W_INCLUDE_DIR})
+  )
 
-SET(LASZIP_NAMES ${OSGEO4W_IMPORT_LIBRARY} laszip)
+if(LASZIP_INCLUDE_DIR)
+  set(LASZIP_VERSION_H "${LASZIP_INCLUDE_DIR}/laszip/laszip_api_version.h")
+  file(READ ${LASZIP_VERSION_H} LASZIP_VERSION_H_CONTENTS)
 
-FIND_LIBRARY(LASZIP_LIBRARY
-  NAMES ${LASZIP_NAMES}
-  PATHS
-  /usr/lib
-  /usr/local/lib
-  ${OSGEO4W_LIB_DIR})
-
-# Comment out laszip.hpp version info
-SET(LASZIP_VERSION_H "${LASZIP_INCLUDE_DIR}/laszip/laszip_api_version.h")
-IF(LASZIP_INCLUDE_DIR AND EXISTS ${LASZIP_VERSION_H})
-  SET(LASZIP_VERSION 0)
-
-  FILE(READ ${LASZIP_VERSION_H} LASZIP_VERSION_H_CONTENTS)
-
-  IF (DEFINED LASZIP_VERSION_H_CONTENTS)
+  if (DEFINED LASZIP_VERSION_H_CONTENTS)
     string(REGEX REPLACE ".*#define[ \t]LASZIP_API_VERSION_MAJOR[ \t]+([0-9]+).*" "\\1" LASZIP_VERSION_MAJOR "${LASZIP_VERSION_H_CONTENTS}")
     string(REGEX REPLACE ".*#define[ \t]LASZIP_API_VERSION_MINOR[ \t]+([0-9]+).*" "\\1" LASZIP_VERSION_MINOR "${LASZIP_VERSION_H_CONTENTS}")
     string(REGEX REPLACE ".*#define[ \t]LASZIP_API_VERSION_PATCH[ \t]+([0-9]+).*"   "\\1" LASZIP_VERSION_PATCH   "${LASZIP_VERSION_H_CONTENTS}")
@@ -71,25 +54,20 @@ IF(LASZIP_INCLUDE_DIR AND EXISTS ${LASZIP_VERSION_H})
       message(FATAL_ERROR "LASzip version parsing failed for \"LASZIP_VERSION_PATCH\"")
     endif()
 
-
-    SET(LASZIP_VERSION "${LASZIP_VERSION_MAJOR}.${LASZIP_VERSION_MINOR}.${LASZIP_VERSION_PATCH}"
+    set(LASZIP_VERSION "${LASZIP_VERSION_MAJOR}.${LASZIP_VERSION_MINOR}.${LASZIP_VERSION_PATCH}"
       CACHE INTERNAL "The version string for LASzip library")
+  endif()
+else()
+  unset(LASZIP_VERSION)
+endif()
 
-    IF (LASZIP_VERSION VERSION_LESS LASzip_FIND_VERSION)
-      MESSAGE(FATAL_ERROR "LASzip version check failed. Version ${LASZIP_VERSION} was found, at least version ${LASzip_FIND_VERSION} is required")
-    ENDIF()
-  ELSE()
-    MESSAGE(FATAL_ERROR "Failed to open ${LASZIP_VERSION_H} file")
-  ENDIF()
-ELSE()
-  return()
-ENDIF()
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(LASzip
+  VERSION_VAR LASZIP_VERSION
+  REQUIRED_VARS LASZIP_LIBRARY LASZIP_INCLUDE_DIR LASZIP_VERSION
+  )
 
-# Handle the QUIETLY and REQUIRED arguments and set LASZIP_FOUND to TRUE
-# if all listed variables are TRUE
-INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(LASzip DEFAULT_MSG LASZIP_LIBRARY LASZIP_INCLUDE_DIR)
+if(LASZIP_FOUND)
+  set(LASZIP_LIBRARIES ${LASZIP_LIBRARY})
+endif()
 
-IF(LASZIP_FOUND)
-  SET(LASZIP_LIBRARIES ${LASZIP_LIBRARY})
-ENDIF()
