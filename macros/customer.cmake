@@ -36,7 +36,9 @@ macro(add_customer_sources_with_default WHAT VAR)
 
   foreach(file ${ARGN})
     string(REPLACE "{CUSTOMER}" ${customer} cfile ${file})
-    if(NOT EXISTS ${cfile})
+    get_filename_component(absfile "${cfile}" ABSOLUTE)
+
+    if(NOT EXISTS ${absfile})
       string(REPLACE "{CUSTOMER}" none cfile ${file})
     endif()
     list(APPEND ${VAR} ${cfile})
