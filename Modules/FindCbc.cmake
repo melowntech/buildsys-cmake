@@ -9,16 +9,24 @@ find_path(CBC_INCLUDE_DIR
   NAMES coin/CbcConfig.h
   )
 
-find_library(CBC_LIBRARY
-  NAMES Cbc
+find_library(OSI_LIBRARY
+  NAMES Osi
+  )
+
+find_library(COINUTILS_LIBRARY
+  NAMES CoinUtils
   )
 
 find_library(OSICLP_LIBRARY
   NAMES OsiClp
   )
 
+find_library(CBC_LIBRARY
+  NAMES Cbc
+  )
+
 set(CBC_INCLUDE_DIRS ${CBC_INCLUDE_DIR})
-set(CBC_LIBRARIES ${CBC_LIBRARY} ${OSICLP_LIBRARY})
+set(CBC_LIBRARIES ${OSI_LIBRARY} ${COINUTILS_LIBRARY} ${CBC_LIBRARY} ${OSICLP_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Cbc; DEFAULT_MSG
