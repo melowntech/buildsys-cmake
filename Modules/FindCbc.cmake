@@ -25,8 +25,12 @@ find_library(Cbc_LIBRARY
   NAMES Cbc
   )
 
+find_library(Cgl_LIBRARY
+  NAMES Cgl
+  )
+
 set(Cbc_INCLUDE_DIRS ${Cbc_INCLUDE_DIR})
-set(Cbc_LIBRARIES ${Osi_LIBRARY} ${CoinUtils_LIBRARY} ${Cbc_LIBRARY} ${OsiClp_LIBRARY})
+set(Cbc_LIBRARIES ${Osi_LIBRARY} ${CoinUtils_LIBRARY} ${Cbc_LIBRARY} ${OsiClp_LIBRARY} ${Cgl_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Cbc; DEFAULT_MSG
