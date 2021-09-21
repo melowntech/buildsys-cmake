@@ -32,4 +32,5 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Cbc; DEFAULT_MSG
   Cbc_LIBRARIES
   Cbc_INCLUDE_DIRS)
-mark_as_advanced(CBC_INCLUDE_DIRS CBC_LIBRARIES)
+mark_as_advanced(Cbc_INCLUDE_DIRS Cbc_LIBRARIES)
+
