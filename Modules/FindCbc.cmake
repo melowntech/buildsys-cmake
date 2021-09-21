@@ -1,35 +1,35 @@
 # Try to find Cbc (https://projects.coin-or.org/Cbc)
 # Once done, this will define
 #
-#  CBC_FOUND - system has Cbc library
-#  CBC_INCLUDE_DIRS - the Cbc include directories
-#  CBC_LIBRARIES - link these to use Cbc library
+#  Cbc_FOUND - system has Cbc libraries
+#  Cbc_INCLUDE_DIRS - the Cbc include directories
+#  Cbc_LIBRARIES - link these to use Cbc libraries
 
-find_path(CBC_INCLUDE_DIR
+find_path(Cbc_INCLUDE_DIR
   NAMES coin/CbcConfig.h
   )
 
-find_library(OSI_LIBRARY
+find_library(Osi_LIBRARY
   NAMES Osi
   )
 
-find_library(COINUTILS_LIBRARY
+find_library(CoinUtils_LIBRARY
   NAMES CoinUtils
   )
 
-find_library(OSICLP_LIBRARY
+find_library(OsiClp_LIBRARY
   NAMES OsiClp
   )
 
-find_library(CBC_LIBRARY
+find_library(Cbc_LIBRARY
   NAMES Cbc
   )
 
-set(CBC_INCLUDE_DIRS ${CBC_INCLUDE_DIR})
-set(CBC_LIBRARIES ${OSI_LIBRARY} ${COINUTILS_LIBRARY} ${CBC_LIBRARY} ${OSICLP_LIBRARY})
+set(Cbc_INCLUDE_DIRS ${Cbc_INCLUDE_DIR})
+set(Cbc_LIBRARIES ${Osi_LIBRARY} ${CoinUtils_LIBRARY} ${Cbc_LIBRARY} ${OsiClp_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Cbc; DEFAULT_MSG
-  CBC_LIBRARIES
-  CBC_INCLUDE_DIRS)
+  Cbc_LIBRARIES
+  Cbc_INCLUDE_DIRS)
 mark_as_advanced(CBC_INCLUDE_DIRS CBC_LIBRARIES)
