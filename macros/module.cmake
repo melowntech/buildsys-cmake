@@ -142,6 +142,7 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
           if(TARGET ${atom})
             list(APPEND libs ${atom})
           else()
+            message(STATUS "module ${MODULE_NAME} is missing (target) dependency ${atom}")
             LIST(APPEND missing ${atom})
           endif()
         else()
@@ -152,6 +153,7 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
           _collect_broken(broken "${atom}" "${version}" "${cversion}")
 
           if(NOT checkResult)
+            message(STATUS "module ${MODULE_NAME} is missing (module) dependency ${atom} ${compareOperator} ${version}, but version ${MODULE_${atom}_VERSION} was found")
             LIST(APPEND missing ${fullAtom})
           else()
             # add dependency to our libraries
@@ -165,6 +167,7 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
             checkResult)
 
           if(NOT checkResult)
+            message(STATUS "module ${MODULE_NAME} is missing (regular) dependency ${atom} ${compareOperator} ${version}, but version ${${atom}_VERSION} was found")
             LIST(APPEND missing ${fullAtom})
           else()
             # add dependency's libraries to our libraries
