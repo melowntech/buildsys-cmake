@@ -20,3 +20,5 @@ macro(exclude_from_all TARGET)
   endif()
 endmacro()
 
+setup_exclude_from_all()
+
