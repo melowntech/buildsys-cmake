@@ -5,36 +5,16 @@
 #  Cbc_INCLUDE_DIRS - the Cbc include directories
 #  Cbc_LIBRARIES - link these to use Cbc libraries
 
-find_path(Cbc_INCLUDE_DIR
-  NAMES coin/CbcConfig.h
-  )
+find_package(PkgConfig)
+pkg_check_modules(Cbc_PKGCONF QUIET cbc)
 
-find_library(Osi_LIBRARY
-  NAMES Osi
-  )
-
-find_library(CoinUtils_LIBRARY
-  NAMES CoinUtils
-  )
-
-find_library(OsiClp_LIBRARY
-  NAMES OsiClp
-  )
-
-find_library(Cbc_LIBRARY
-  NAMES Cbc
-  )
-
-find_library(Cgl_LIBRARY
-  NAMES Cgl
-  )
-
-set(Cbc_INCLUDE_DIRS ${Cbc_INCLUDE_DIR})
-set(Cbc_LIBRARIES ${Osi_LIBRARY} ${CoinUtils_LIBRARY} ${Cbc_LIBRARY} ${OsiClp_LIBRARY} ${Cgl_LIBRARY})
+set(Cbc_INCLUDE_DIRS ${Cbc_PKGCONF_INCLUDE_DIRS})
+set(Cbc_LIBRARIES ${Cbc_PKGCONF_LIBRARIES})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Cbc; DEFAULT_MSG
+find_package_handle_standard_args(Cbc
+  FOUND_VAR Cbc_FOUND
+  REQUIRED_VARS
   Cbc_LIBRARIES
   Cbc_INCLUDE_DIRS)
 mark_as_advanced(Cbc_INCLUDE_DIRS Cbc_LIBRARIES)
-
