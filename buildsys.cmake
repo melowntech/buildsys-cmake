@@ -402,6 +402,7 @@ foreach(submodule
     symlink-fixes
     tensorflow
     torch
+    exclude-from-all
 
     build-types/release
     build-types/customerdebug
