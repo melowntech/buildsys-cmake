@@ -1,14 +1,17 @@
-find_package(Boost REQUIRED CONFIG)
+# last letter is set to upper case to avoid variable name 
+# collision of old cmake approach without using targets
+find_package(boosT REQUIRED CONFIG)
 
 if (TARGET Boost::boost)
   set(Boost_FOUND TRUE)
+  set(Boost_VERSION ${boosT_VERSION})
   list(APPEND Boost_LIBRARIES Boost::boost)
 endif()
 
 if (TARGET Boost::thread)
   set(Boost_THREAD_FOUND TRUE)
-  set(Boost_THREAD_LIBRARIES Boost::boost)
-  list(APPEND Boost_LIBRARIES Boost::boost)
+  set(Boost_THREAD_LIBRARIES Boost::thread)
+  list(APPEND Boost_LIBRARIES Boost::thread)
 endif()
 
 if (TARGET Boost::program_options)

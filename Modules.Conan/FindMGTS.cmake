@@ -1,7 +1,10 @@
-find_package(mgts REQUIRED CONFIG)
+# last letter is set to upper case to avoid variable name 
+# collision of old cmake approach without using targets
+find_package(mgtS REQUIRED CONFIG)
 
 if (TARGET mgts::mgts)
   set(MGTS_FOUND TRUE)
+  set(MGTS_VERSION ${mgtS_VERSION})
   set(MGTS_LIBRARIES mgts::mgts)
 endif()
 

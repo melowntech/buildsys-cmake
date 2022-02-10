@@ -1,7 +1,10 @@
-find_package(TIFF REQUIRED CONFIG)
+# last letter is set to upper case to avoid variable name 
+# collision of old cmake approach without using targets
+find_package(tifF REQUIRED CONFIG) 
 
 if (TARGET TIFF::TIFF)
   set(TIFF_FOUND TRUE)
+  set(TIFF_VERSION ${tifF_VERSION})
   set(TIFF_LIBRARIES TIFF::TIFF)
 endif()
 

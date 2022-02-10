@@ -1,7 +1,10 @@
-find_package(PROJ REQUIRED CONFIG)
+# last letter is set to upper case to avoid variable name 
+# collision of old cmake approach without using targets
+find_package(proJ REQUIRED CONFIG)
 
 if (TARGET PROJ::proj)
   set(PROJ_FOUND TRUE)
+  set(PROJ_VERSION ${proJ_VERSION})
   set(PROJ_LIBRARIES PROJ::proj)
 endif()
 

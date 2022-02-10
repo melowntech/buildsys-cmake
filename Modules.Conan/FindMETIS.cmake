@@ -1,8 +1,12 @@
-find_package(Metis REQUIRED CONFIG)
+# last letter is set to upper case to avoid variable name 
+# collision of old cmake approach without using targets
+find_package(metiS REQUIRED CONFIG)
 
 if (TARGET metis::metis)
   set(metis_FOUND TRUE)
   set(METIS_FOUND TRUE)
+  set(metis_VERSION ${metiS_VERSION})
+  set(METIS_VERSION ${metiS_VERSION})
   set(metis_LIBRARIES metis::metis)
   set(METIS_LIBRARIES metis::metis)
 endif()

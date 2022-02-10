@@ -1,7 +1,10 @@
-find_package(PNG REQUIRED CONFIG)
+# last letter is set to upper case to avoid variable name 
+# collision of old cmake approach without using targets
+find_package(pnG REQUIRED CONFIG)
 
 if (TARGET PNG::PNG)
   set(PNG_FOUND TRUE)
+  set(PNG_VERSION ${pnG_VERSION})
   set(PNG_LIBRARIES PNG::PNG)
 endif()
 

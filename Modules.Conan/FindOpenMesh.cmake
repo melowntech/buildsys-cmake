@@ -1,9 +1,12 @@
-find_package(OpenMesh 8.1 REQUIRED CONFIG)
+# last letter is set to upper case to avoid variable name 
+# collision of old cmake approach without using targets
+find_package(openmesH 8.1 REQUIRED CONFIG)
 # TODO: Find other solution
 message(WARNING "Force-using OpenMesh 8.1")
 
 if (TARGET OpenMesh::OpenMesh)
   set(OPENMESH_FOUND TRUE)
+  set(OPENMESH_VERSION ${openmesH_VERSION})
   set(OPENMESH_LIBRARIES OpenMesh::OpenMesh)
 endif()
 
