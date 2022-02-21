@@ -10,6 +10,7 @@ if (TARGET Boost::boost)
   list(GET Boost_VERSION_LIST 1 Boost_MINOR_VERSION)
   list(GET Boost_VERSION_LIST 2 Boost_PATCH_VERSION)
   list(APPEND Boost_LIBRARIES Boost::boost)
+  get_target_property(Boost_INCLUDE_DIRS Boost::boost INTERFACE_INCLUDE_DIRECTORIES)
 endif()
 
 if (TARGET Boost::thread)
