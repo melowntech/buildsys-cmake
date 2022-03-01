@@ -11,7 +11,7 @@ find_package(PkgConfig)
 pkg_check_modules(PROJ_PKGCONF QUIET proj)
 
 find_path(PROJ_INCLUDE_DIR
-  NAMES proj_api.h
+  NAMES proj.h
   PATHS ${PROJ_PKGCONF_INCLUDE_DIRS}
 )
 
