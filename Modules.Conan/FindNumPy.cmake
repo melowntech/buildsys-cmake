@@ -1,5 +1,3 @@
-# last letter is set to upper case to avoid variable name 
-# collision of old cmake approach without using targets
 find_package(Python3 REQUIRED COMPONENTS NumPy) 
 
 if (TARGET Python3::NumPy)

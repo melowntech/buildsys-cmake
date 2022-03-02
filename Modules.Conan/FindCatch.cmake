@@ -1,10 +1,8 @@
-# last letter is set to upper case to avoid variable name 
-# collision of old cmake approach without using targets
-find_package(catcH2 REQUIRED CONFIG)
+find_package(Catch2 REQUIRED CONFIG)
 
 if (TARGET Catch2::Catch2)
   set(Catch_FOUND TRUE)
-  set(Catch_VERSION ${catcH2_VERSION})
+  set(Catch_VERSION ${Catch2_VERSION})
   set(Catch_LIBRARIES Catch2::Catch2)
 
   # Add additional include directory "include/catch2"

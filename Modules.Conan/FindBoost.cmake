@@ -1,10 +1,8 @@
-# last letter is set to upper case to avoid variable name 
-# collision of old cmake approach without using targets
-find_package(boosT REQUIRED CONFIG)
+find_package(Boost REQUIRED CONFIG)
 
 if (TARGET Boost::boost)
   set(Boost_FOUND TRUE)
-  set(Boost_VERSION ${boosT_VERSION})
+  set(Boost_VERSION ${Boost_VERSION})
   string(REPLACE "." ";" Boost_VERSION_LIST ${Boost_VERSION})
   list(GET Boost_VERSION_LIST 0 Boost_MAJOR_VERSION)
   list(GET Boost_VERSION_LIST 1 Boost_MINOR_VERSION)

@@ -1,12 +1,10 @@
-# last letter is set to upper case to avoid variable name 
-# collision of old cmake approach without using targets
-find_package(eigeN3 REQUIRED CONFIG)
+find_package(Eigen3 REQUIRED CONFIG)
 
 if (TARGET Eigen3::Eigen)
   set(EIGEN3_FOUND TRUE)
   set(Eigen3_FOUND TRUE)
-  set(Eigen3_VERSION ${eigeN3_VERSION})
-  set(Eigen3_VERSION ${eigeN3_VERSION})
+  set(EIGEN3_VERSION ${Eigen3_VERSION})
+  set(Eigen3_VERSION ${Eigen3_VERSION})
   set(EIGEN3_LIBRARIES Eigen3::Eigen)
   set(Eigen3_LIBRARIES Eigen3::Eigen)
 

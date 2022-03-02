@@ -1,9 +1,7 @@
-# last letter is set to upper case to avoid variable name 
-# collision of old cmake approach without using targets
-find_package(cereS REQUIRED CONFIG) 
+find_package(Ceres REQUIRED CONFIG) 
 
 if (TARGET Ceres::ceres)
   set(Ceres_FOUND TRUE)
-  set(Ceres_VERSION ${cereS_VERSION})
+  set(Ceres_VERSION ${Ceres_VERSION})
   set(Ceres_LIBRARIES Ceres::ceres)
 endif()
