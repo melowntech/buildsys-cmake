@@ -295,7 +295,8 @@ macro(setup_build_system)
 
   # add this directory to the modules path
   if(BUILDSYS_CONAN)
-    file(TO_CMAKE_PATH $ENV{CMAKE_MODULE_PATH} CMAKE_MODULE_PATH)
+  file(TO_CMAKE_PATH $ENV{CMAKE_PREFIX_PATH} CMAKE_PREFIX_PATH)
+  file(TO_CMAKE_PATH $ENV{CMAKE_MODULE_PATH} CMAKE_MODULE_PATH)
     list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/Modules.Conan)
   endif()
   if(WIN32)
