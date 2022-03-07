@@ -1,6 +1,4 @@
-find_package(PDAL 2.3 REQUIRED CONFIG)
-# TODO: Find other solution
-message(WARNING "Force-using PDAL 2.3")
+find_package(PDAL REQUIRED CONFIG)
 
 if (TARGET PDAL::PDAL)
   set(PDAL_FOUND TRUE)

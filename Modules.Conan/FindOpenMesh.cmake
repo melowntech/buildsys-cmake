@@ -1,6 +1,4 @@
-find_package(OpenMesh 8.1 REQUIRED CONFIG)
-# TODO: Find other solution
-message(WARNING "Force-using OpenMesh 8.1")
+find_package(OpenMesh REQUIRED CONFIG)
 
 if (TARGET OpenMesh::OpenMesh)
   set(OPENMESH_FOUND TRUE)
