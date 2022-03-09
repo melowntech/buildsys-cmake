@@ -1,0 +1,10 @@
+find_package(metis REQUIRED CONFIG)
+
+if (TARGET metis::metis)
+  set(metis_FOUND TRUE)
+  set(METIS_FOUND TRUE)
+  set(metis_VERSION ${metis_VERSION})
+  set(METIS_VERSION ${metis_VERSION})
+  set(metis_LIBRARIES metis::metis)
+  set(METIS_LIBRARIES metis::metis)
+endif()

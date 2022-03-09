@@ -1,0 +1,7 @@
+find_package(FFTW3 REQUIRED CONFIG) 
+
+if (TARGET FFTW3::fftw3)
+  set(FFTW3_FOUND TRUE)
+  set(FFTW3_VERSION ${FFTW3_VERSION})
+  set(FFTW3_LIBRARIES FFTW3::fftw3)
+endif()

@@ -1,0 +1,7 @@
+find_package(PNG REQUIRED CONFIG)
+
+if (TARGET PNG::PNG)
+  set(PNG_FOUND TRUE)
+  set(PNG_VERSION ${PNG_VERSION})
+  set(PNG_LIBRARIES PNG::PNG)
+endif()

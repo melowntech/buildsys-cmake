@@ -1,0 +1,11 @@
+find_package(cryptopp REQUIRED CONFIG) 
+
+if (TARGET cryptopp::cryptopp)
+  set(CRYPTO++_FOUND TRUE)
+  set(CRYPTO++_VERSION ${cryptopp_VERSION})
+  set(CRYPTO++_LIBRARIES cryptopp::cryptopp)
+elseif(TARGET cryptopp::cryptopp-shared)
+  set(CRYPTO++_FOUND TRUE)
+  set(CRYPTO++_VERSION ${cryptopp_VERSION})
+  set(CRYPTO++_LIBRARIES cryptopp::cryptopp-shared)
+endif()

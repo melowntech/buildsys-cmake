@@ -1,0 +1,11 @@
+find_package(OpenVDB REQUIRED CONFIG)
+
+if (TARGET OpenVDB::openvdb_static)
+  set(OpenVDB_FOUND TRUE)
+  set(OpenVDB_VERSION ${OpenVDB_VERSION})
+  set(OpenVDB_LIBRARIES OpenVDB::openvdb_static)
+elseif (TARGET OpenVDB::OpenVDB)
+  set(OpenVDB_FOUND TRUE)
+  set(OpenVDB_VERSION ${OpenVDB_VERSION})
+  set(OpenVDB_LIBRARIES OpenVDB::OpenVDB)
+endif()
