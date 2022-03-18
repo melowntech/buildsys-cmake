@@ -540,6 +540,7 @@ endforeach ()
 
 unset(_TBB_COMPONENT)
 unset(_TBB_TARGET_NAME)
+unset(_TBB_FIND_COMPONENTS)
 unset(_TBB_FIND_STATUS)
 unset(_TBB_INC_PATH_SUFFIXES)
 unset(_TBB_LIB_PATH_SUFFIXES)
