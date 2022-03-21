@@ -383,46 +383,49 @@ foreach (_TBB_COMPONENT IN LISTS _TBB_FIND_COMPONENTS)
     # Add TBB::<C> import target
     string(TOLOWER ${_TBB_COMPONENT} _TBB_TARGET_NAME)
     set(_TBB_TARGET_NAME "TBB::${_TBB_TARGET_NAME}")
-    add_library(${_TBB_TARGET_NAME} SHARED IMPORTED)
 
-    set_target_properties(${_TBB_TARGET_NAME} PROPERTIES
-      INTERFACE_INCLUDE_DIRECTORIES     "${TBB_${_TBB_COMPONENT}_INCLUDE_DIRS}"
-      IMPORTED_LINK_INTERFACE_LANGUAGES CXX
-      IMPORTED_NO_SONAME                TRUE
-    )
-    if (_TBB_${_TBB_COMPONENT}_LIB_LINK_DEPENDS)
-      set_target_properties(${_TBB_TARGET_NAME} PROPERTIES
-        INTERFACE_LINK_LIBRARIES "${_TBB_${_TBB_COMPONENT}_LIB_LINK_DEPENDS}"
-      )
-    endif ()
+    if (NOT TARGET ${_TBB_TARGET_NAME}) # Allow multiple calls of this script
+        add_library(${_TBB_TARGET_NAME} SHARED IMPORTED)
 
-    foreach (_TBB_CONFIGURATION IN ITEMS DEBUG RELEASE)
-      if (TBB_${_TBB_COMPONENT}_LIBRARY_${_TBB_CONFIGURATION})
-        set_property(TARGET ${_TBB_TARGET_NAME} APPEND PROPERTY IMPORTED_CONFIGURATIONS ${_TBB_CONFIGURATION})
-        if (WIN32)
-          set_target_properties(${_TBB_TARGET_NAME} PROPERTIES
-            IMPORTED_IMPLIB_${_TBB_CONFIGURATION} "${TBB_${_TBB_COMPONENT}_LIBRARY_${_TBB_CONFIGURATION}}"
-          )
-          string(REPLACE       "/lib/"   "/bin/" _TBB_LIB_PATH_DLL "${TBB_${_TBB_COMPONENT}_LIBRARY_${_TBB_CONFIGURATION}}")
-          string(REGEX REPLACE "\\.lib$" ".dll"  _TBB_LIB_PATH_DLL "${_TBB_LIB_PATH_DLL}")
-          if (EXISTS "${_TBB_LIB_PATH_DLL}")
-            set_target_properties(${_TBB_TARGET_NAME} PROPERTIES
-              IMPORTED_LOCATION_${_TBB_CONFIGURATION} "${_TBB_LIB_PATH_DLL}"
-            )
-            if (TBB_DEBUG)
-              message("** FindTBB: - IMPORTED_LOCATION_${_TBB_CONFIGURATION} = ${_TBB_LIB_PATH_DLL}")
-            endif ()
-          elseif (TBB_DEBUG)
-            message("** FindTBB: Could not determine ${_TBB_CONFIGURATION} DLL path from import library, tried: "
-                    "\n\t${_TBB_LIB_PATH_DLL}")
-          endif ()
-        else ()
-          set_target_properties(${_TBB_TARGET_NAME} PROPERTIES
-            IMPORTED_LOCATION_${_TBB_CONFIGURATION} "${TBB_${_TBB_COMPONENT}_LIBRARY_${_TBB_CONFIGURATION}}"
-          )
+        set_target_properties(${_TBB_TARGET_NAME} PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES     "${TBB_${_TBB_COMPONENT}_INCLUDE_DIRS}"
+        IMPORTED_LINK_INTERFACE_LANGUAGES CXX
+        IMPORTED_NO_SONAME                TRUE
+        )
+        if (_TBB_${_TBB_COMPONENT}_LIB_LINK_DEPENDS)
+        set_target_properties(${_TBB_TARGET_NAME} PROPERTIES
+            INTERFACE_LINK_LIBRARIES "${_TBB_${_TBB_COMPONENT}_LIB_LINK_DEPENDS}"
+        )
         endif ()
-      endif ()
-    endforeach ()
+
+        foreach (_TBB_CONFIGURATION IN ITEMS DEBUG RELEASE)
+        if (TBB_${_TBB_COMPONENT}_LIBRARY_${_TBB_CONFIGURATION})
+            set_property(TARGET ${_TBB_TARGET_NAME} APPEND PROPERTY IMPORTED_CONFIGURATIONS ${_TBB_CONFIGURATION})
+            if (WIN32)
+            set_target_properties(${_TBB_TARGET_NAME} PROPERTIES
+                IMPORTED_IMPLIB_${_TBB_CONFIGURATION} "${TBB_${_TBB_COMPONENT}_LIBRARY_${_TBB_CONFIGURATION}}"
+            )
+            string(REPLACE       "/lib/"   "/bin/" _TBB_LIB_PATH_DLL "${TBB_${_TBB_COMPONENT}_LIBRARY_${_TBB_CONFIGURATION}}")
+            string(REGEX REPLACE "\\.lib$" ".dll"  _TBB_LIB_PATH_DLL "${_TBB_LIB_PATH_DLL}")
+            if (EXISTS "${_TBB_LIB_PATH_DLL}")
+                set_target_properties(${_TBB_TARGET_NAME} PROPERTIES
+                IMPORTED_LOCATION_${_TBB_CONFIGURATION} "${_TBB_LIB_PATH_DLL}"
+                )
+                if (TBB_DEBUG)
+                message("** FindTBB: - IMPORTED_LOCATION_${_TBB_CONFIGURATION} = ${_TBB_LIB_PATH_DLL}")
+                endif ()
+            elseif (TBB_DEBUG)
+                message("** FindTBB: Could not determine ${_TBB_CONFIGURATION} DLL path from import library, tried: "
+                        "\n\t${_TBB_LIB_PATH_DLL}")
+            endif ()
+            else ()
+            set_target_properties(${_TBB_TARGET_NAME} PROPERTIES
+                IMPORTED_LOCATION_${_TBB_CONFIGURATION} "${TBB_${_TBB_COMPONENT}_LIBRARY_${_TBB_CONFIGURATION}}"
+            )
+            endif ()
+        endif ()
+        endforeach ()
+    endif ()
 
     if (TBB_DEBUG)
       message("** FindTBB: Looking for component ${_TBB_COMPONENT}... - found")
