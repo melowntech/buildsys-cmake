@@ -28,29 +28,36 @@ else()
 endif()
 
 macro(cpp_msvc_overrides)
-  # disable warning: class 'type' needs to have dll-interface
-  #   to be used by clients of class 'type2'
-  add_definitions(/wd4251 /wd4275)
+  # # disable warning: class 'type' needs to have dll-interface
+  # #   to be used by clients of class 'type2'
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4251>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4275>)
 
-  # disable warning: conversion from 'type' to 'type2', possible loss of data
-  add_definitions(/wd4267 /wd4244 /wd4305)
+  # # disable warning: conversion from 'type' to 'type2', possible loss of data
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4305>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4244>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4305>)
 
-  # disable warning: unary minus operator applied
-  #   to unsigned type, result still unsigned
-  add_definitions(/wd4146)
+  # # disable warning: unary minus operator applied
+  # #   to unsigned type, result still unsigned
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4146>)
 
   # disable warning: deprecated declaration
-  #add_definitions(/wd4996)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4996>)
 
-  # enable multi process compilation
-  add_definitions(/MP)
+  # # enable multi process compilation
+  # add_definitions(/MP)
 
   # stricter conformance with c++ standard
-  add_definitions(/permissive-)
+  # add_definitions(/permissive-)
+  set(CMAKE_CXX_EXTENSIONS OFF)
 
   # avoid some especially obtrusive macro definitions in windows.h
   add_definitions(/DWIN32_LEAN_AND_MEAN)
   add_definitions(/DNOMINMAX)
+
+  # avoid fatal error: number of sections exceeded object file format limit
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/bigobj>)
 endmacro()
 
 # enable C++11
