@@ -55,6 +55,9 @@ macro(cpp_msvc_overrides)
   # avoid some especially obtrusive macro definitions in windows.h
   add_definitions(/DWIN32_LEAN_AND_MEAN)
   add_definitions(/DNOMINMAX)
+  add_definitions(/D_USE_MATH_DEFINES)
+  add_definitions(/D_ENABLE_EXTENDED_ALIGNED_STORAGE)
+  add_definitions(/D_CRT_SECURE_NO_WARNINGS)
 
   # avoid fatal error: number of sections exceeded object file format limit
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/bigobj>)
