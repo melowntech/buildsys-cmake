@@ -15,6 +15,16 @@ endif
 
 include $(BUILDSYS_COMMON)
 
+CMAKE_SHARED_MODULE_SUPPORT ?= NO
+
+BINARY_LINKS = bin lib
+
+ifeq ($(CMAKE_SHARED_MODULE_SUPPORT),YES)
+	BINARY_LINKS += module
+endif
+
+BINARY_DIRS = $(foreach dir,${BINARY_LINKS}, $(BUILDDIR)/${dir})
+
 # include configuration
 include $(BUILDSYS)config.mk
 
@@ -25,7 +35,7 @@ all .DEFAULT: FORCE
 	@(unset MAKELEVEL; cd $(BUILDDIR) && $(MAKE) $@)
 
 purge:
-	rm -rf bin lib $(BUILDDIR)
+	rm -rf $(BINARY_LINKS) $(BUILDDIR)
 
 default debug release relwithdebinfo customerdebug customerrelease:
 	$(call bootstrap_dirs)
@@ -89,7 +99,8 @@ FORCE:
 
 define bootstrap_dirs
 	@echo "* Building in $(BUILDDIR)"
-	@(mkdir -p $(BUILDDIR)/bin $(BUILDDIR)/lib && ln -sf $(BUILDDIR)/bin && ln -sf $(BUILDDIR)/lib)
+	@(mkdir -p $(BINARY_DIRS) $(foreach dir,${BINARY_DIRS}, && ln -sf $(dir)))
+#&& ln -sf $(BUILDDIR)/bin && ln -sf $(BUILDDIR)/lib)
     @((test -f .module && mkdir -p $(BUILDDIR)/module && ln -sf $(BUILDDIR)/module) || exit 0)
 endef
 
