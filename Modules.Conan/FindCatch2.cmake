@@ -1,4 +1,4 @@
-find_package(Catch2 REQUIRED CONFIG)
+find_package(Catch2 CONFIG)
 
 if (TARGET Catch2::Catch2)
   set(Catch2_FOUND TRUE)

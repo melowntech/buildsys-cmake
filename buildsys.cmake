@@ -45,8 +45,8 @@ macro(cpp_msvc_overrides)
   # disable warning: deprecated declaration
   # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4996>)
 
-  # # enable multi process compilation
-  # add_definitions(/MP)
+  # enable multi process compilation
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/MP>)
 
   # stricter conformance with c++ standard
   # add_definitions(/permissive-)

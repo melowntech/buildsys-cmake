@@ -1,4 +1,4 @@
-find_package(OpenVDB REQUIRED CONFIG)
+find_package(OpenVDB CONFIG)
 
 if (TARGET OpenVDB::openvdb_static)
   set(OpenVDB_FOUND TRUE)

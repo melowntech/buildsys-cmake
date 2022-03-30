@@ -1,4 +1,4 @@
-find_package(Python3 REQUIRED COMPONENTS NumPy) 
+find_package(Python3 COMPONENTS NumPy) 
 
 if (TARGET Python3::NumPy)
   set(NumPy_FOUND TRUE)

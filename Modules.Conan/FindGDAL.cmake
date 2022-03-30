@@ -1,4 +1,4 @@
-find_package(GDAL REQUIRED CONFIG)
+find_package(GDAL CONFIG)
 
 if (TARGET GDAL::GDAL)
   set(GDAL_FOUND TRUE)

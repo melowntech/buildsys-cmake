@@ -1,4 +1,4 @@
-find_package(libexif REQUIRED CONFIG) 
+find_package(libexif CONFIG) 
 
 if (TARGET libexif::libexif)
   set(EXIF_FOUND TRUE)

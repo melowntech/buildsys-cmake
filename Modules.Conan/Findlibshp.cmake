@@ -1,4 +1,4 @@
-find_package(shapelib REQUIRED CONFIG) 
+find_package(shapelib CONFIG) 
 
 if (TARGET shapelib::shp)
   set(LIBSHP_FOUND TRUE)

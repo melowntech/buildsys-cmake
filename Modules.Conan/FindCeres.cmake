@@ -1,4 +1,4 @@
-find_package(Ceres REQUIRED CONFIG) 
+find_package(Ceres CONFIG) 
 
 if (TARGET Ceres::ceres)
   set(Ceres_FOUND TRUE)

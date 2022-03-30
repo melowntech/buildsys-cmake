@@ -1,4 +1,4 @@
-find_package(laszip REQUIRED CONFIG)
+find_package(laszip CONFIG)
 
 if (TARGET laszip::laszip)
   set(LASzip_FOUND TRUE)

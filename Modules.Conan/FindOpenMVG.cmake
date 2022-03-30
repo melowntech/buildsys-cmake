@@ -1,4 +1,4 @@
-find_package(openmvg REQUIRED CONFIG)
+find_package(openmvg CONFIG)
 
 if (TARGET openmvg::openmvg)
   set(OPENMVG_FOUND TRUE)

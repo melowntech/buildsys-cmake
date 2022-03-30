@@ -1,4 +1,4 @@
-find_package(HSPC REQUIRED CONFIG)
+find_package(HSPC CONFIG)
 
 if (TARGET HSPC::HSPC)
   set(myVRPointCloud_FOUND TRUE)
