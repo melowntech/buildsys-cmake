@@ -181,8 +181,11 @@ macro(enable_cuda_lambdas TARGET)
     target_compile_options(${TARGET} PRIVATE
       $<$<COMPILE_LANGUAGE:CUDA>:--expt-extended-lambda>)
     set_target_properties(${TARGET} PROPERTIES 
-      CUDA_SEPARABLE_COMPILATION ON
-      CUDA_RESOLVE_DEVICE_SYMBOLS ON)
+      CUDA_SEPARABLE_COMPILATION ON)
+    if(WIN32)
+      set_target_properties(${TARGET} PROPERTIES 
+        CUDA_RESOLVE_DEVICE_SYMBOLS ON)
+    endif()
     add_definitions(-DHAS_CUDA_LAMBDA)
   endif()
 endmacro()
