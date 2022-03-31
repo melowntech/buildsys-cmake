@@ -90,8 +90,15 @@ macro(setup_conan_build_dependencies
       # install from conan remote
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
         ${CONAN_FILE} -g cmake_find_package_multi -if "${CMAKE_BINARY_DIR}/.conan/cmake" -r ${CONAN_REMOTE_NAME} 
-        --build missing --profile ${CONAN_PROFILE_NAME}
+        --profile ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
+      if(NOT _conan_install_ret EQUAL "0")
+        message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, trying to build missing packages ...")
+        execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
+          ${CONAN_FILE} -g cmake_find_package_multi -if "${CMAKE_BINARY_DIR}/.conan/cmake"
+          --build missing --profile ${CONAN_PROFILE_NAME}
+          RESULT_VARIABLE _conan_install_ret)
+      endif()
       if(NOT _conan_install_ret EQUAL "0")
         message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, installing without custom remote ...")
         execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
