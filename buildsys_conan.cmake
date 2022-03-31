@@ -50,6 +50,7 @@ macro(setup_conan_build_dependencies
       message(FATAL_ERROR "Conan remote '${CONAN_REMOTE_NAME}' ${CONAN_PACKAGES_REMOTE} is missing ...\n"
         "Add remote using:\n"
         "- conan remote clean\n"
+        "- conan remote add conancenter https://center.conan.io\n"
         "- conan remote add ${CONAN_REMOTE_NAME} ${CONAN_PACKAGES_REMOTE}\n"
         "- conan user \${USER} -p -r ${CONAN_REMOTE_NAME}\n")
     endif()
@@ -67,7 +68,7 @@ macro(setup_conan_build_dependencies
         OUTPUT_QUIET ERROR_QUIET)
     endif()
 
-    if (NOT PIP_REQUIREMENTS STREQUAL "")
+    if (NOT "${PIP_REQUIREMENTS}" STREQUAL "")
       # install python deps
       message(STATUS "* Installing python dependencies from '${PIP_REQUIREMENTS}' ...")
       execute_process(COMMAND ${PIP_BINARY} install -r ${PIP_REQUIREMENTS}
