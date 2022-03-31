@@ -49,8 +49,7 @@ macro(cpp_msvc_overrides)
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/MP>)
 
   # stricter conformance with c++ standard
-  # add_definitions(/permissive-)
-  set(CMAKE_CXX_EXTENSIONS OFF)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/permissive->)
 
   # avoid some especially obtrusive macro definitions in windows.h
   add_definitions(/DWIN32_LEAN_AND_MEAN)
