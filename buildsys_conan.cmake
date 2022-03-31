@@ -16,7 +16,7 @@ macro(setup_conan_build_dependencies
     message(STATUS "")
     message(STATUS "****************************")
     message(STATUS "* Preparing Conan build ... ")
-    message(STATUS "* BUILDSYS_CONAN = TRUE     ")
+    message(STATUS "* BUILDSYS_CONAN = ${BUILDSYS_CONAN}")
     message(STATUS "")
 
     # backup PATH environment variable
