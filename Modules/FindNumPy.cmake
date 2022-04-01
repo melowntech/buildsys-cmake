@@ -2,7 +2,7 @@ include(FindPackageHandleStandardArgs)
 
 # fail if no python executable is present
 if(NOT PYTHON_EXECUTABLE)
-  status(MESSAGE "No PYTHON_EXECUTABLE found. Use enable_python(version).")
+  message(STATUS "No PYTHON_EXECUTABLE found. Use enable_python(version).")
   set(NUMPY_INCLUDE_DIR NUMPY_INCLUDE_DIR-NOTFOUND)
   find_package_handle_standard_args(NumPy REQUIRED_VARS NUMPY_INCLUDE_DIR)
 endif()

@@ -1,5 +1,5 @@
-macro(buildsys_get_static_libraries var libs)
-  foreach(lib ${libs})
+macro(buildsys_get_static_libraries var)
+  foreach(lib ${ARGN})
     if(TARGET ${lib})
       # get dependencies
       get_target_property(TYPE ${lib} TYPE)
