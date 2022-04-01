@@ -1,17 +1,19 @@
 # set(BUILDSYS_CONAN TRUE)
-# setup_conan_build_dependencies(
+# install_conan_deps(
 #   "mlwn" "https://gitlab.mlwn.se/api/v4/projects/447/packages/conan"
 #   "${CMAKE_CURRENT_LIST_DIR}/conanfile.txt"
 #   "${CMAKE_CURRENT_LIST_DIR}/requirements.txt"
 #)
 
-macro(setup_conan_build_dependencies 
+macro(install_conan_deps 
   CONAN_REMOTE_NAME
   CONAN_PACKAGES_REMOTE
   CONAN_FILE
   PIP_REQUIREMENTS
 )
-  if(BUILDSYS_CONAN)
+  if(NOT BUILDSYS_CONAN)
+    message(WARNING "Set BUILDSYS_CONAN=TRUE if you want use install_conan_deps macro.")
+  else()
 
     message(STATUS "")
     message(STATUS "****************************")

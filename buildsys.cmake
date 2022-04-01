@@ -403,6 +403,7 @@ foreach(submodule
     traceback
     hostname
     make-output-file
+    install-conan-deps
     install-prefix
     output-paths
     python
