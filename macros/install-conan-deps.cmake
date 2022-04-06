@@ -111,6 +111,11 @@ macro(install_conan_deps
       if(NOT _conan_install_ret EQUAL "0")
         message(FATAL_ERROR "Installing conan dependencies failed!")
       endif()
+      # export dependency graph
+      message(STATUS "* Exporting conan dependency graph ...")
+      execute_process(COMMAND ${CONAN_BINARY} info ${CONAN_FILE}
+      --graph=${CMAKE_BINARY_DIR}/.conan/dependency_graph_${CONAN_BUILD_TYPE}.html
+      --profile ${CONAN_PROFILE_NAME})
       message(STATUS "")
     endforeach()
 
