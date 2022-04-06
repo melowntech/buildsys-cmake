@@ -1,4 +1,4 @@
-find_package(proj REQUIRED CONFIG)
+find_package(proj CONFIG)
 
 if (TARGET PROJ::proj)
   set(PROJ_FOUND TRUE)

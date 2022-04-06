@@ -1,8 +1,8 @@
-find_package(coin-cbc REQUIRED CONFIG)
-find_package(coin-cgl REQUIRED CONFIG)
-find_package(coin-clp REQUIRED CONFIG)
-find_package(coin-osi REQUIRED CONFIG)
-find_package(coin-utils REQUIRED CONFIG)
+find_package(coin-cbc CONFIG)
+find_package(coin-cgl CONFIG)
+find_package(coin-clp CONFIG)
+find_package(coin-osi CONFIG)
+find_package(coin-utils CONFIG)
 
 if (
   TARGET coin-cbc::coin-cbc AND 

@@ -5,7 +5,7 @@ set(_jsoncpp_LIBRARIES ${jsoncpp_LIBRARIES})
 set(_jsoncpp_INCLUDE_DIRS ${jsoncpp_INCLUDE_DIRS})
 # ------------------------------------
 
-find_package(jsoncpp REQUIRED CONFIG)
+find_package(jsoncpp CONFIG)
 
 if (TARGET jsoncpp::jsoncpp)
   set(JSONCPP_FOUND TRUE)

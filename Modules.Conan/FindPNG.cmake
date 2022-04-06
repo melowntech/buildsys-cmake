@@ -1,4 +1,4 @@
-find_package(PNG REQUIRED CONFIG)
+find_package(PNG CONFIG)
 
 if (TARGET PNG::PNG)
   set(PNG_FOUND TRUE)

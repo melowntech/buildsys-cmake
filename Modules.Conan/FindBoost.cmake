@@ -1,4 +1,4 @@
-find_package(Boost REQUIRED CONFIG)
+find_package(Boost CONFIG)
 
 if (TARGET Boost::boost)
   set(Boost_FOUND TRUE)
@@ -69,4 +69,10 @@ if (TARGET Boost::unit_test_framework)
   set(Boost_UNIT_TEST_FRAMEWORK_FOUND TRUE)
   set(Boost_UNIT_TEST_FRAMEWORK_LIBRARIES Boost::unit_test_framework)
   list(APPEND Boost_LIBRARIES Boost::unit_test_framework)
+endif()
+
+if (TARGET Boost::python)
+  set(Boost_PYTHON_FOUND TRUE)
+  set(Boost_PYTHON_LIBRARIES Boost::python)
+  list(APPEND Boost_LIBRARIES Boost::python)
 endif()

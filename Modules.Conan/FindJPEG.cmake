@@ -1,4 +1,4 @@
-find_package(libjpeg-turbo REQUIRED CONFIG)
+find_package(libjpeg-turbo CONFIG)
 
 if (TARGET libjpeg-turbo::libjpeg-turbo)
   set(JPEG_FOUND TRUE)

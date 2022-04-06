@@ -1,4 +1,4 @@
-find_package(cryptopp REQUIRED CONFIG) 
+find_package(cryptopp CONFIG) 
 
 if (TARGET cryptopp::cryptopp)
   set(CRYPTO++_FOUND TRUE)

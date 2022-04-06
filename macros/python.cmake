@@ -3,19 +3,29 @@ macro(enable_python_impl VERSION)
     message(FATAL_ERROR "Please use find_package(Boost) first.")
   endif()
 
-  find_package(PythonInterp ${VERSION} REQUIRED)
+  if (BUILDSYS_CONAN)
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
+    set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
+  else()
+    find_package(PythonInterp ${VERSION} REQUIRED)
+  endif()
 
   set(LONG_VERSION "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
   set(SHORT_VERSION "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
 
-  find_package(Boost ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION} QUIET
-    COMPONENTS
-    python-${LONG_VERSION}
-    python${SHORT_VERSION}
-    python-py${SHORT_VERSION}
-    )
-
-  if(Boost_PYTHON-${LONG_VERSION}_FOUND)
+  if (BUILDSYS_CONAN)
+    find_package(Boost COMPONENTS python)  
+  else()    
+    find_package(Boost ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION} QUIET
+      COMPONENTS
+      python-${LONG_VERSION}
+      python${SHORT_VERSION}
+      python-py${SHORT_VERSION})
+  endif()
+  
+  if(Boost_PYTHON_FOUND)
+    set(PYLIB Boost_PYTHON)
+  elseif(Boost_PYTHON-${LONG_VERSION}_FOUND)
     set(PYLIB Boost_PYTHON-${LONG_VERSION})
   elseif(Boost_PYTHON${SHORT_VERSION}_FOUND OR Boost_python${SHORT_VERSION}_FOUND)
     set(PYLIB Boost_PYTHON${SHORT_VERSION})
@@ -44,7 +54,14 @@ macro(enable_python_impl VERSION)
   # force for cmake-3.15
   set(Boost_PYTHON_FOUND ON)
 
-  find_package(PythonLibs ${PYTHON_VERSION_STRING} EXACT REQUIRED)
+  if (BUILDSYS_CONAN)
+    find_package(Python3 REQUIRED COMPONENTS Interpreter Development)  
+    set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
+    set(PYTHONLIBS_FOUND ${PYTHON_FOUND})
+  else()    
+    find_package(PythonLibs ${PYTHON_VERSION_STRING} EXACT REQUIRED)
+  endif()
+  
   if(PYTHONLIBS_FOUND)
     set(PYTHONLIBS_LIBRARIES ${PYTHON_LIBRARIES})
     set(PYTHONLIBS_INCLUDE_PATH ${PYTHON_INCLUDE_PATH})

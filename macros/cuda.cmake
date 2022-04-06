@@ -179,8 +179,13 @@ macro(enable_cuda_lambdas TARGET)
     message(STATUS "Enabling CUDA lambdas support on target ${TARGET}.")
     set_source_files_properties(${ARGN} PROPERTIES LANGUAGE CUDA)
     target_compile_options(${TARGET} PRIVATE
-      $<$<COMPILE_LANGUAGE:CUDA>:--expt-extended-lambda -Xcompiler "-fopenmp" >)
-    set_target_properties(${TARGET} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+      $<$<COMPILE_LANGUAGE:CUDA>:--expt-extended-lambda>)
+    set_target_properties(${TARGET} PROPERTIES 
+      CUDA_SEPARABLE_COMPILATION ON)
+    if(WIN32)
+      set_target_properties(${TARGET} PROPERTIES 
+        CUDA_RESOLVE_DEVICE_SYMBOLS ON)
+    endif()
     add_definitions(-DHAS_CUDA_LAMBDA)
   endif()
 endmacro()
@@ -197,11 +202,25 @@ macro(enable_cuda_lambdas_impl)
   endif()
 endmacro()
 
+# https://github.com/NVIDIA/thrust/blob/main/thrust/cmake/thrust-config.cmake#L564
+# Wrap the OpenMP flags for CUDA targets
+function(fix_omp_target_for_cuda omp_target)
+get_target_property(opts ${omp_target} INTERFACE_COMPILE_OPTIONS)
+if (opts MATCHES "\\$<\\$<COMPILE_LANGUAGE:CXX>:([^>]*)>")
+  target_compile_options(${omp_target} INTERFACE
+    $<$<AND:$<COMPILE_LANGUAGE:CUDA>,$<CUDA_COMPILER_ID:NVIDIA>>:-Xcompiler=${CMAKE_MATCH_1}>
+  )
+endif()
+endfunction()
+
 macro(enable_cuda)
   if(NOT BUILDSYS_DISABLE_CUDA)
     enable_cuda_impl(${ARGV})
     message(STATUS "Enabling CUDA support (can be disabled by setting BUILDSYS_DISABLE_CUDA variable).")
     enable_cuda_lambdas_impl()
+    if (TARGET OpenMP::OpenMP_CXX)
+      fix_omp_target_for_cuda(OpenMP::OpenMP_CXX)
+    endif()
   else()
     message(STATUS "Disabling CUDA support because of BUILDSYS_DISABLE_CUDA.")
     # unset global varibale CUDA_FOUND because some 3rdparty libraries use CUDA

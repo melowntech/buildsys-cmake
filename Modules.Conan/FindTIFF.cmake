@@ -1,4 +1,4 @@
-find_package(TIFF REQUIRED CONFIG) 
+find_package(TIFF CONFIG) 
 
 if (TARGET TIFF::TIFF)
   set(TIFF_FOUND TRUE)

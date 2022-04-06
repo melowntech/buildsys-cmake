@@ -1,4 +1,4 @@
-find_package(glog REQUIRED CONFIG)
+find_package(glog CONFIG)
 
 if (TARGET glog::glog)
   set(GLOG_FOUND TRUE)

@@ -1,4 +1,4 @@
-find_package(OpenEXR REQUIRED CONFIG)
+find_package(OpenEXR CONFIG)
 
 if (TARGET OpenEXR::OpenEXR)
   set(IlmBase_FOUND TRUE)
