@@ -32,7 +32,7 @@ macro(install_conan_deps
     # (enable use of conda without activation) add Library/bin to PATH
     get_filename_component(_conda_env ${Python3_EXECUTABLE} DIRECTORY)
     if (EXISTS ${_conda_env}/Library/bin)
-      set(ENV{PATH} "${_conda_env}/Library/bin;$ENV{PATH}")
+      set(ENV{PATH} "${_conda_env}/Library/bin;${_conda_env}/Scripts;$ENV{PATH}")
     endif()
 
     # check if conan exists
@@ -78,6 +78,19 @@ macro(install_conan_deps
       if(NOT _pip_install_ret EQUAL "0")
         message(FATAL_ERROR "Installing python dependencies failed!")
       endif()
+      execute_process(COMMAND ${PIP_BINARY} install pip-licenses
+        RESULT_VARIABLE _pip_install_ret)
+      if(NOT _pip_install_ret EQUAL "0")
+        message(WARNING "Unable to extract python licenses!")
+      else()
+        execute_process(COMMAND pip-licenses --from=mixed --with-authors 
+          --with-urls --with-description --format=json
+          --output-file=${CMAKE_BINARY_DIR}/.conan/python_deps.json)
+        execute_process(COMMAND pip-licenses --from=mixed --with-authors 
+          --with-urls --with-description --format=plain-vertical 
+          --with-license-file --no-license-path
+          --output-file=${CMAKE_BINARY_DIR}/.conan/licenses/python_thirdparty_licenses.txt)
+      endif()
       message(STATUS "")
     endif()
 
@@ -89,34 +102,50 @@ macro(install_conan_deps
     endif()
     foreach(CONAN_BUILD_TYPE ${CONAN_BUILD_TYPES})
       message(STATUS "* Installing conan dependencies (${CONAN_BUILD_TYPE}) from '${CONAN_FILE}' ...")
-      # install from conan remote
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
         ${CONAN_FILE} -g cmake_find_package_multi -if "${CMAKE_BINARY_DIR}/.conan/cmake" -r ${CONAN_REMOTE_NAME} 
         --profile ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
-      if(NOT _conan_install_ret EQUAL "0")
-        message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, trying to build missing packages ...")
-        execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
-          ${CONAN_FILE} -g cmake_find_package_multi -if "${CMAKE_BINARY_DIR}/.conan/cmake"
-          --build missing --profile ${CONAN_PROFILE_NAME}
-          RESULT_VARIABLE _conan_install_ret)
+      if(_conan_install_ret EQUAL "0")
+        execute_process(COMMAND ${CONAN_BINARY} info
+          ${CONAN_FILE} -if "${CMAKE_BINARY_DIR}/.conan/cmake" -r ${CONAN_REMOTE_NAME} 
+          --json=${CMAKE_BINARY_DIR}/.conan/conan_deps_${CONAN_BUILD_TYPE}.json
+          --graph=${CMAKE_BINARY_DIR}/.conan/conan_deps_${CONAN_BUILD_TYPE}.html)
+        message(STATUS "")
+        break()
       endif()
-      if(NOT _conan_install_ret EQUAL "0")
-        message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, installing without custom remote ...")
-        execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
-          ${CONAN_FILE} -g cmake_find_package_multi -if "${CMAKE_BINARY_DIR}/.conan/cmake"
-          --build missing --profile ${CONAN_PROFILE_NAME}
-          RESULT_VARIABLE _conan_install_ret)
+
+      message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, trying to build missing packages ...")
+      execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
+        ${CONAN_FILE} -g cmake_find_package_multi -if "${CMAKE_BINARY_DIR}/.conan/cmake"
+        --build missing --profile ${CONAN_PROFILE_NAME}
+        RESULT_VARIABLE _conan_install_ret)
+      if(_conan_install_ret EQUAL "0")
+        execute_process(COMMAND ${CONAN_BINARY} info
+          ${CONAN_FILE} -if "${CMAKE_BINARY_DIR}/.conan/cmake" -r ${CONAN_REMOTE_NAME} 
+          --json=${CMAKE_BINARY_DIR}/.conan/deps_${CONAN_BUILD_TYPE}.json
+          --graph=${CMAKE_BINARY_DIR}/.conan/deps_${CONAN_BUILD_TYPE}.html)
+        message(STATUS "")
+        break()
       endif()
-      if(NOT _conan_install_ret EQUAL "0")
-        message(FATAL_ERROR "Installing conan dependencies failed!")
+
+      message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, installing without custom remote ...")
+      execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
+        ${CONAN_FILE} -g cmake_find_package_multi -if "${CMAKE_BINARY_DIR}/.conan/cmake"
+        --build missing --profile ${CONAN_PROFILE_NAME}
+        RESULT_VARIABLE _conan_install_ret)
+      if(_conan_install_ret EQUAL "0")
+        execute_process(COMMAND ${CONAN_BINARY} info
+          ${CONAN_FILE} -if "${CMAKE_BINARY_DIR}/.conan/cmake"
+          --json=${CMAKE_BINARY_DIR}/.conan/deps_${CONAN_BUILD_TYPE}.json
+          --graph=${CMAKE_BINARY_DIR}/.conan/deps_${CONAN_BUILD_TYPE}.html)
+        message(STATUS "")
+        break()
       endif()
-      # export dependency graph
-      message(STATUS "* Exporting conan dependency graph ...")
-      execute_process(COMMAND ${CONAN_BINARY} info ${CONAN_FILE}
-      --graph=${CMAKE_BINARY_DIR}/.conan/dependency_graph_${CONAN_BUILD_TYPE}.html
-      --profile ${CONAN_PROFILE_NAME})
+      
+      message(FATAL_ERROR "Installing conan dependencies failed!")
       message(STATUS "")
+      
     endforeach()
 
     list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_BINARY_DIR}/.conan/cmake")
