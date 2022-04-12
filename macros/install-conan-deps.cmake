@@ -83,6 +83,7 @@ macro(install_conan_deps
       if(NOT _pip_install_ret EQUAL "0")
         message(WARNING "Unable to extract python licenses!")
       else()
+        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/.conan/licenses)
         execute_process(COMMAND pip-licenses --from=mixed --with-authors 
           --with-urls --with-description --format=json
           --output-file=${CMAKE_BINARY_DIR}/.conan/python_deps.json)
