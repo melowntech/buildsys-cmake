@@ -33,9 +33,13 @@ DEB_PACKAGE_DEBUG ?= $(DEB_SOURCE)-dbg
 # use this build directory
 DEB_BUILDDIR=obj-$(DEB_BUILD_GNU_TYPE)
 
+# use toplevel dir as sourcedir by default
+DEB_SOURCEDIR ?= .
+
 # default rule; tell debhelper we use CMake
 %:
-	dh $@ -Scmake -B$(DEB_BUILDDIR) --parallel -O--version-info
+	dh $@ -Scmake -B$(DEB_BUILDDIR) -D$(DEB_SOURCEDIR) \
+          --parallel -O--version-info
 
 # custom installation
 override_dh_auto_install:
