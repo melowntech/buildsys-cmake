@@ -1,7 +1,5 @@
 # Update Release build type
 
-option(BUILDSYS_RELEASE_NDEBUG "Compile release without debug symbols" OFF)
-
 if(NOT WIN32 AND NOT BUILDSYS_EMBEDDED)
   if(NOT BUILDSYS_RELEASE_NDEBUG)
     message(STATUS "Release mode: Compiling with debug symbols by default. To disable set the BUILDSYS_RELEASE_NDEBUG variable.")
