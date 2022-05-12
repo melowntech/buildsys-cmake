@@ -32,6 +32,10 @@ if (args.verbose):
     print("tmp:", tmp)
 
 import zipapp
-import shutil
 zipapp.create_archive(ifile, tmp, hashbang)
-shutil.move(tmp, ofile)
+if os.name != 'nt':
+    os.rename(tmp, ofile)
+else:
+    import shutil
+    shutil.move(tmp, ofile)
+    shutil.move(ofile, ofile + '.pyz')
