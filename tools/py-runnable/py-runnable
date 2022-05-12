@@ -32,5 +32,6 @@ if (args.verbose):
     print("tmp:", tmp)
 
 import zipapp
+import shutil
 zipapp.create_archive(ifile, tmp, hashbang)
-os.rename(tmp, ofile)
+shutil.move(tmp, ofile)
