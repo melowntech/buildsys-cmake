@@ -38,4 +38,3 @@ if os.name != 'nt':
 else:
     import shutil
     shutil.move(tmp, ofile)
-    shutil.move(ofile, ofile + '.pyz')
