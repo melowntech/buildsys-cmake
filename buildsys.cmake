@@ -30,20 +30,26 @@ endif()
 macro(cpp_msvc_overrides)
   # # disable warning: class 'type' needs to have dll-interface
   # #   to be used by clients of class 'type2'
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4251>)
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4275>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4251>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4275>)
 
   # # disable warning: conversion from 'type' to 'type2', possible loss of data
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4305>)
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4244>)
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4305>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4305>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4244>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4305>)
 
   # # disable warning: unary minus operator applied
   # #   to unsigned type, result still unsigned
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4146>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4146>)
 
   # disable warning: deprecated declaration
   # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4996>)
+
+  # disable external warnings
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:W0>)
+
+  # disable linker warning: PDB (debug symbols) not found
+  add_link_options(/ignore:4099)
 
   # enable multi process compilation
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/MP>)
