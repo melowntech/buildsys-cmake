@@ -73,12 +73,12 @@ macro(install_conan_deps
     if (NOT "${PIP_REQUIREMENTS}" STREQUAL "")
       # install python deps
       message(STATUS "* Installing python dependencies from '${PIP_REQUIREMENTS}' ...")
-      execute_process(COMMAND ${PIP_BINARY} install -r ${PIP_REQUIREMENTS}
+      execute_process(COMMAND ${PIP_BINARY} install --user -r ${PIP_REQUIREMENTS}
         RESULT_VARIABLE _pip_install_ret)
       if(NOT _pip_install_ret EQUAL "0")
         message(FATAL_ERROR "Installing python dependencies failed!")
       endif()
-      execute_process(COMMAND ${PIP_BINARY} install pip-licenses
+      execute_process(COMMAND ${PIP_BINARY} install --user pip-licenses
         RESULT_VARIABLE _pip_install_ret)
       if(NOT _pip_install_ret EQUAL "0")
         message(WARNING "Unable to extract python licenses!")
