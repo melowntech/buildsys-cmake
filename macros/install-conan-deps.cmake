@@ -124,8 +124,8 @@ macro(install_conan_deps
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
           ${CONAN_FILE} -if "${CMAKE_BINARY_DIR}/.conan/cmake" -r ${CONAN_REMOTE_NAME} 
-          --json=${CMAKE_BINARY_DIR}/.conan/deps_${CONAN_BUILD_TYPE}.json
-          --graph=${CMAKE_BINARY_DIR}/.conan/deps_${CONAN_BUILD_TYPE}.html)
+          --json=${CMAKE_BINARY_DIR}/.conan/conan_deps_${CONAN_BUILD_TYPE}.json
+          --graph=${CMAKE_BINARY_DIR}/.conan/conan_deps_${CONAN_BUILD_TYPE}.html)
         message(STATUS "")
         break()
       endif()
@@ -138,8 +138,8 @@ macro(install_conan_deps
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
           ${CONAN_FILE} -if "${CMAKE_BINARY_DIR}/.conan/cmake"
-          --json=${CMAKE_BINARY_DIR}/.conan/deps_${CONAN_BUILD_TYPE}.json
-          --graph=${CMAKE_BINARY_DIR}/.conan/deps_${CONAN_BUILD_TYPE}.html)
+          --json=${CMAKE_BINARY_DIR}/.conan/conan_deps_${CONAN_BUILD_TYPE}.json
+          --graph=${CMAKE_BINARY_DIR}/.conan/conan_deps_${CONAN_BUILD_TYPE}.html)
         message(STATUS "")
         break()
       endif()
