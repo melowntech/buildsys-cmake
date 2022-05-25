@@ -27,6 +27,13 @@ else()
   message(FATAL_ERROR "Unsupported platform <${CMAKE_SYSTEM_NAME}> (missing file <${_PLATFORM_FILE}>).")
 endif()
 
+if(WIN32 AND MSVC)
+  # get rid of bin/Release, bin/Debug, etc. subdirectories
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+endif()
+
 macro(cpp_msvc_overrides)
   # # disable warning: class 'type' needs to have dll-interface
   # #   to be used by clients of class 'type2'

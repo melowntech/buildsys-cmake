@@ -15,11 +15,7 @@ macro(install_conan_deps
     message(WARNING "Set BUILDSYS_CONAN=TRUE if you want use install_conan_deps macro.")
   else()
 
-    if(MSVC)
-      set(CONAN_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE})
-    else()
-      set(CONAN_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-    endif()
+    set(CONAN_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
     message(STATUS "")
     message(STATUS "****************************")
