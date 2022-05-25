@@ -1,4 +1,4 @@
-find_package(mgts REQUIRED CONFIG)
+find_package(mgts CONFIG)
 
 if (TARGET mgts::mgts)
   set(MGTS_FOUND TRUE)

@@ -1,4 +1,4 @@
-find_package(FFTW3 REQUIRED CONFIG) 
+find_package(FFTW3 CONFIG) 
 
 if (TARGET FFTW3::fftw3)
   set(FFTW3_FOUND TRUE)

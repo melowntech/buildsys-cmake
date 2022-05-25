@@ -1,4 +1,4 @@
-find_package(OpenMesh REQUIRED CONFIG)
+find_package(OpenMesh CONFIG)
 
 if (TARGET OpenMesh::OpenMesh)
   set(OPENMESH_FOUND TRUE)

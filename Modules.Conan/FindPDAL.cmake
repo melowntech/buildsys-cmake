@@ -1,4 +1,4 @@
-find_package(PDAL REQUIRED CONFIG)
+find_package(PDAL CONFIG)
 
 if (TARGET PDAL::PDAL)
   set(PDAL_FOUND TRUE)

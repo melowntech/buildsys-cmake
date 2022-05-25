@@ -1,4 +1,4 @@
-find_package(OpenCV REQUIRED CONFIG)
+find_package(OpenCV CONFIG)
 
 if (TARGET opencv::opencv)
   set(OpenCV_FOUND TRUE)

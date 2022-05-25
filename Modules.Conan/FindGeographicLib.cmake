@@ -1,4 +1,4 @@
-find_package(geographiclib REQUIRED CONFIG)
+find_package(geographiclib CONFIG)
 
 if (TARGET GeographicLib::GeographicLib)
   set(GeographicLib_FOUND TRUE)

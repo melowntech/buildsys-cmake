@@ -1,4 +1,4 @@
-find_package(Eigen3 REQUIRED CONFIG)
+find_package(Eigen3 CONFIG)
 
 if (TARGET Eigen3::Eigen)
   set(EIGEN3_FOUND TRUE)

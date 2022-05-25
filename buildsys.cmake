@@ -7,7 +7,7 @@ endif()
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 
 # buildsystem as a dependency: fake dependency (e.g. BuildSystem>=1.0)
-set(BuildSystem_VERSION 1.11)
+set(BuildSystem_VERSION 1.12)
 set(BuildSystem_FOUND TRUE)
 set(BuildSystem_LIBRARIES)
 set(BuildSystem_DEFINITION)
@@ -28,29 +28,38 @@ else()
 endif()
 
 macro(cpp_msvc_overrides)
-  # disable warning: class 'type' needs to have dll-interface
-  #   to be used by clients of class 'type2'
-  add_definitions(/wd4251 /wd4275)
+  # # disable warning: class 'type' needs to have dll-interface
+  # #   to be used by clients of class 'type2'
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4251>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4275>)
 
-  # disable warning: conversion from 'type' to 'type2', possible loss of data
-  add_definitions(/wd4267 /wd4244 /wd4305)
+  # # disable warning: conversion from 'type' to 'type2', possible loss of data
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4305>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4244>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4305>)
 
-  # disable warning: unary minus operator applied
-  #   to unsigned type, result still unsigned
-  add_definitions(/wd4146)
+  # # disable warning: unary minus operator applied
+  # #   to unsigned type, result still unsigned
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4146>)
 
   # disable warning: deprecated declaration
-  #add_definitions(/wd4996)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4996>)
 
   # enable multi process compilation
-  add_definitions(/MP)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/MP>)
 
   # stricter conformance with c++ standard
-  add_definitions(/permissive-)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/permissive->)
 
   # avoid some especially obtrusive macro definitions in windows.h
   add_definitions(/DWIN32_LEAN_AND_MEAN)
   add_definitions(/DNOMINMAX)
+  add_definitions(/D_USE_MATH_DEFINES)
+  add_definitions(/D_ENABLE_EXTENDED_ALIGNED_STORAGE)
+  add_definitions(/D_CRT_SECURE_NO_WARNINGS)
+
+  # avoid fatal error: number of sections exceeded object file format limit
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/bigobj>)
 endmacro()
 
 # enable C++11
@@ -295,7 +304,6 @@ macro(setup_build_system)
 
   # add this directory to the modules path
   if(BUILDSYS_CONAN)
-    file(TO_CMAKE_PATH $ENV{CMAKE_MODULE_PATH} CMAKE_MODULE_PATH)
     list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/Modules.Conan)
   endif()
   if(WIN32)
@@ -395,6 +403,7 @@ foreach(submodule
     traceback
     hostname
     make-output-file
+    install-conan-deps
     install-prefix
     output-paths
     python

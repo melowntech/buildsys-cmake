@@ -3,10 +3,16 @@ macro(enable_OpenMP_impl)
 
   if(OPENMP_FOUND)
     message(STATUS "Found OpenMP.")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenMP_Fortran_FLAGS}")
-
+    if (TARGET OpenMP::OpenMP_C)
+      link_libraries(OpenMP::OpenMP_C)
+    endif()
+    if (TARGET OpenMP::OpenMP_CXX)
+      link_libraries(OpenMP::OpenMP_CXX)
+    endif()
+    if (TARGET OpenMP::Fortran)
+      link_libraries(OpenMP::Fortran)
+    endif()
+    
     if(NOT OpenMP_FOUND)
       # for compatibility with older cmake version
       set(OpenMP_FOUND TRUE)

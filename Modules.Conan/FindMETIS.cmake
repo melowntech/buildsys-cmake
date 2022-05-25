@@ -1,4 +1,4 @@
-find_package(metis REQUIRED CONFIG)
+find_package(metis CONFIG)
 
 if (TARGET metis::metis)
   set(metis_FOUND TRUE)
