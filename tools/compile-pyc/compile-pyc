@@ -6,6 +6,7 @@ import types
 
 import argparse
 import os
+import shutil
 
 import py_compile
 
@@ -22,4 +23,4 @@ ofile = args.output[0]
 tmp = ofile + ".compile-pyc"
 
 py_compile.compile(ifile, tmp)
-os.rename(tmp, ofile)
+shutil.move(tmp, ofile)

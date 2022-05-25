@@ -9,6 +9,7 @@ import os.path
 
 import platform
 import os
+import shutil
 
 parser = argparse.ArgumentParser(description="Makes python ZIP archive runnable.")
 
@@ -33,8 +34,4 @@ if (args.verbose):
 
 import zipapp
 zipapp.create_archive(ifile, tmp, hashbang)
-if os.name != 'nt':
-    os.rename(tmp, ofile)
-else:
-    import shutil
-    shutil.move(tmp, ofile)
+shutil.move(tmp, ofile)
