@@ -9,6 +9,7 @@ import os.path
 
 import platform
 import os
+import shutil
 
 if (sys.version_info >= (3, 0)):
     # python 2 compatibility
@@ -109,5 +110,5 @@ if platform.system() == 'Windows':
     except OSError:
         pass
 
-os.rename(hpp + ".file2cpp", hpp)
-os.rename(cpp + ".file2cpp", cpp)
+shutil.move(hpp + ".file2cpp", hpp)
+shutil.move(cpp + ".file2cpp", cpp)
