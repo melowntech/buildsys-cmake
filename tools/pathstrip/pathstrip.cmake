@@ -1,18 +1,20 @@
 macro(buildsys_target_post_build_pathstrip target)
-  if(NOT elftools_FOUND)
-    check_python_module(elftools elftools_FOUND ${PYTHON_BINARY})
-  endif()
-  if(NOT elftools_FOUND)
-    message(FATAL_ERROR "pathstrip utility needs pyelftools module installed")
-  endif()
+  if(NOT WIN32)
+    if(NOT elftools_FOUND)
+      check_python_module(elftools elftools_FOUND ${PYTHON_BINARY})
+    endif()
+    if(NOT elftools_FOUND)
+      message(FATAL_ERROR "pathstrip utility needs pyelftools module installed")
+    endif()
 
-  add_custom_command(TARGET ${target}
-                     POST_BUILD
-                     COMMAND ${PYTHON_BINARY}
-                     ARGS ${PATHSTRIP_BINARY}
-                     $<TARGET_FILE:${target}> ${CMAKE_SOURCE_DIR}
-                     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                     COMMENT "Stripping paths from target ${target}")
+    add_custom_command(TARGET ${target}
+                      POST_BUILD
+                      COMMAND ${PYTHON_BINARY}
+                      ARGS ${PATHSTRIP_BINARY}
+                      $<TARGET_FILE:${target}> ${CMAKE_SOURCE_DIR}
+                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                      COMMENT "Stripping paths from target ${target}")
+  endif()
 endmacro()
 
 macro(find_pathstrip)

@@ -100,7 +100,6 @@ FORCE:
 define bootstrap_dirs
 	@echo "* Building in $(BUILDDIR)"
 	@(mkdir -p $(BINARY_DIRS) $(foreach dir,${BINARY_DIRS}, && ln -sf $(dir)))
-#&& ln -sf $(BUILDDIR)/bin && ln -sf $(BUILDDIR)/lib)
     @((test -f .module && mkdir -p $(BUILDDIR)/module && ln -sf $(BUILDDIR)/module) || exit 0)
 endef
 
