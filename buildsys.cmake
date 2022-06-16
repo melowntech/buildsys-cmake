@@ -419,7 +419,6 @@ foreach(submodule
     install-prefix
     output-paths
     python
-    compile-definitions
     customer
     debug
     dict

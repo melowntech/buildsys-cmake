@@ -117,6 +117,8 @@ macro(enable_cuda_lambdas TARGET)
   endif()
 endmacro()
 
+option(BUILDSYS_DISABLE_CUDA_LAMBDA "Disable CUDA lambdas support" OFF)
+
 # for a given target and a list of sources, switch to nvcc compilation and enable extended lambdas
 macro(enable_cuda_lambdas_impl)
   if(CMAKE_CUDA_COMPILER AND NOT BUILDSYS_DISABLE_CUDA_LAMBDA)
@@ -141,17 +143,9 @@ endif()
 endfunction()
 
 macro(enable_cuda)
-  if(NOT BUILDSYS_DISABLE_CUDA)
-    enable_cuda_impl(${ARGV})
-    message(STATUS "Enabling CUDA support (can be disabled by setting BUILDSYS_DISABLE_CUDA variable).")
-    enable_cuda_lambdas_impl()
-    if (TARGET OpenMP::OpenMP_CXX)
-      fix_omp_target_for_cuda(OpenMP::OpenMP_CXX)
-    endif()
-  else()
-    message(STATUS "Disabling CUDA support because of BUILDSYS_DISABLE_CUDA.")
-    # unset global varibale CUDA_FOUND because some 3rdparty libraries use CUDA
-    # and clutter global namespace (I'm looking at you, OpenCV).
-    set(CUDA_FOUND OFF)
+  enable_cuda_impl(${ARGV})
+  enable_cuda_lambdas_impl()
+  if (TARGET OpenMP::OpenMP_CXX)
+    fix_omp_target_for_cuda(OpenMP::OpenMP_CXX)
   endif()
 endmacro()
