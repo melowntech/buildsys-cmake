@@ -359,11 +359,6 @@ macro(setup_build_system)
     set(Fortran_DEFINITION)
   endif()
 
-  # apply architecture
-  if(BUILDSYS_ARCHITECTURE)
-    set_architecture(${BUILDSYS_ARCHITECTURE})
-  endif()
-
   # setup include dirs
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -403,7 +398,6 @@ endif()
 
 # load sub modules
 foreach(submodule
-    architecture
     module
     profiler
     openmp
