@@ -8,6 +8,8 @@ macro(enable_opencl_impl)
   add_definitions(-DCL_TARGET_OPENCL_VERSION=220)
 endmacro()
 
+option(BUILDSYS_DISABLE_OPENCL "Disable OpenCL support" OFF)
+
 macro(enable_opencl)
   if(NOT BUILDSYS_DISABLE_OPENCL)
     enable_opencl_impl()

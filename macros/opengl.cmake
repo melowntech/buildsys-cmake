@@ -31,6 +31,8 @@ macro(enable_openGL_impl)
   endif()
 endmacro()
 
+option(BUILDSYS_DISABLE_OPENGL "Disable OpenGL support" OFF)
+
 macro(enable_opengl)
   if(NOT BUILDSYS_DISABLE_OPENGL)
     enable_opengl_impl(${ARGN})
