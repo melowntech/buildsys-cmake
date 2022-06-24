@@ -22,6 +22,8 @@ macro(enable_OpenMP_impl)
   endif()
 endmacro()
 
+option(BUILDSYS_DISABLE_OPENMP "Disable OpenMP support" OFF)
+
 macro(enable_OpenMP)
   set(enable TRUE)
 
