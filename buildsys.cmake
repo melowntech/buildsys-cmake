@@ -7,7 +7,7 @@ endif()
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 
 # buildsystem as a dependency: fake dependency (e.g. BuildSystem>=1.0)
-set(BuildSystem_VERSION 1.12)
+set(BuildSystem_VERSION 1.13)
 set(BuildSystem_FOUND TRUE)
 set(BuildSystem_LIBRARIES)
 set(BuildSystem_DEFINITION)
@@ -314,7 +314,6 @@ macro(setup_build_system)
 
   # add install prefix
   buildsys_compile_with_install_prefix()
-
   # add this directory to the modules path
   if(BUILDSYS_CONAN)
     list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/Modules.Conan)
@@ -360,11 +359,6 @@ macro(setup_build_system)
     set(Fortran_DEFINITION)
   endif()
 
-  # apply architecture
-  if(BUILDSYS_ARCHITECTURE)
-    set_architecture(${BUILDSYS_ARCHITECTURE})
-  endif()
-
   # setup include dirs
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -404,7 +398,6 @@ endif()
 
 # load sub modules
 foreach(submodule
-    architecture
     module
     profiler
     openmp
@@ -420,7 +413,6 @@ foreach(submodule
     install-prefix
     output-paths
     python
-    compile-definitions
     customer
     debug
     dict

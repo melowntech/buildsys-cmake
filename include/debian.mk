@@ -6,6 +6,15 @@ ifndef PACKAGES
 $(error Missing PACKAGES variable)
 endif
 
+# custom build handling
+ifeq ($(DEB_CUSTOM_BUILD),YES)
+ifndef CMAKE_BUILD_TYPE
+# use customer build
+CMAKE_BUILD_TYPE = CustomerRelease
+CMAKE_FLAGS += -DBUILDSYS_CUSTOMER=$(DEB_CUSTOMER)
+endif
+endif
+
 # default to Release build
 CMAKE_BUILD_TYPE ?= Release
 
