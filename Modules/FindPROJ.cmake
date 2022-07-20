@@ -26,7 +26,7 @@ set(PROJ_LIBRARIES ${PROJ_LIBRARY})
 set(PROJ_VERSION ${PROJ_PKGCONF_VERSION})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Proj DEFAULT_MSG
+find_package_handle_standard_args(PROJ DEFAULT_MSG
   PROJ_LIBRARIES
   PROJ_INCLUDE_DIRS
   PROJ_VERSION)
