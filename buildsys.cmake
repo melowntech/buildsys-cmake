@@ -59,9 +59,10 @@ macro(cpp_msvc_overrides)
 
   # strict warnings, all errors
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/Wall>)
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/Wx>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/WX>)
 
   # disable external warnings
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:anglebrackets>)
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:W0>)
 
   # disable linker warning: PDB (debug symbols) not found
