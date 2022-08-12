@@ -59,8 +59,8 @@ macro(cpp_msvc_overrides)
 
   # strict warnings, all errors
   # TODO: allow W4 or Wall
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/W3>)
-  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/WX>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/W3>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/WX>)
 
   # disable external warnings
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:anglebrackets>)
