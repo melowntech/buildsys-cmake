@@ -57,6 +57,10 @@ macro(cpp_msvc_overrides)
   # standard-conforming-preprocessor-invalid-warning-c/364698
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4003>)
 
+  # strict warnings, all errors
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/Wall>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/Wx>)
+
   # disable external warnings
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:W0>)
 
