@@ -52,6 +52,11 @@ macro(cpp_msvc_overrides)
   # disable warning: deprecated declaration
   # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4996>)
 
+  # not enough arguments for function-like macro invocation
+  # should be fixed in newer VC https://developercommunity.visualstudio.com/t/
+  # standard-conforming-preprocessor-invalid-warning-c/364698
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4003>)
+
   # disable external warnings
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:W0>)
 
@@ -194,7 +199,7 @@ macro(set_visibility TARGET VISIBILITY)
   else()
     set(inline_hidden OFF)
   endif()
-  
+
   set_target_properties(${TARGET} PROPERTIES
     C_VISIBILITY_PRESET ${VISIBILITY}
     CXX_VISIBILITY_PRESET ${VISIBILITY}
