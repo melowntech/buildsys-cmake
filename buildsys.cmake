@@ -58,13 +58,14 @@ macro(cpp_msvc_overrides)
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4003>)
 
   # strict warnings, all errors
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/Wall>)
+  # TODO: allow W4 or Wall
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/W3>)
   # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/WX>)
 
   # disable external warnings
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:anglebrackets>)
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:W0>)
-  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:templates->)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:templates->)
 
   # disable linker warning: PDB (debug symbols) not found
   add_link_options(/ignore:4099)
