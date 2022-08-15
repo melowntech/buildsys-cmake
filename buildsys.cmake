@@ -63,6 +63,7 @@ macro(cpp_msvc_overrides)
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/WX>)
 
   # disable external warnings
+  # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:anglebrackets>)
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:W0>)
   # TODO(?): allow external warnings stemming from internal template init.
