@@ -52,8 +52,22 @@ macro(cpp_msvc_overrides)
   # disable warning: deprecated declaration
   # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4996>)
 
+  # not enough arguments for function-like macro invocation
+  # should be fixed in newer VC https://developercommunity.visualstudio.com/t/
+  # standard-conforming-preprocessor-invalid-warning-c/364698
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4003>)
+
+  # strict warnings, all errors
+  # TODO: allow W4 or Wall
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/W3>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/WX>)
+
   # disable external warnings
+  # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:anglebrackets>)
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:W0>)
+  # TODO(?): allow external warnings stemming from internal template init.
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:templates->)
 
   # disable linker warning: PDB (debug symbols) not found
   add_link_options(/ignore:4099)
@@ -194,7 +208,7 @@ macro(set_visibility TARGET VISIBILITY)
   else()
     set(inline_hidden OFF)
   endif()
-  
+
   set_target_properties(${TARGET} PROPERTIES
     C_VISIBILITY_PRESET ${VISIBILITY}
     CXX_VISIBILITY_PRESET ${VISIBILITY}
