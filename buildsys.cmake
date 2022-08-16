@@ -35,6 +35,13 @@ if(WIN32 AND MSVC)
 endif()
 
 macro(cpp_msvc_overrides)
+  # enable intrinsic functions, favor faster code (instead of smaller code)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/arch:AVX /Oi /Ot>)
+
+  # disable security checks (stack buffer overrun prevention)
+  $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELEASE>>:/GS- /O2>
+  $<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELEASE>>:/GS- /O2>
+
   # # disable warning: class 'type' needs to have dll-interface
   # #   to be used by clients of class 'type2'
   # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4251>)
@@ -69,14 +76,23 @@ macro(cpp_msvc_overrides)
   # TODO(?): allow external warnings stemming from internal template init.
   # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:templates->)
 
-  # disable linker warning: PDB (debug symbols) not found
-  add_link_options(/ignore:4099)
-
   # enable multi process compilation
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/MP>)
 
   # stricter conformance with c++ standard
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/permissive->)
+
+  # avoid fatal error: number of sections exceeded object file format limit
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/bigobj>)
+
+  # disable linker warning: PDB (debug symbols) not found
+  add_link_options(/ignore:4099)
+
+  # eliminate unreferenced functions
+  add_link_options(/OPT:REF)
+
+  # not possible with /OPT:REF
+  add_link_options(/INCREMENTAL:NO)
 
   # avoid some especially obtrusive macro definitions in windows.h
   add_definitions(/DWIN32_LEAN_AND_MEAN)
@@ -84,9 +100,6 @@ macro(cpp_msvc_overrides)
   add_definitions(/D_USE_MATH_DEFINES)
   add_definitions(/D_ENABLE_EXTENDED_ALIGNED_STORAGE)
   add_definitions(/D_CRT_SECURE_NO_WARNINGS)
-
-  # avoid fatal error: number of sections exceeded object file format limit
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/bigobj>)
 endmacro()
 
 # enable C++11
