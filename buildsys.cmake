@@ -40,7 +40,7 @@ macro(cpp_msvc_overrides)
 
   # disable security checks (stack buffer overrun prevention)
   add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELEASE>>:/GS- /O2>)
-  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELEASE>>:/GS- /O2>)
+  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELWITHDEBINFO>>:/GS- /O2>)
 
   # # disable warning: class 'type' needs to have dll-interface
   # #   to be used by clients of class 'type2'
