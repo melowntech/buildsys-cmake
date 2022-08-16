@@ -422,6 +422,7 @@ foreach(submodule
     symlink-fixes
     tensorflow
     torch
+    tensorrt
     exclude-from-all
 
     build-types/release

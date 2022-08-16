@@ -1,0 +1,28 @@
+macro(enable_TensorRT_impl)
+  if(NOT MSVC)
+    find_package(nvinfer REQUIRED)
+    find_package(nvonnxparser REQUIRED)
+  else()
+    if(NOT TENSORRT_ROOT)
+      set(TENSORRT_ROOT $ENV{TENSORRT_ROOT})
+    endif()
+
+    find_package(nvinfer MODULE REQUIRED)
+    find_package(nvonnxparser MODULE REQUIRED)
+
+    file(GLOB TensorRT_DLLS "${TENSORRT_ROOT}/lib/*.dll")
+    foreach(_TensorRT_DLL_PATH ${TensorRT_DLLS})
+      # copy TensorRT dll
+      get_filename_component(_TensorRT_DLL_LIB ${_TensorRT_DLL_PATH} NAME_WE)
+      get_filename_component(_TensorRT_DLL_NAME ${_TensorRT_DLL_PATH} NAME)
+      configure_file(${_TensorRT_DLL_PATH} ${CMAKE_BINARY_DIR}/bin/${_TensorRT_DLL_NAME} COPYONLY)
+      set(_TensorRT_DLL_LIB _TensorRT_dll_lib_${_TensorRT_DLL_LIB})
+      add_library(${_TensorRT_DLL_LIB} SHARED IMPORTED GLOBAL)
+      set_target_properties(${_TensorRT_DLL_LIB} PROPERTIES IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/bin/${_TensorRT_DLL_NAME})
+    endforeach()
+  endif()
+endmacro()
+
+macro(enable_TensorRT)
+  enable_TensorRT_impl()
+endmacro()
