@@ -36,11 +36,15 @@ endif()
 
 macro(cpp_msvc_overrides)
   # enable intrinsic functions, favor faster code (instead of smaller code)
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/arch:AVX /Oi /Ot>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/arch:AVX>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/Oi>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/Ot>)
 
   # disable security checks (stack buffer overrun prevention)
-  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELEASE>>:/GS- /O2>)
-  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELWITHDEBINFO>>:/GS- /O2>)
+  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELEASE>>:/GS->)
+  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELEASE>>:/O2>)
+  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELWITHDEBINFO>>:/GS->)
+  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELWITHDEBINFO>>:/O2>)
 
   # # disable warning: class 'type' needs to have dll-interface
   # #   to be used by clients of class 'type2'
