@@ -20,7 +20,7 @@ set(MODBUS_LIBRARIES ${MODBUS_LIBRARY})
 set(MODBUS_VERSION ${MODBUS_PKGCONF_VERSION})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Modbus DEFAULT_MSG
+find_package_handle_standard_args(MODBUS DEFAULT_MSG
   MODBUS_LIBRARIES
   MODBUS_INCLUDE_DIRS
   MODBUS_VERSION)
