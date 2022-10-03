@@ -7,7 +7,7 @@ endif()
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 
 # buildsystem as a dependency: fake dependency (e.g. BuildSystem>=1.0)
-set(BuildSystem_VERSION 1.12)
+set(BuildSystem_VERSION 1.14)
 set(BuildSystem_FOUND TRUE)
 set(BuildSystem_LIBRARIES)
 set(BuildSystem_DEFINITION)
@@ -27,23 +27,58 @@ else()
   message(FATAL_ERROR "Unsupported platform <${CMAKE_SYSTEM_NAME}> (missing file <${_PLATFORM_FILE}>).")
 endif()
 
+if(WIN32 AND MSVC)
+  # get rid of bin/Release, bin/Debug, etc. subdirectories
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+endif()
+
 macro(cpp_msvc_overrides)
+  # enable intrinsic functions, favor faster code (instead of smaller code)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/arch:AVX>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/Oi>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/Ot>)
+
+  # disable security checks (stack buffer overrun prevention)
+  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELEASE>>:/GS->)
+  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELEASE>>:/O2>)
+  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELWITHDEBINFO>>:/GS->)
+  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELWITHDEBINFO>>:/O2>)
+
   # # disable warning: class 'type' needs to have dll-interface
   # #   to be used by clients of class 'type2'
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4251>)
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4275>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4251>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4275>)
 
   # # disable warning: conversion from 'type' to 'type2', possible loss of data
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4305>)
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4244>)
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4305>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4305>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4244>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4305>)
 
   # # disable warning: unary minus operator applied
   # #   to unsigned type, result still unsigned
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4146>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4146>)
 
   # disable warning: deprecated declaration
   # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4996>)
+
+  # not enough arguments for function-like macro invocation
+  # should be fixed in newer VC https://developercommunity.visualstudio.com/t/
+  # standard-conforming-preprocessor-invalid-warning-c/364698
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/wd4003>)
+
+  # strict warnings, all errors
+  # TODO: allow W4 or Wall
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/W3>)
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/WX>)
+
+  # disable external warnings
+  # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:anglebrackets>)
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:W0>)
+  # TODO(?): allow external warnings stemming from internal template init.
+  # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/external:templates->)
 
   # enable multi process compilation
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/MP>)
@@ -51,15 +86,24 @@ macro(cpp_msvc_overrides)
   # stricter conformance with c++ standard
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/permissive->)
 
+  # avoid fatal error: number of sections exceeded object file format limit
+  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/bigobj>)
+
+  # disable linker warning: PDB (debug symbols) not found
+  add_link_options(/ignore:4099)
+
+  # eliminate unreferenced functions
+  add_link_options(/OPT:REF)
+
+  # not possible with /OPT:REF
+  add_link_options(/INCREMENTAL:NO)
+
   # avoid some especially obtrusive macro definitions in windows.h
   add_definitions(/DWIN32_LEAN_AND_MEAN)
   add_definitions(/DNOMINMAX)
   add_definitions(/D_USE_MATH_DEFINES)
   add_definitions(/D_ENABLE_EXTENDED_ALIGNED_STORAGE)
   add_definitions(/D_CRT_SECURE_NO_WARNINGS)
-
-  # avoid fatal error: number of sections exceeded object file format limit
-  add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/bigobj>)
 endmacro()
 
 # enable C++11
@@ -181,7 +225,7 @@ macro(set_visibility TARGET VISIBILITY)
   else()
     set(inline_hidden OFF)
   endif()
-  
+
   set_target_properties(${TARGET} PROPERTIES
     C_VISIBILITY_PRESET ${VISIBILITY}
     CXX_VISIBILITY_PRESET ${VISIBILITY}
@@ -301,7 +345,6 @@ macro(setup_build_system)
 
   # add install prefix
   buildsys_compile_with_install_prefix()
-
   # add this directory to the modules path
   if(BUILDSYS_CONAN)
     list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/Modules.Conan)
@@ -347,11 +390,6 @@ macro(setup_build_system)
     set(Fortran_DEFINITION)
   endif()
 
-  # apply architecture
-  if(BUILDSYS_ARCHITECTURE)
-    set_architecture(${BUILDSYS_ARCHITECTURE})
-  endif()
-
   # setup include dirs
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -391,7 +429,6 @@ endif()
 
 # load sub modules
 foreach(submodule
-    architecture
     module
     profiler
     openmp
@@ -407,7 +444,6 @@ foreach(submodule
     install-prefix
     output-paths
     python
-    compile-definitions
     customer
     debug
     dict
@@ -417,6 +453,7 @@ foreach(submodule
     symlink-fixes
     tensorflow
     torch
+    tensorrt
     exclude-from-all
 
     build-types/release

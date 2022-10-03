@@ -9,80 +9,7 @@ macro(enable_cuda_impl)
   list(APPEND CUDA_LIBRARIES ${CUDA_CUDA_LIBRARY})
   set(__HOST_COMPILER_ID ${CMAKE_CXX_COMPILER_ID})
 
-  if(CUDA_VERSION_MAJOR LESS 6)
-    # CUDA 5.x
-    set(CUDA_ARCH_BIN "2.0 3.0 3.5" CACHE STRING
-      "Specify GPU architectures to build binaries for.")
-    set(CUDA_ARCH_PTX "3.5" CACHE STRING
-      "Specify PTX architectures to build PTX intermediate code for.")
-  elseif(CUDA_VERSION_MAJOR LESS 8)
-    # CUDA 7.x
-    set(CUDA_ARCH_BIN "2.0 3.0 3.5 5.0" CACHE STRING
-      "Specify GPU architectures to build binaries for.")
-    set(CUDA_ARCH_PTX "5.0" CACHE STRING
-      "Specify PTX architectures to build PTX intermediate code for.")
-  elseif(CUDA_VERSION_MAJOR LESS 9)
-    # CUDA 8.x
-    set(CUDA_ARCH_BIN "2.0 3.0 3.5 5.0 6.0" CACHE STRING
-      "Specify GPU architectures to build binaries for.")
-    set(CUDA_ARCH_PTX "6.0" CACHE STRING
-      "Specify PTX architectures to build PTX intermediate code for.")
-
-    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -Wno-deprecated-gpu-targets")
-
-    if (CMAKE_CXX_COMPILER_ID MATCHES GNU
-        AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0.0")
-      message(STATUS "Too new gcc for cuda ${CUDA_VERSION_MAJOR}; "
-        "forcing clang-3.8.")
-      find_program(__CLANG_CUDA8 clang++-3.8)
-
-      if(NOT __CLANG_CUDA8)
-        message(FATAL_ERROR "Please, install clang-3.8")
-      endif()
-
-      set(CUDA_HOST_COMPILER ${__CLANG_CUDA8})
-      set(__HOST_COMPILER_ID Clang)
-    endif()
-  elseif(CUDA_VERSION VERSION_LESS 9.2)
-    # CUDA < 9.2
-    set(CUDA_ARCH_BIN "3.0 3.5 5.0 6.0" CACHE STRING
-      "Specify GPU architectures to build binaries for.")
-    set(CUDA_ARCH_PTX "6.0" CACHE STRING
-      "Specify PTX architectures to build PTX intermediate code for.")
-
-    if (CMAKE_CXX_COMPILER_ID MATCHES GNU
-        AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0.0")
-      message(STATUS "Too new gcc for cuda ${CUDA_VERSION_MAJOR}; "
-        "clang<=4.0.")
-      find_program(__CLANG_CUDA9 NAMES clang++-4.0 clang++-3.9)
-
-      if(NOT __CLANG_CUDA9)
-        message(FATAL_ERROR "Please, install clang-4.0 or clang-3.9")
-      endif()
-
-      set(CUDA_HOST_COMPILER ${__CLANG_CUDA9})
-      set(__HOST_COMPILER_ID Clang)
-    endif()
-  elseif(CUDA_VERSION VERSION_LESS 10.0)
-    # CUDA >= 9.2 && < 10.0
-    set(CUDA_ARCH_BIN "3.0 3.5 5.0 6.0" CACHE STRING
-      "Specify GPU architectures to build binaries for.")
-    set(CUDA_ARCH_PTX "6.0" CACHE STRING
-      "Specify PTX architectures to build PTX intermediate code for.")
-
-    if (CMAKE_CXX_COMPILER_ID MATCHES GNU
-        AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9.0.0")
-      message(STATUS "Too new gcc for cuda ${CUDA_VERSION_MAJOR}; "
-        "forcing g++-<=8.")
-      find_program(__GPP_CUDA92 NAMES g++-8 g++-7)
-
-      if(NOT __GPP_CUDA92)
-        message(FATAL_ERROR "Please, install g++-8 or g++-7")
-      endif()
-
-      set(CUDA_HOST_COMPILER ${__GPP_CUDA92})
-    endif()
-  elseif(CUDA_VERSION VERSION_LESS 11.0)
+  if(CUDA_VERSION VERSION_LESS 11.0)
     # CUDA >= 10.0 && < 11.0
     set(CUDA_ARCH_BIN "3.0 3.5 5.0 6.0 7.5" CACHE STRING
       "Specify GPU architectures to build binaries for.")
@@ -190,6 +117,8 @@ macro(enable_cuda_lambdas TARGET)
   endif()
 endmacro()
 
+option(BUILDSYS_DISABLE_CUDA_LAMBDA "Disable CUDA lambdas support" OFF)
+
 # for a given target and a list of sources, switch to nvcc compilation and enable extended lambdas
 macro(enable_cuda_lambdas_impl)
   if(CMAKE_CUDA_COMPILER AND NOT BUILDSYS_DISABLE_CUDA_LAMBDA)
@@ -214,17 +143,9 @@ endif()
 endfunction()
 
 macro(enable_cuda)
-  if(NOT BUILDSYS_DISABLE_CUDA)
-    enable_cuda_impl(${ARGV})
-    message(STATUS "Enabling CUDA support (can be disabled by setting BUILDSYS_DISABLE_CUDA variable).")
-    enable_cuda_lambdas_impl()
-    if (TARGET OpenMP::OpenMP_CXX)
-      fix_omp_target_for_cuda(OpenMP::OpenMP_CXX)
-    endif()
-  else()
-    message(STATUS "Disabling CUDA support because of BUILDSYS_DISABLE_CUDA.")
-    # unset global varibale CUDA_FOUND because some 3rdparty libraries use CUDA
-    # and clutter global namespace (I'm looking at you, OpenCV).
-    set(CUDA_FOUND OFF)
+  enable_cuda_impl(${ARGV})
+  enable_cuda_lambdas_impl()
+  if (TARGET OpenMP::OpenMP_CXX)
+    fix_omp_target_for_cuda(OpenMP::OpenMP_CXX)
   endif()
 endmacro()

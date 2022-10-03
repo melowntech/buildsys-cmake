@@ -15,6 +15,8 @@ macro(install_conan_deps
     message(WARNING "Set BUILDSYS_CONAN=TRUE if you want use install_conan_deps macro.")
   else()
 
+    set(CONAN_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
     message(STATUS "")
     message(STATUS "****************************")
     message(STATUS "* Preparing Conan build ... ")
@@ -83,14 +85,14 @@ macro(install_conan_deps
       if(NOT _pip_install_ret EQUAL "0")
         message(WARNING "Unable to extract python licenses!")
       else()
-        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/.conan/licenses)
+        file(MAKE_DIRECTORY ${CONAN_OUTPUT_DIRECTORY}/licenses)
         execute_process(COMMAND pip-licenses --from=mixed --with-authors 
           --with-urls --with-description --format=json
-          --output-file=${CMAKE_BINARY_DIR}/.conan/python_deps.json)
+          --output-file=${CONAN_OUTPUT_DIRECTORY}/python_deps.json)
         execute_process(COMMAND pip-licenses --from=mixed --with-authors 
           --with-urls --with-description --format=plain-vertical 
           --with-license-file --no-license-path
-          --output-file=${CMAKE_BINARY_DIR}/.conan/licenses/python_thirdparty_licenses.txt)
+          --output-file=${CONAN_OUTPUT_DIRECTORY}/licenses/python_thirdparty_licenses.txt)
       endif()
       message(STATUS "")
     endif()
@@ -104,42 +106,42 @@ macro(install_conan_deps
     foreach(CONAN_BUILD_TYPE ${CONAN_BUILD_TYPES})
       message(STATUS "* Installing conan dependencies (${CONAN_BUILD_TYPE}) from '${CONAN_FILE}' ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
-        ${CONAN_FILE} -g cmake_find_package_multi -if "${CMAKE_BINARY_DIR}/.conan/cmake" -r ${CONAN_REMOTE_NAME} 
+        ${CONAN_FILE} -g cmake_find_package_multi -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
         --profile ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
-          ${CONAN_FILE} -if "${CMAKE_BINARY_DIR}/.conan/cmake" -r ${CONAN_REMOTE_NAME} 
-          --json=${CMAKE_BINARY_DIR}/.conan/conan_deps_${CONAN_BUILD_TYPE}.json
-          --graph=${CMAKE_BINARY_DIR}/.conan/conan_deps_${CONAN_BUILD_TYPE}.html)
+          ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
+          --json=${CONAN_OUTPUT_DIRECTORY}/conan_deps.json
+          --graph=${CONAN_OUTPUT_DIRECTORY}/conan_deps.html)
         message(STATUS "")
         break()
       endif()
 
       message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, trying to build missing packages ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
-        ${CONAN_FILE} -g cmake_find_package_multi -if "${CMAKE_BINARY_DIR}/.conan/cmake"
+        ${CONAN_FILE} -g cmake_find_package_multi -if "${CONAN_OUTPUT_DIRECTORY}/cmake"
         --build missing --profile ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
-          ${CONAN_FILE} -if "${CMAKE_BINARY_DIR}/.conan/cmake" -r ${CONAN_REMOTE_NAME} 
-          --json=${CMAKE_BINARY_DIR}/.conan/conan_deps_${CONAN_BUILD_TYPE}.json
-          --graph=${CMAKE_BINARY_DIR}/.conan/conan_deps_${CONAN_BUILD_TYPE}.html)
+          ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
+          --json=${CONAN_OUTPUT_DIRECTORY}/conan_deps.json
+          --graph=${CONAN_OUTPUT_DIRECTORY}/conan_deps.html)
         message(STATUS "")
         break()
       endif()
 
       message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, installing without custom remote ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
-        ${CONAN_FILE} -g cmake_find_package_multi -if "${CMAKE_BINARY_DIR}/.conan/cmake"
+        ${CONAN_FILE} -g cmake_find_package_multi -if "${CONAN_OUTPUT_DIRECTORY}/cmake"
         --build missing --profile ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
-          ${CONAN_FILE} -if "${CMAKE_BINARY_DIR}/.conan/cmake"
-          --json=${CMAKE_BINARY_DIR}/.conan/conan_deps_${CONAN_BUILD_TYPE}.json
-          --graph=${CMAKE_BINARY_DIR}/.conan/conan_deps_${CONAN_BUILD_TYPE}.html)
+          ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake"
+          --json=${CONAN_OUTPUT_DIRECTORY}/conan_deps.json
+          --graph=${CONAN_OUTPUT_DIRECTORY}/conan_deps.html)
         message(STATUS "")
         break()
       endif()
@@ -149,8 +151,8 @@ macro(install_conan_deps
       
     endforeach()
 
-    list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_BINARY_DIR}/.conan/cmake")
-    list(INSERT CMAKE_PREFIX_PATH 0 "${CMAKE_BINARY_DIR}/.conan/cmake")
+    list(INSERT CMAKE_MODULE_PATH 0 "${CONAN_OUTPUT_DIRECTORY}/cmake")
+    list(INSERT CMAKE_PREFIX_PATH 0 "${CONAN_OUTPUT_DIRECTORY}/cmake")
 
     message(STATUS "* Conan build initialized.  ")
     message(STATUS "****************************")
