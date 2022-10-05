@@ -59,19 +59,6 @@ macro(install_conan_deps
         "- conan user \${USER} -p -r ${CONAN_REMOTE_NAME}\n")
     endif()
 
-    # create conan profile
-    set(CONAN_PROFILE_NAME ${CONAN_REMOTE_NAME})
-    execute_process(COMMAND ${CONAN_BINARY} profile new ${CONAN_PROFILE_NAME} --detect
-        OUTPUT_QUIET ERROR_QUIET)
-      
-    # update conan profile for windows
-    IF(WIN32)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="Visual Studio" ${CONAN_PROFILE_NAME}
-        OUTPUT_QUIET ERROR_QUIET)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.version=16 ${CONAN_PROFILE_NAME}
-        OUTPUT_QUIET ERROR_QUIET)
-    endif()
-
     if (NOT "${PIP_REQUIREMENTS}" STREQUAL "")
       # install python deps
       message(STATUS "* Installing python dependencies from '${PIP_REQUIREMENTS}' ...")
@@ -104,6 +91,29 @@ macro(install_conan_deps
       set(CONAN_BUILD_TYPES Debug Release)
     endif()
     foreach(CONAN_BUILD_TYPE ${CONAN_BUILD_TYPES})
+
+      # create conan profile
+      set(CONAN_PROFILE_NAME ${CONAN_REMOTE_NAME}-${CONAN_BUILD_TYPE})
+      execute_process(COMMAND ${CONAN_BINARY} profile new ${CONAN_PROFILE_NAME} --detect
+          OUTPUT_QUIET ERROR_QUIET)
+        
+      # update conan profile for windows
+      IF(WIN32)
+        execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="Visual Studio" ${CONAN_PROFILE_NAME}
+          OUTPUT_QUIET ERROR_QUIET)
+        execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.version=16 ${CONAN_PROFILE_NAME}
+          OUTPUT_QUIET ERROR_QUIET)
+        # execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.toolset=v142 ${CONAN_PROFILE_NAME}
+        #   OUTPUT_QUIET ERROR_QUIET)
+        # if (${CONAN_BUILD_TYPE} EQUAL Debug)
+        #   execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.runtime=MDd ${CONAN_PROFILE_NAME}
+        #     OUTPUT_QUIET ERROR_QUIET)
+        # else()
+        #   execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.runtime=MD ${CONAN_PROFILE_NAME}
+        #     OUTPUT_QUIET ERROR_QUIET)
+        # endif()
+      endif()
+
       message(STATUS "* Installing conan dependencies (${CONAN_BUILD_TYPE}) from '${CONAN_FILE}' ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
         ${CONAN_FILE} -g cmake_find_package_multi -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 

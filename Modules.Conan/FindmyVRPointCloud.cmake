@@ -5,6 +5,7 @@ set(_jsoncpp_LIBRARIES ${jsoncpp_LIBRARIES})
 set(_jsoncpp_INCLUDE_DIRS ${jsoncpp_INCLUDE_DIRS})
 # ------------------------------------
 
+find_package(myVRArchive CONFIG)
 find_package(myVRPointCloud CONFIG)
 
 if (TARGET myVRPointCloud::myVRPointCloud)
