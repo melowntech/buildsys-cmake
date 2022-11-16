@@ -11,7 +11,7 @@ find_path(GeographicLib_INCLUDE_DIR
 
 # Finally the library itself
 find_library(GeographicLib_LIBRARY
-  NAMES Geographic
+    NAMES Geographic GeographicLib
 )
 
 set(GeographicLib_LIBRARIES ${GeographicLib_LIBRARY})
