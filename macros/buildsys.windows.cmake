@@ -12,6 +12,12 @@ macro(setup_build_system_os_specific)
   add_definitions(-D_USE_MATH_DEFINES)
   add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+
+  # use manifest file
+  add_link_options(
+    "LINKER:/MANIFEST:EMBED" 
+    "LINKER:/MANIFESTINPUT:${BUILDSYS_ROOT}/manifest/windows.manifest"
+  )
 endmacro()
 
 set(BUILDSYS_SYMLINKS_FIX_SCRIPT
