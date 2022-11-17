@@ -4,9 +4,16 @@ macro(enable_cuda_impl)
     set(__version ${ARGV0})
   endif()
   
+  if(WIN32)
+    set(CMAKE_CUDA_RUNTIME_LIBRARY Shared)
+  endif()
+
   find_package(CUDA ${__version} REQUIRED)
-  include_directories(${CUDA_INCLUDE_DIRS})
-  list(APPEND CUDA_LIBRARIES ${CUDA_CUDA_LIBRARY})
+  if(NOT WIN32)
+    # TODO: may not be needed
+    include_directories(${CUDA_INCLUDE_DIRS})
+    list(APPEND CUDA_LIBRARIES ${CUDA_CUDA_LIBRARY})
+  endif()
   set(__HOST_COMPILER_ID ${CMAKE_CXX_COMPILER_ID})
 
   if(CUDA_VERSION VERSION_LESS 11.0)
@@ -52,7 +59,10 @@ macro(enable_cuda_impl)
   message(STATUS "CUDA: compiling code for ${CUDA_ARCH_BIN} binary arch.")
 
   # do not propagate host flags; C++11 doesn't work
-  set(CUDA_PROPAGATE_HOST_FLAGS OFF)
+  if(NOT WIN32)
+    # TODO: may not be needed
+    set(CUDA_PROPAGATE_HOST_FLAGS OFF)
+  endif()
 
   # >>> copied from opencv build
   set(NVCC_FLAGS_EXTRA "")
