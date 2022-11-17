@@ -11,11 +11,8 @@ macro(enable_cuda_impl)
   endif()
 
   find_package(CUDA ${__version} REQUIRED)
-  if(NOT WIN32)
-    # TODO: may not be needed
-    include_directories(${CUDA_INCLUDE_DIRS})
-    list(APPEND CUDA_LIBRARIES ${CUDA_CUDA_LIBRARY})
-  endif()
+  include_directories(${CUDA_INCLUDE_DIRS})
+  list(APPEND CUDA_LIBRARIES ${CUDA_CUDA_LIBRARY})
   set(__HOST_COMPILER_ID ${CMAKE_CXX_COMPILER_ID})
 
   if(CUDA_VERSION VERSION_LESS 11.0)
