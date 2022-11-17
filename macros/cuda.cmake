@@ -5,7 +5,9 @@ macro(enable_cuda_impl)
   endif()
   
   if(WIN32)
-    set(CMAKE_CUDA_RUNTIME_LIBRARY Shared)
+    # disable static CUDA runtime
+    set(CUDA_USE_STATIC_CUDA_RUNTIME OFF CACHE BOOL "")
+    set(CMAKE_CUDA_RUNTIME_LIBRARY Shared CACHE STRING "")
   endif()
 
   find_package(CUDA ${__version} REQUIRED)
