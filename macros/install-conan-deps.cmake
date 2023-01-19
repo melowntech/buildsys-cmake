@@ -1,6 +1,6 @@
 # set(BUILDSYS_CONAN TRUE)
 # install_conan_deps(
-#   "mlwn" "https://gitlab.mlwn.se/api/v4/projects/447/packages/conan"
+#   "mlwn" "https://gitlab.mlwn.se/api/v4/projects/541/packages/conan"
 #   "${CMAKE_CURRENT_LIST_DIR}/conanfile.txt"
 #   "${CMAKE_CURRENT_LIST_DIR}/requirements.txt"
 #)
@@ -59,6 +59,10 @@ macro(install_conan_deps
         "- conan user \${USER} -p -r ${CONAN_REMOTE_NAME}\n")
     endif()
 
+    # enable revisions for conan 1.X
+    execute_process(COMMAND ${CONAN_BINARY} config set general.revisions_enabled=True
+        OUTPUT_QUIET ERROR_QUIET)
+    
     # create conan profile
     set(CONAN_PROFILE_NAME ${CONAN_REMOTE_NAME})
     execute_process(COMMAND ${CONAN_BINARY} profile new ${CONAN_PROFILE_NAME} --detect
