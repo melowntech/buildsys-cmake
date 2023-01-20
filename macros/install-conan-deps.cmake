@@ -150,7 +150,7 @@ macro(install_conan_deps
         message(WARNING "Uploading built Conan packages to remote '${CONAN_REMOTE_NAME}' failed!")
         message(STATUS "")
       endif()
-    else()
+    endif()
 
     list(INSERT CMAKE_MODULE_PATH 0 "${CONAN_OUTPUT_DIRECTORY}/cmake")
     list(INSERT CMAKE_PREFIX_PATH 0 "${CONAN_OUTPUT_DIRECTORY}/cmake")
