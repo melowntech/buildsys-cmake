@@ -143,8 +143,7 @@ macro(install_conan_deps
     endforeach()
 
     if(BUILDSYS_CONAN_UPLOAD_PACKAGES)
-      execute_process(COMMAND ${CONAN_BINARY} upload "*" --all -c 
-        -r ${CONAN_REMOTE_NAME} --profile ${CONAN_PROFILE_NAME}
+      execute_process(COMMAND ${CONAN_BINARY} upload "*" --all -c -r ${CONAN_REMOTE_NAME}
         RESULT_VARIABLE _conan_upload_ret)
       if(_conan_upload_ret EQUAL "0")
         message(WARNING "Uploading built Conan packages to remote '${CONAN_REMOTE_NAME}' failed!")
