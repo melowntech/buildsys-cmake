@@ -17,6 +17,10 @@ macro(install_conan_deps
 
     set(CONAN_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
+    if(NOT DEFINED BUILDSYS_CONAN_UPLOAD_PACKAGES)
+      set(BUILDSYS_CONAN_UPLOAD_PACKAGES OFF)
+    endif()
+
     message(STATUS "")
     message(STATUS "****************************")
     message(STATUS "* Preparing Conan build ... ")
