@@ -4,7 +4,7 @@ macro(enable_cuda_impl)
     set(__version ${ARGV0})
   endif()
   
-  if(WIN32)
+  if(FALSE AND WIN32)
     # disable static CUDA runtime
     set(CUDA_USE_STATIC_CUDA_RUNTIME OFF CACHE BOOL "")
     set(CMAKE_CUDA_RUNTIME_LIBRARY Shared CACHE STRING "")
