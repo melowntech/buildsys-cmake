@@ -146,6 +146,13 @@ macro(install_conan_deps
       
     endforeach()
 
+    # remove conan build files
+    execute_process(COMMAND ${CONAN_BINARY} remove "*" --src --builds --force
+        RESULT_VARIABLE _conan_remove_builds_ret)
+    if(_conan_remove_builds_ret NOT EQUAL "0")
+      message(WARNING "Removing conan build files failed!")
+    endif()
+
     if(BUILDSYS_CONAN_UPLOAD_PACKAGES)
       execute_process(COMMAND ${CONAN_BINARY} upload "*" --all -c -r ${CONAN_REMOTE_NAME}
         RESULT_VARIABLE _conan_upload_ret)
