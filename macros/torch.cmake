@@ -1,5 +1,5 @@
 macro(enable_torch_impl)
-  if(NOT BUILDSYS_CONAN)
+  if(NOT WIN32)
     if(NOT PYTHON_EXECUTABLE)
       message(STATUS "No PYTHON_EXECUTABLE found. Use enable_python(version).")
     else()
