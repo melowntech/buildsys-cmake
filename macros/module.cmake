@@ -123,8 +123,10 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
   unset(definitions)
   unset(module_breaks)
   unset(broken)
+  unset(provided_targets)
+  set(has_provided_targets FALSE)
 
-  set(supported_modes "DEPENDS;DEFINITIONS;BREAKS")
+  set(supported_modes "DEPENDS;DEFINITIONS;BREAKS;PROVIDES")
   set(mode "DEPENDS")
 
   foreach(atom ${ARGN})
@@ -155,7 +157,7 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
             LIST(APPEND missing ${fullAtom})
           else()
             # add dependency to our libraries
-            list(APPEND libs ${atom})
+            list(APPEND libs ${MODULE_${atom}_TARGETS})
             # add dependency's definitions to our definitions
             list(APPEND definitions ${MODULE_${atom}_DEFINITIONS})
           endif()
@@ -187,6 +189,10 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
       list(APPEND module_breaks "${breaks_version}")
       list(APPEND module_breaks "${breaks_what}")
       
+    elseif(mode STREQUAL "PROVIDES")
+      # add given name to to provided targets
+      list(APPEND provided_targets ${atom})
+      set(has_provided_targets TRUE)
     else()
       message(FATAL_ERROR "${MODULE_NAME}: INTERNAL ERROR unsupported mode ${mode}")
     endif()
@@ -213,6 +219,15 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
   if(definitions)
     list(REMOVE_DUPLICATES definitions)
   endif()
+
+  if(NOT has_provided_targets)
+    list(APPEND provided_targets ${MODULE_NAME})
+  endif()
+
+  # set TARGETS
+  set(MODULE_TARGETS ${libs})
+  set(MODULE_${MODULE_NAME}_TARGETS ${provided_targets})
+  set(MODULE_${MODULE_NAME}_TARGETS ${provided_targets} PARENT_SCOPE)
 
   # set LIBRARIES
   set(MODULE_LIBRARIES ${libs})
