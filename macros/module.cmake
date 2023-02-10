@@ -139,7 +139,10 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
       module_split_version(${atom} atom compareOperator version)
 
       # dependency
-      if (NOT ${atom}_FOUND)
+      if (MODULE_${atom}_FOUND # module "atom"
+          OR (TARGET ${atom}  # target "atom" without "atom"_FOUND
+            AND NOT ${atom}_FOUND)
+          )
         if(NOT MODULE_${atom}_FOUND)
           if(TARGET ${atom})
             list(APPEND libs ${atom})
@@ -163,20 +166,21 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
           endif()
         endif()
       else()
-          module_check_version("${${atom}_VERSION}" "${compareOperator}" "${version}"
-            checkResult)
+        # old "atom"_FOUND
+        module_check_version("${${atom}_VERSION}" "${compareOperator}" "${version}"
+          checkResult)
 
-          if(NOT checkResult)
-            LIST(APPEND missing ${fullAtom})
-          else()
-            # add dependency's libraries to our libraries
-            list(APPEND libs ${${atom}_LIBRARIES})
-            # TODO: split -DX to _DEFINITIONS and other stuff to _FLAGS
-            # do nothing now
+        if(NOT checkResult)
+          LIST(APPEND missing ${fullAtom})
+        else()
+          # add dependency's libraries to our libraries
+          list(APPEND libs ${${atom}_LIBRARIES})
+          # TODO: split -DX to _DEFINITIONS and other stuff to _FLAGS
+          # do nothing now
 
-            # add dependency's definitions to our definitions
-            # list(APPEND definitions ${${atom}_DEFINITIONS})
-          endif()
+          # add dependency's definitions to our definitions
+          # list(APPEND definitions ${${atom}_DEFINITIONS})
+        endif()
       endif()
 
     elseif(mode STREQUAL "DEFINITIONS")
