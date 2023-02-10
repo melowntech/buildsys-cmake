@@ -7,10 +7,11 @@ endif()
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 
 # buildsystem as a dependency: fake dependency (e.g. BuildSystem>=1.0)
-set(BuildSystem_VERSION 1.14)
+set(BuildSystem_VERSION 1.15)
 set(BuildSystem_FOUND TRUE)
 set(BuildSystem_LIBRARIES)
 set(BuildSystem_DEFINITION)
+set(BuildSystem_TARGETS)
 
 # remember buildsystem root
 set(BUILDSYS_ROOT ${CMAKE_CURRENT_LIST_DIR})
