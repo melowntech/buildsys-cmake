@@ -70,7 +70,10 @@ override_dh_auto_configure:
 ifeq ($(DEB_PACKAGE_DEBUG),AUTOMATIC)
 override_dh_strip:
 	dh_strip --automatic-dbgsym
-else ifneq ($(DEB_PACKAGE_DEBUG),NO)
+else ifeq ($(DEB_PACKAGE_DEBUG),NO)
+override_dh_strip:
+	dh_strip --no-automatic-dbgsym
+else
 override_dh_strip:
 	dh_strip --dbg-package=$(DEB_PACKAGE_DEBUG)
 endif
