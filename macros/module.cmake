@@ -165,7 +165,7 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
             list(APPEND definitions ${MODULE_${atom}_DEFINITIONS})
           endif()
         endif()
-      else()
+      elseif(${atom}_FOUND)
         # old "atom"_FOUND
         module_check_version("${${atom}_VERSION}" "${compareOperator}" "${version}"
           checkResult)
@@ -181,6 +181,9 @@ macro(define_module MODULE_TYPE MODULE_NAME_VERSION DEPENDS)
           # add dependency's definitions to our definitions
           # list(APPEND definitions ${${atom}_DEFINITIONS})
         endif()
+      else()
+        # nothing found -> missing
+        LIST(APPEND missing ${fullAtom})
       endif()
 
     elseif(mode STREQUAL "DEFINITIONS")
