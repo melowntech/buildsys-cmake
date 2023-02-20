@@ -72,14 +72,6 @@ macro(install_conan_deps
     set(CONAN_PROFILE_NAME ${CONAN_REMOTE_NAME})
     execute_process(COMMAND ${CONAN_BINARY} profile new ${CONAN_PROFILE_NAME} --detect
         OUTPUT_QUIET ERROR_QUIET)
-      
-    # update conan profile for windows
-    IF(WIN32)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="Visual Studio" ${CONAN_PROFILE_NAME}
-        OUTPUT_QUIET ERROR_QUIET)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.version=16 ${CONAN_PROFILE_NAME}
-        OUTPUT_QUIET ERROR_QUIET)
-    endif()
 
     if (NOT "${PIP_REQUIREMENTS}" STREQUAL "")
       # install python deps
