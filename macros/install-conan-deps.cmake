@@ -1,7 +1,7 @@
 # set(BUILDSYS_CONAN TRUE)
 # install_conan_deps(
 #   "mlwn" "https://gitlab.mlwn.se/api/v4/projects/541/packages/conan"
-#   "${CMAKE_CURRENT_LIST_DIR}/conanfile.txt"
+#   "${CMAKE_CURRENT_LIST_DIR}/conanfile.py"
 #   "${CMAKE_CURRENT_LIST_DIR}/requirements.txt"
 #)
 
@@ -115,7 +115,7 @@ macro(install_conan_deps
     foreach(CONAN_BUILD_TYPE ${CONAN_BUILD_TYPES})
       message(STATUS "* Installing conan dependencies (${CONAN_BUILD_TYPE}) from '${CONAN_FILE}' ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
-        ${CONAN_FILE} -g cmake_find_package_multi -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
+        ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
         --build missing --profile ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
@@ -129,7 +129,7 @@ macro(install_conan_deps
 
       message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, trying conan-center ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
-        ${CONAN_FILE} -g cmake_find_package_multi -if "${CONAN_OUTPUT_DIRECTORY}/cmake"
+        ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake"
         --build missing --profile ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
