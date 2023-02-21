@@ -17,6 +17,14 @@ macro(install_conan_deps
 
     set(CONAN_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
+    # Update RPATH behavior, to search relatively to bin folder (default for Windows DLLs)
+    if (APPLE)
+      set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
+    else()
+      set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+    endif()
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
+
     if(NOT DEFINED BUILDSYS_CONAN_UPLOAD_PACKAGES)
       set(BUILDSYS_CONAN_UPLOAD_PACKAGES OFF)
     endif()
