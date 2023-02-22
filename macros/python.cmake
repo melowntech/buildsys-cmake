@@ -33,8 +33,11 @@ macro(enable_python_impl VERSION)
   elseif(Boost_PYTHON-PY${SHORT_VERSION}_FOUND)
     set(PYLIB Boost_PYTHON-PY${SHORT_VERSION})
   else()
-  message(WARNING "No boost python libraries found.")  
-  # message(FATAL_ERROR "No boost python libraries found.")
+    if (BUILDSYS_CONAN)
+      message(WARNING "No boost python libraries found.") 
+    else()
+      message(FATAL_ERROR "No boost python libraries found.")
+    endif()
   endif()
 
   # this must be manually set
