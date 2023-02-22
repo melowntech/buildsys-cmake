@@ -8,6 +8,7 @@ macro(setup_build_system_os_specific)
 
   # damn you, MSVC!
   add_definitions(-DWIN32_LEAN_AND_MEAN)
+  add_definitions(-DNOGDI)
   add_definitions(-DNOMINMAX)
   add_definitions(-D_USE_MATH_DEFINES)
   add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)

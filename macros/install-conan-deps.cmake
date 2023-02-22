@@ -1,7 +1,7 @@
 # set(BUILDSYS_CONAN TRUE)
 # install_conan_deps(
-#   "mlwn" "https://gitlab.mlwn.se/api/v4/projects/447/packages/conan"
-#   "${CMAKE_CURRENT_LIST_DIR}/conanfile.txt"
+#   "mlwn" "https://gitlab.mlwn.se/api/v4/projects/541/packages/conan"
+#   "${CMAKE_CURRENT_LIST_DIR}/conanfile.py"
 #   "${CMAKE_CURRENT_LIST_DIR}/requirements.txt"
 #)
 
@@ -17,10 +17,23 @@ macro(install_conan_deps
 
     set(CONAN_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
+    # Update RPATH behavior, to search relatively to bin folder (default for Windows DLLs)
+    if (APPLE)
+      set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
+    else()
+      set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+    endif()
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
+
+    if(NOT DEFINED BUILDSYS_CONAN_UPLOAD_PACKAGES)
+      set(BUILDSYS_CONAN_UPLOAD_PACKAGES OFF)
+    endif()
+
     message(STATUS "")
     message(STATUS "****************************")
     message(STATUS "* Preparing Conan build ... ")
     message(STATUS "* BUILDSYS_CONAN = ${BUILDSYS_CONAN}")
+    message(STATUS "* BUILDSYS_CONAN_UPLOAD_PACKAGES = ${BUILDSYS_CONAN_UPLOAD_PACKAGES}")
     message(STATUS "")
 
     # backup PATH environment variable
@@ -59,6 +72,10 @@ macro(install_conan_deps
         "- conan user \${USER} -p -r ${CONAN_REMOTE_NAME}\n")
     endif()
 
+    # enable revisions for conan 1.X
+    execute_process(COMMAND ${CONAN_BINARY} config set general.revisions_enabled=True
+        OUTPUT_QUIET ERROR_QUIET)
+    
     # create conan profile
     set(CONAN_PROFILE_NAME ${CONAN_REMOTE_NAME})
     execute_process(COMMAND ${CONAN_BINARY} profile new ${CONAN_PROFILE_NAME} --detect
@@ -106,21 +123,7 @@ macro(install_conan_deps
     foreach(CONAN_BUILD_TYPE ${CONAN_BUILD_TYPES})
       message(STATUS "* Installing conan dependencies (${CONAN_BUILD_TYPE}) from '${CONAN_FILE}' ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
-        ${CONAN_FILE} -g cmake_find_package_multi -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
-        --profile ${CONAN_PROFILE_NAME}
-        RESULT_VARIABLE _conan_install_ret)
-      if(_conan_install_ret EQUAL "0")
-        execute_process(COMMAND ${CONAN_BINARY} info
-          ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
-          --json=${CONAN_OUTPUT_DIRECTORY}/conan_deps.json
-          --graph=${CONAN_OUTPUT_DIRECTORY}/conan_deps.html)
-        message(STATUS "")
-        break()
-      endif()
-
-      message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, trying to build missing packages ...")
-      execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
-        ${CONAN_FILE} -g cmake_find_package_multi -if "${CONAN_OUTPUT_DIRECTORY}/cmake"
+        ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
         --build missing --profile ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
@@ -132,24 +135,41 @@ macro(install_conan_deps
         break()
       endif()
 
-      message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, installing without custom remote ...")
+      message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, trying conan-center ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
-        ${CONAN_FILE} -g cmake_find_package_multi -if "${CONAN_OUTPUT_DIRECTORY}/cmake"
+        ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake"
         --build missing --profile ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
-          ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake"
+          ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
           --json=${CONAN_OUTPUT_DIRECTORY}/conan_deps.json
           --graph=${CONAN_OUTPUT_DIRECTORY}/conan_deps.html)
         message(STATUS "")
         break()
       endif()
-      
+
       message(FATAL_ERROR "Installing conan dependencies failed!")
       message(STATUS "")
       
     endforeach()
+
+    # remove conan build files
+    message(STATUS "* Cleaning conan build files ...")
+    execute_process(COMMAND ${CONAN_BINARY} remove "*" --src --builds --force
+        RESULT_VARIABLE _conan_remove_builds_ret)
+    if(NOT _conan_remove_builds_ret EQUAL "0")
+      message(WARNING "Removing conan build files failed!")
+    endif()
+
+    if(BUILDSYS_CONAN_UPLOAD_PACKAGES)
+      execute_process(COMMAND ${CONAN_BINARY} upload "*" --all -c -r ${CONAN_REMOTE_NAME}
+        RESULT_VARIABLE _conan_upload_ret)
+      if(_conan_upload_ret EQUAL "0")
+        message(WARNING "Uploading built Conan packages to remote '${CONAN_REMOTE_NAME}' failed!")
+        message(STATUS "")
+      endif()
+    endif()
 
     list(INSERT CMAKE_MODULE_PATH 0 "${CONAN_OUTPUT_DIRECTORY}/cmake")
     list(INSERT CMAKE_PREFIX_PATH 0 "${CONAN_OUTPUT_DIRECTORY}/cmake")

@@ -14,7 +14,8 @@ macro(enable_python_impl VERSION)
   set(SHORT_VERSION "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
 
   if (BUILDSYS_CONAN)
-    find_package(Boost COMPONENTS python)  
+    find_package(Boost)
+    # find_package(Boost COMPONENTS python)  
   else()    
     find_package(Boost ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION} QUIET
       COMPONENTS
@@ -32,7 +33,11 @@ macro(enable_python_impl VERSION)
   elseif(Boost_PYTHON-PY${SHORT_VERSION}_FOUND)
     set(PYLIB Boost_PYTHON-PY${SHORT_VERSION})
   else()
-    message(FATAL_ERROR "No boost python libraries found.")
+    if (BUILDSYS_CONAN)
+      message(WARNING "No boost python libraries found.") 
+    else()
+      message(FATAL_ERROR "No boost python libraries found.")
+    endif()
   endif()
 
   # this must be manually set

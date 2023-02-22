@@ -1,7 +1,7 @@
-find_package(libjpeg-turbo CONFIG)
+find_package(JPEG CONFIG)
 
-if (TARGET libjpeg-turbo::libjpeg-turbo)
+if (TARGET JPEG-turbo::libjpeg-JPEG)
   set(JPEG_FOUND TRUE)
-  set(JPEG_VERSION ${libjpeg-turbo_VERSION})
-  set(JPEG_LIBRARIES libjpeg-turbo::libjpeg-turbo)
+  set(JPEG_VERSION ${JPEG_VERSION})
+  set(JPEG_LIBRARIES JPEG::JPEG)
 endif()

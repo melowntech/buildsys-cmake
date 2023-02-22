@@ -1,21 +1,12 @@
-# --------- backup variables ---------
-set(_jsoncpp_FOUND ${jsoncpp_FOUND})
-set(_jsoncpp_VERSION ${jsoncpp_VERSION})
-set(_jsoncpp_LIBRARIES ${jsoncpp_LIBRARIES})
-set(_jsoncpp_INCLUDE_DIRS ${jsoncpp_INCLUDE_DIRS})
-# ------------------------------------
-
 find_package(jsoncpp CONFIG)
 
 if (TARGET jsoncpp::jsoncpp)
   set(JSONCPP_FOUND TRUE)
   set(JSONCPP_VERSION ${jsoncpp_VERSION})
   set(JSONCPP_LIBRARIES jsoncpp::jsoncpp)
+  get_target_property(JSONCPP_INCLUDE_DIRS jsoncpp::jsoncpp INTERFACE_INCLUDE_DIRECTORIES)
+  set(JsonCPP_FOUND TRUE)
+  set(JsonCPP_VERSION ${jsoncpp_VERSION})
+  set(JsonCPP_LIBRARIES jsoncpp::jsoncpp)
+  get_target_property(JsonCPP_INCLUDE_DIRS jsoncpp::jsoncpp INTERFACE_INCLUDE_DIRECTORIES)
 endif()
-
-# --------- restore variables ---------
-set(jsoncpp_FOUND ${_jsoncpp_FOUND})
-set(jsoncpp_VERSION ${_jsoncpp_VERSION})
-set(jsoncpp_LIBRARIES ${_jsoncpp_LIBRARIES})
-set(jsoncpp_INCLUDE_DIRS ${_jsoncpp_INCLUDE_DIRS})
-# ------------------------------------
