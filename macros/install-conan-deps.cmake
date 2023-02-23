@@ -66,27 +66,19 @@ macro(install_conan_deps
     if(_conan_remote_found EQUAL -1)
       message(FATAL_ERROR "Conan remote '${CONAN_REMOTE_NAME}' ${CONAN_PACKAGES_REMOTE} is missing ...\n"
         "Add remote using:\n"
-        "- conan remote clean\n"
+        "- conan remote remove *\n"
         "- conan remote add conancenter https://center.conan.io\n"
         "- conan remote add ${CONAN_REMOTE_NAME} ${CONAN_PACKAGES_REMOTE}\n"
-        "- conan user \${USER} -p -r ${CONAN_REMOTE_NAME}\n")
+        "- conan remote login \${USER} -p -r ${CONAN_REMOTE_NAME}\n")
     endif()
-
-    # enable revisions for conan 1.X
-    execute_process(COMMAND ${CONAN_BINARY} config set general.revisions_enabled=True
-        OUTPUT_QUIET ERROR_QUIET)
     
-    # create conan profile
-    set(CONAN_PROFILE_NAME ${CONAN_REMOTE_NAME})
-    execute_process(COMMAND ${CONAN_BINARY} profile new ${CONAN_PROFILE_NAME} --detect
+    # create default conan profile if missing
+    execute_process(COMMAND ${CONAN_BINARY} profile detect 
         OUTPUT_QUIET ERROR_QUIET)
       
-    # update conan profile for windows
+    # conan settings override
     IF(WIN32)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="Visual Studio" ${CONAN_PROFILE_NAME}
-        OUTPUT_QUIET ERROR_QUIET)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.version=16 ${CONAN_PROFILE_NAME}
-        OUTPUT_QUIET ERROR_QUIET)
+      set(CONAN_SETTINGS_OVERRIDE -s:h compiler.version=192 -s:b compiler.version=192)
     endif()
 
     if (NOT "${PIP_REQUIREMENTS}" STREQUAL "")
@@ -123,12 +115,12 @@ macro(install_conan_deps
     foreach(CONAN_BUILD_TYPE ${CONAN_BUILD_TYPES})
       message(STATUS "* Installing conan dependencies (${CONAN_BUILD_TYPE}) from '${CONAN_FILE}' ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
-        ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
-        --build missing --profile ${CONAN_PROFILE_NAME}
+        ${CONAN_FILE} -of "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
+        --build missing ${CONAN_SETTINGS_OVERRIDE}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
-          ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
+          ${CONAN_FILE} -of "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
           --json=${CONAN_OUTPUT_DIRECTORY}/conan_deps.json
           --graph=${CONAN_OUTPUT_DIRECTORY}/conan_deps.html)
         message(STATUS "")
@@ -137,12 +129,12 @@ macro(install_conan_deps
 
       message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, trying conan-center ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
-        ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake"
-        --build missing --profile ${CONAN_PROFILE_NAME}
+        ${CONAN_FILE} -of "${CONAN_OUTPUT_DIRECTORY}/cmake"
+        --build missing ${CONAN_SETTINGS_OVERRIDE}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
-          ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
+          ${CONAN_FILE} -of "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
           --json=${CONAN_OUTPUT_DIRECTORY}/conan_deps.json
           --graph=${CONAN_OUTPUT_DIRECTORY}/conan_deps.html)
         message(STATUS "")
