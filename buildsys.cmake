@@ -242,7 +242,7 @@ endmacro()
 
 macro(enable_threads)
   find_package(Threads REQUIRED)
-  set(THREADS_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
+  set(THREADS_LIBRARIES Threads::Threads)
 endmacro()
 
 macro(setup_project NAME VERSION)
@@ -365,11 +365,11 @@ macro(setup_build_system)
   endif()
 
   if (BUILDSYS_CPP_STANDARD EQUAL 11)
-    enable_cpp11()
+    set(CMAKE_CXX_STANDARD 11)
   elseif (BUILDSYS_CPP_STANDARD EQUAL 14)
-    enable_cpp14()
+    set(CMAKE_CXX_STANDARD 14)
   elseif (BUILDSYS_CPP_STANDARD EQUAL 17)
-    enable_cpp17()
+    set(CMAKE_CXX_STANDARD 17)
   else()
     message(FATAL_ERROR "Unknown C++ standard ${BUILDSYS_CPP_STANDARD} requested.")
   endif()
@@ -380,8 +380,8 @@ macro(setup_build_system)
   set(C++_LIBRARIES)
   set(C++_DEFINITION)
 
-  # enable C11 by default
-  enable_c11()
+  # # enable C11 by default
+  # enable_c11()
   enable_threads()
 
   if(CMAKE_Fortran_COMPILER)

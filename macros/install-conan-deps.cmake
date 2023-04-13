@@ -87,6 +87,10 @@ macro(install_conan_deps
         OUTPUT_QUIET ERROR_QUIET)
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.version=16 ${CONAN_PROFILE_NAME}
         OUTPUT_QUIET ERROR_QUIET)
+    else()
+      # Use C++ 11 ABI (https://docs.conan.io/1/howtos/manage_gcc_abi.html)
+      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.libcxx=libstdc++11 ${CONAN_PROFILE_NAME}
+        OUTPUT_QUIET ERROR_QUIET)
     endif()
 
     if (NOT "${PIP_REQUIREMENTS}" STREQUAL "")
