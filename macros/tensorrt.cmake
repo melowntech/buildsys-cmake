@@ -1,14 +1,11 @@
 macro(enable_TensorRT_impl)
   if(MSVC)
-    if(NOT TENSORRT_ROOT)
-      set(TENSORRT_ROOT $ENV{TENSORRT_ROOT})
-      if(NOT TENSORRT_ROOT)
-        message(FATAL_ERROR "Environment variable TENSORRT_ROOT not defined! Unable to find TensorRT!")
-      endif()
+    if(NOT ENV{TENSORRT_ROOT})
+      message(FATAL_ERROR "Environment variable TENSORRT_ROOT not defined! Unable to find TensorRT!")
     endif()
 
     # Copy TensorRT DLLs and create cmake targets
-    file(GLOB TensorRT_DLLS "${TENSORRT_ROOT}/lib/*.dll")
+    file(GLOB TensorRT_DLLS "$ENV{TENSORRT_ROOT}/lib/*.dll")
     foreach(_TensorRT_DLL_PATH ${TensorRT_DLLS})
       get_filename_component(_TensorRT_DLL_LIB ${_TensorRT_DLL_PATH} NAME_WE)
       get_filename_component(_TensorRT_DLL_NAME ${_TensorRT_DLL_PATH} NAME)
