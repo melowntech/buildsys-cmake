@@ -47,7 +47,11 @@ macro(install_conan_deps
     # (enable use of conda without activation) add Library/bin to PATH
     get_filename_component(_conda_env ${Python3_EXECUTABLE} DIRECTORY)
     if (EXISTS ${_conda_env}/Library/bin)
-      set(ENV{PATH} "${_conda_env}/Library/bin;${_conda_env}/Scripts;$ENV{PATH}")
+      if (WIN32)
+        set(ENV{PATH} "${_conda_env}/Library/bin;${_conda_env}/Scripts;$ENV{PATH}")
+      else()
+        set(ENV{PATH} "${_conda_env}/Library/bin:${_conda_env}/Scripts:$ENV{PATH}")
+      endif()
     endif()
 
     # check if conan exists
