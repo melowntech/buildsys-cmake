@@ -49,8 +49,6 @@ macro(install_conan_deps
     if (EXISTS ${_conda_env}/Library/bin)
       if (WIN32)
         set(ENV{PATH} "${_conda_env}/Library/bin;${_conda_env}/Scripts;$ENV{PATH}")
-      else()
-        set(ENV{PATH} "${_conda_env}/Library/bin:${_conda_env}/Scripts:$ENV{PATH}")
       endif()
     endif()
 
