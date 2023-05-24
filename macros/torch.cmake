@@ -1,5 +1,5 @@
 macro(enable_torch_impl)
-  if(NOT WIN32)
+  if(NOT WIN32 AND NOT APPLE)
     if(NOT PYTHON_EXECUTABLE)
       message(STATUS "No PYTHON_EXECUTABLE found. Use enable_python(version).")
     else()
@@ -13,7 +13,7 @@ macro(enable_torch_impl)
   else()
     find_package(Torch REQUIRED)
   endif()
-  
+
   if (MSVC)
     file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
     foreach(_TORCH_DLL_PATH ${TORCH_DLLS})
