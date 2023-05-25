@@ -12,7 +12,7 @@ macro(enable_OpenMP_impl)
     if (TARGET OpenMP::Fortran)
       link_libraries(OpenMP::Fortran)
     endif()
-    
+
     if(NOT OpenMP_FOUND)
       # for compatibility with older cmake version
       set(OpenMP_FOUND TRUE)
@@ -47,7 +47,7 @@ macro(enable_OpenMP_win_experimental)
       string(REPLACE "-openmp" "/openmp:llvm -openmp:experimental" INTERFACE_LINK_OPTIONS ${WIN_OMP_LINK_OPTIONS})
       set_target_properties(OpenMP::OpenMP_C PROPERTIES INTERFACE_LINK_OPTIONS ${INTERFACE_LINK_OPTIONS})
     endif()
-  
+
   endif()
 endmacro()
 

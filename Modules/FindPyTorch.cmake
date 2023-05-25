@@ -4,7 +4,7 @@ include(FindPackageHandleStandardArgs)
 if(NOT PYTHON_EXECUTABLE)
   message(STATUS "No PYTHON_EXECUTABLE found. Use enable_python(version).")
   set(PYTORCH_DIR PYTORCH_DIR-NOTFOUND)
-  find_package_handle_standard_args(TensorFlow REQUIRED_VARS PYTORCH_DIR)
+  find_package_handle_standard_args(PyTorch REQUIRED_VARS PYTORCH_DIR)
 endif()
 
 execute_process(COMMAND "${PYTHON_EXECUTABLE}"
