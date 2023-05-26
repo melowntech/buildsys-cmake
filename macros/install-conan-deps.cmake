@@ -5,7 +5,7 @@
 #   "${CMAKE_CURRENT_LIST_DIR}/requirements.txt"
 #)
 
-macro(install_conan_deps 
+macro(install_conan_deps
   CONAN_REMOTE_NAME
   CONAN_PACKAGES_REMOTE
   CONAN_FILE
@@ -43,7 +43,7 @@ macro(install_conan_deps
     find_package(Python3 COMPONENTS Interpreter REQUIRED QUIET)
     set(CONAN_BINARY ${Python3_EXECUTABLE} -m conans.conan)
     set(PIP_BINARY ${Python3_EXECUTABLE} -m pip)
-    
+
     # (enable use of conda without activation) add Library/bin to PATH
     get_filename_component(_conda_env ${Python3_EXECUTABLE} DIRECTORY)
     if (EXISTS ${_conda_env}/Library/bin)
@@ -53,7 +53,7 @@ macro(install_conan_deps
     endif()
 
     # check if conan exists
-    execute_process(COMMAND ${CONAN_BINARY} 
+    execute_process(COMMAND ${CONAN_BINARY}
       RESULT_VARIABLE _conan_ret
       OUTPUT_QUIET ERROR_QUIET)
     if(_conan_ret EQUAL "1")
@@ -62,7 +62,7 @@ macro(install_conan_deps
 
     execute_process(COMMAND ${CONAN_BINARY} remote list
       OUTPUT_VARIABLE _conan_remotes)
-    
+
     # check for conan remote
     string(FIND "${_conan_remotes}" "${CONAN_REMOTE_NAME}: ${CONAN_PACKAGES_REMOTE}" _conan_remote_found)
     if(_conan_remote_found EQUAL -1)
@@ -77,12 +77,12 @@ macro(install_conan_deps
     # enable revisions for conan 1.X
     execute_process(COMMAND ${CONAN_BINARY} config set general.revisions_enabled=True
         OUTPUT_QUIET ERROR_QUIET)
-    
+
     # create conan profile
     set(CONAN_PROFILE_NAME ${CONAN_REMOTE_NAME})
     execute_process(COMMAND ${CONAN_BINARY} profile new ${CONAN_PROFILE_NAME} --detect
         OUTPUT_QUIET ERROR_QUIET)
-      
+
     # update conan profile for windows
     IF(WIN32)
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="Visual Studio" ${CONAN_PROFILE_NAME}
@@ -92,6 +92,16 @@ macro(install_conan_deps
     else()
       # Use C++ 11 ABI (https://docs.conan.io/1/howtos/manage_gcc_abi.html)
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.libcxx=libstdc++11 ${CONAN_PROFILE_NAME}
+        OUTPUT_QUIET ERROR_QUIET)
+    endif()
+
+    # update conan profile for apple
+    IF(APPLE)
+      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="apple-clang" ${CONAN_PROFILE_NAME}
+        OUTPUT_QUIET ERROR_QUIET)
+      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.libcxx=libc++ ${CONAN_PROFILE_NAME}
+        OUTPUT_QUIET ERROR_QUIET)
+      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.version=14 ${CONAN_PROFILE_NAME}
         OUTPUT_QUIET ERROR_QUIET)
     endif()
 
@@ -109,11 +119,11 @@ macro(install_conan_deps
         message(WARNING "Unable to extract python licenses!")
       else()
         file(MAKE_DIRECTORY ${CONAN_OUTPUT_DIRECTORY}/licenses)
-        execute_process(COMMAND pip-licenses --from=mixed --with-authors 
+        execute_process(COMMAND pip-licenses --from=mixed --with-authors
           --with-urls --with-description --format=json
           --output-file=${CONAN_OUTPUT_DIRECTORY}/python_deps.json)
-        execute_process(COMMAND pip-licenses --from=mixed --with-authors 
-          --with-urls --with-description --format=plain-vertical 
+        execute_process(COMMAND pip-licenses --from=mixed --with-authors
+          --with-urls --with-description --format=plain-vertical
           --with-license-file --no-license-path
           --output-file=${CONAN_OUTPUT_DIRECTORY}/licenses/python_thirdparty_licenses.txt)
       endif()
@@ -129,12 +139,12 @@ macro(install_conan_deps
     foreach(CONAN_BUILD_TYPE ${CONAN_BUILD_TYPES})
       message(STATUS "* Installing conan dependencies (${CONAN_BUILD_TYPE}) from '${CONAN_FILE}' ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
-        ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
+        ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME}
         --build missing --profile ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
-          ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
+          ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME}
           --json=${CONAN_OUTPUT_DIRECTORY}/conan_deps.json
           --graph=${CONAN_OUTPUT_DIRECTORY}/conan_deps.html)
         message(STATUS "")
@@ -148,7 +158,7 @@ macro(install_conan_deps
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
-          ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME} 
+          ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME}
           --json=${CONAN_OUTPUT_DIRECTORY}/conan_deps.json
           --graph=${CONAN_OUTPUT_DIRECTORY}/conan_deps.html)
         message(STATUS "")
@@ -157,7 +167,7 @@ macro(install_conan_deps
 
       message(FATAL_ERROR "Installing conan dependencies failed!")
       message(STATUS "")
-      
+
     endforeach()
 
     # remove conan build files

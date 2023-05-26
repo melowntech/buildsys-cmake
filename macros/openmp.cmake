@@ -1,18 +1,30 @@
 macro(enable_OpenMP_impl)
-  find_package(OpenMP)
+  if(APPLE)
+    find_package(OpenMP CONFIG)
+  else()
+    find_package(OpenMP)
+  endif()
 
-  if(OPENMP_FOUND)
+  if(OPENMP_FOUND OR OpenMP_FOUND)
     message(STATUS "Found OpenMP.")
     if (TARGET OpenMP::OpenMP_C)
+      message(STATUS "Found target OpenMP::OpenMP_C.")
       link_libraries(OpenMP::OpenMP_C)
     endif()
     if (TARGET OpenMP::OpenMP_CXX)
+      message(STATUS "Found target OpenMP::OpenMP_CXX.")
       link_libraries(OpenMP::OpenMP_CXX)
     endif()
     if (TARGET OpenMP::Fortran)
+      message(STATUS "Found target OpenMP::Fortran.")
       link_libraries(OpenMP::Fortran)
     endif()
-    
+
+    if(NOT OPENMP_FOUND)
+      # apple
+      set(OPENMP_FOUND TRUE)
+    endif()
+
     if(NOT OpenMP_FOUND)
       # for compatibility with older cmake version
       set(OpenMP_FOUND TRUE)
@@ -47,7 +59,7 @@ macro(enable_OpenMP_win_experimental)
       string(REPLACE "-openmp" "/openmp:llvm -openmp:experimental" INTERFACE_LINK_OPTIONS ${WIN_OMP_LINK_OPTIONS})
       set_target_properties(OpenMP::OpenMP_C PROPERTIES INTERFACE_LINK_OPTIONS ${INTERFACE_LINK_OPTIONS})
     endif()
-  
+
   endif()
 endmacro()
 
