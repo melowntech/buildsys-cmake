@@ -206,7 +206,6 @@ macro(enable_cpp17)
     # TODO: get rid of (some of) these ignores
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-overloaded-virtual") # function hiding
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-switch") # fix after GDAL 3.5.0
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-null-pointer-subtraction") # utility::md5
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations") # sprintf -> snprintf, result_of -> invoke_result
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override")
   elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang AND NOT CMAKE_CXX_COMPILER_ID MATCHES AppleClang)
