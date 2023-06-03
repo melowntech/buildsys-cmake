@@ -480,6 +480,7 @@ foreach(submodule
     symlink-fixes
     tensorflow
     torch
+    torchvision
     tensorrt
     exclude-from-all
 
