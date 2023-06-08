@@ -91,15 +91,10 @@ macro(install_conan_deps
 
     # update conan profile for apple
     IF(APPLE)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.os="Macos" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.os_build="Macos" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.arch="armv8" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.arch_build="armv8" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="apple-clang" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.cppstd="gnu17" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.version=14 ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
+      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.cppstd="gnu17" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.libcxx=libc++ ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.build_type="Release" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
       execute_process(COMMAND ${CONAN_BINARY} profile update env.CC=clang ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
       execute_process(COMMAND ${CONAN_BINARY} profile update env.CXX=clang++ ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
     endif()
