@@ -304,6 +304,7 @@ macro(setup_customer)
   string(TOUPPER "${CMAKE_BUILD_TYPE}" BT)
   if (BUILDSYS_CUSTOMER_BUILD_${BT})
     set(BUILDSYS_CUSTOMER_BUILD TRUE)
+    add_definitions("-DBUILDSYS_CUSTOMER_BUILD=1")
     if (NOT BUILDSYS_CUSTOMER)
       message(FATAL_ERROR "Custom build requested but no customer is set. "
         "Please, set BUILDSYS_CUSTOMER variable.")
