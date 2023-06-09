@@ -197,5 +197,23 @@ macro(install_conan_deps
     # restore PATH environment variable
     set(ENV{PATH} "${ENV_BACKUP}")
 
+    # create cmake install component (see conanfile / imports)
+    if (WIN32)
+      file(GLOB CONAN_LIBS "${CMAKE_BINARY_DIR}/bin/*.dll")
+      install(FILES ${CONAN_LIBS} DESTINATION bin COMPONENT conan_deps)
+    elseif(UNIX)
+      file(GLOB CONAN_LIBS "${CMAKE_BINARY_DIR}/lib/*.so*")
+      foreach(lib_ ${CONAN_LIBS})
+        find_program(PATCHELF patchelf REQUIRED)
+        execute_process(COMMAND ${PATCHELF} ${lib_} --set-rpath $ORIGIN
+          OUTPUT_QUIET ERROR_QUIET)
+      endforeach()
+      install(FILES ${CONAN_LIBS} DESTINATION lib COMPONENT conan_deps)
+    elseif(APPLE)
+      file(GLOB CONAN_LIBS "${CMAKE_BINARY_DIR}/lib/*.dylib*")
+      message(WARNING "RPATH of prebuilt dynamic libraries may not be set correctly. CPack may fail.")
+    endif()
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/share/" DESTINATION share COMPONENT conan_deps)
+
   endif()
 endmacro()
