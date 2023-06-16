@@ -1,5 +1,9 @@
 macro(enable_cuda_impl)
-  set(CMAKE_CUDA_ARCHITECTURES all-major CACHE STRING "")
+  # To find and use the CUDA toolkit libraries manually, use the FindCUDAToolkit module instead. 
+  # It works regardless of the CUDA language being enabled.
+  find_package(CUDAToolkit REQUIRED)
+  # WARNING: This is unfortunately overriden by Torch's TORCH_CUDA_ARCH_LIST
+  set(CMAKE_CUDA_ARCHITECTURES all-major CACHE STRING "") # cmake >= 3.23
   add_definitions(-DHAS_CUDA)
 endmacro()
 
