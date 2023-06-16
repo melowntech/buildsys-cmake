@@ -198,6 +198,7 @@ macro(install_conan_deps
     set(ENV{PATH} "${ENV_BACKUP}")
 
     # create cmake install component (see conanfile / imports)
+    # TODO: find specific files imported by conan to not accidentally include other files
     if (WIN32)
       file(GLOB CONAN_LIBS "${CMAKE_BINARY_DIR}/bin/*.dll")
       install(FILES ${CONAN_LIBS} DESTINATION bin COMPONENT conandeps)
