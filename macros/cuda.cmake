@@ -3,7 +3,11 @@ macro(enable_cuda_impl)
   # It works regardless of the CUDA language being enabled.
   find_package(CUDAToolkit REQUIRED)
   # WARNING: This is unfortunately overriden by Torch's TORCH_CUDA_ARCH_LIST
-  set(CMAKE_CUDA_ARCHITECTURES all-major CACHE STRING "") # cmake >= 3.23
+  if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.23.0")
+    set(CMAKE_CUDA_ARCHITECTURES all-major CACHE STRING "") # cmake >= 3.23
+  else()
+    set(CMAKE_CUDA_ARCHITECTURES 61-real 75-real 86 CACHE STRING "")
+  endif()
   add_definitions(-DHAS_CUDA)
 endmacro()
 
