@@ -166,7 +166,7 @@ macro(install_conan_deps
 
     # remove conan build files
     message(STATUS "* Cleaning conan build files ...")
-    execute_process(COMMAND ${CONAN_BINARY} remove "*" --src --builds --force
+    execute_process(COMMAND ${CONAN_BINARY} remove "*" --builds --force
         RESULT_VARIABLE _conan_remove_builds_ret)
     if(NOT _conan_remove_builds_ret EQUAL "0")
       message(WARNING "Removing conan build files failed!")
