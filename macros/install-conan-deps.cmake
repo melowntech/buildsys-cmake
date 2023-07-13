@@ -140,7 +140,7 @@ macro(install_conan_deps
       message(STATUS "* Installing conan dependencies (${CONAN_BUILD_TYPE}) from '${CONAN_FILE}' ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
         ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME}
-        --build missing --profile ${CONAN_PROFILE_NAME}
+        --build cascade --build missing --profile ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
@@ -154,7 +154,7 @@ macro(install_conan_deps
       message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, trying conan-center ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
         ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake"
-        --build missing --profile ${CONAN_PROFILE_NAME}
+        --build cascade --build missing --profile ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
@@ -172,7 +172,7 @@ macro(install_conan_deps
 
     # remove conan build files
     message(STATUS "* Cleaning conan build files ...")
-    execute_process(COMMAND ${CONAN_BINARY} remove "*" --src --builds --force
+    execute_process(COMMAND ${CONAN_BINARY} remove "*" --builds --force
         RESULT_VARIABLE _conan_remove_builds_ret)
     if(NOT _conan_remove_builds_ret EQUAL "0")
       message(WARNING "Removing conan build files failed!")
