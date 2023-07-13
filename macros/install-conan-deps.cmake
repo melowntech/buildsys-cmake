@@ -84,19 +84,15 @@ macro(install_conan_deps
         OUTPUT_QUIET ERROR_QUIET)
 
     # update conan profile for windows
-    IF(WIN32)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="Visual Studio" ${CONAN_PROFILE_NAME}
-        OUTPUT_QUIET ERROR_QUIET)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.version=16 ${CONAN_PROFILE_NAME}
-        OUTPUT_QUIET ERROR_QUIET)
-    else()
+    if(WIN32)
+      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="Visual Studio" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
+      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.version=16 ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
+    elseif(UNIX AND NOT APPLE)
+      # update conan profile for linux
       # Use C++ 11 ABI (https://docs.conan.io/1/howtos/manage_gcc_abi.html)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.libcxx=libstdc++11 ${CONAN_PROFILE_NAME}
-        OUTPUT_QUIET ERROR_QUIET)
-    endif()
-
-    # update conan profile for apple
-    IF(APPLE)
+      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.libcxx=libstdc++11 ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
+    elseif(APPLE)
+      # update conan profile for apple
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="apple-clang" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.version=14 ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.cppstd="gnu17" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
@@ -140,7 +136,7 @@ macro(install_conan_deps
       message(STATUS "* Installing conan dependencies (${CONAN_BUILD_TYPE}) from '${CONAN_FILE}' ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
         ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME}
-        --build cascade --build missing --profile ${CONAN_PROFILE_NAME}
+        --build cascade --build missing -pr:h ${CONAN_PROFILE_NAME} -pr:b ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
@@ -154,7 +150,7 @@ macro(install_conan_deps
       message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, trying conan-center ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
         ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake"
-        --build cascade --build missing --profile ${CONAN_PROFILE_NAME}
+        --build cascade --build missing -pr:h ${CONAN_PROFILE_NAME} -pr:b ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
