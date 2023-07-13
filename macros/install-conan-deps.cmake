@@ -202,7 +202,7 @@ macro(install_conan_deps
     if (WIN32)
       file(GLOB CONAN_LIBS "${CMAKE_BINARY_DIR}/bin/*.dll")
       install(FILES ${CONAN_LIBS} DESTINATION bin COMPONENT conandeps)
-    elseif(UNIX)
+    elseif(UNIX AND NOT APPLE)
       file(GLOB CONAN_LIBS "${CMAKE_BINARY_DIR}/lib/*.so*")
       foreach(lib_ ${CONAN_LIBS})
         find_program(PATCHELF patchelf REQUIRED)

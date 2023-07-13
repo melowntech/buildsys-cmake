@@ -26,7 +26,7 @@ macro(enable_torch_impl)
         add_library(${_TORCH_DLL_LIB} SHARED IMPORTED GLOBAL)
         set_target_properties(${_TORCH_DLL_LIB} PROPERTIES IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/bin/${_TORCH_DLL_NAME})
       endforeach()
-    elseif(UNIX)
+    elseif(UNIX AND NOT APPLE)
       file(GLOB TORCH_SO "${TORCH_INSTALL_PREFIX}/lib/*.so")
       foreach(_TORCH_SO_PATH ${TORCH_SO})
         # copy torch so
