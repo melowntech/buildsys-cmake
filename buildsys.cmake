@@ -203,9 +203,6 @@ macro(enable_cpp17)
     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--as-needed")
   elseif(CMAKE_CXX_COMPILER_ID MATCHES AppleClang)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++ -Wextra -Wall -Werror")
-    # TODO: get rid of (some of) these ignores
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-switch") # fix after GDAL 3.5.0
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations") # sprintf -> snprintf, spinlock
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override")
   elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang AND NOT CMAKE_CXX_COMPILER_ID MATCHES AppleClang)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++ -Wno-conversion")
@@ -307,6 +304,7 @@ macro(setup_customer)
   string(TOUPPER "${CMAKE_BUILD_TYPE}" BT)
   if (BUILDSYS_CUSTOMER_BUILD_${BT})
     set(BUILDSYS_CUSTOMER_BUILD TRUE)
+    add_definitions("-DBUILDSYS_CUSTOMER_BUILD=1")
     if (NOT BUILDSYS_CUSTOMER)
       message(FATAL_ERROR "Custom build requested but no customer is set. "
         "Please, set BUILDSYS_CUSTOMER variable.")
