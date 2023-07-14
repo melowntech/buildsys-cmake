@@ -202,6 +202,7 @@ macro(install_conan_deps
       # parse conan_imports_manifest.txt lines
       set(conan_file_skipped_ 1)
       string(REGEX REPLACE ": .*$" "" conan_file_ ${conan_import_}) 
+      file(TO_CMAKE_PATH "${conan_file_}" conan_file_)
       file(RELATIVE_PATH conan_file_rel_ ${CMAKE_BINARY_DIR} ${conan_file_})
       string(REGEX MATCH "^[^\\/]*" conan_folder_ ${conan_file_rel_}) 
       get_filename_component(conan_file_dest_ ${conan_file_rel_} DIRECTORY)
