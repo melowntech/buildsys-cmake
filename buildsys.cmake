@@ -93,11 +93,12 @@ macro(cpp_msvc_overrides)
   # disable linker warning: PDB (debug symbols) not found
   add_link_options(/ignore:4099)
 
-  # eliminate unreferenced functions
-  add_link_options(/OPT:REF)
-
-  # not possible with /OPT:REF
-  add_link_options(/INCREMENTAL:NO)
+  if(BUILDSYS_RELEASE_NDEBUG)
+    # eliminate unreferenced functions
+    add_link_options(/OPT:REF)
+    # not possible with /OPT:REF
+    add_link_options(/INCREMENTAL:NO)
+  endif()
 
   # avoid some especially obtrusive macro definitions in windows.h
   add_definitions(/DWIN32_LEAN_AND_MEAN)
