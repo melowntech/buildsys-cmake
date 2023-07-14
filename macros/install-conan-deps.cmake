@@ -197,15 +197,14 @@ macro(install_conan_deps
     if(NOT EXISTS "${CONAN_OUTPUT_DIRECTORY}/cmake/conan_imports_manifest.txt")
       message(WARNING "Unable to parse conan_imports_manifest.txt, COMPONENT conandeps wonn't be created.")
     endif()
-    file(STRINGS "${CONAN_OUTPUT_DIRECTORY}/cmake/conan_imports_manifest.txt" conan_imports_ REGEX "^.*:.*")
+    file(STRINGS "${CONAN_OUTPUT_DIRECTORY}/cmake/conan_imports_manifest.txt" conan_imports_ REGEX "^.*: .*")
     foreach(conan_import_ ${conan_imports_})
       # parse conan_imports_manifest.txt lines
-      string(REGEX MATCH "^(${CMAKE_BINARY_DIR}[\\/](([^\\/]*)[\\/][^:]*))" _ ${conan_import_}) 
       set(conan_file_skipped_ 1)
-      set(conan_file_ ${CMAKE_MATCH_1})
-      set(conan_file_dest_ ${CMAKE_MATCH_2})
-      get_filename_component(conan_file_dest_ ${conan_file_dest_} DIRECTORY)
-      set(conan_folder_ ${CMAKE_MATCH_3})
+      string(REGEX REPLACE ": .*$" "" conan_file_ ${conan_import_}) 
+      file(RELATIVE_PATH conan_file_rel_ ${CMAKE_BINARY_DIR} ${conan_file_})
+      string(REGEX MATCH "^[^\\/]*" conan_folder_ ${conan_file_rel_}) 
+      get_filename_component(conan_file_dest_ ${conan_file_rel_} DIRECTORY)
 
       if (${conan_folder_} STREQUAL "bin")
         # install *.dll files to bin folder
