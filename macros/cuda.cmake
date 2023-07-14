@@ -9,6 +9,16 @@ macro(enable_cuda_impl)
     set(CMAKE_CUDA_ARCHITECTURES 61-real 75-real 86 CACHE STRING "")
   endif()
   add_definitions(-DHAS_CUDA)
+
+  # Install CUDA DLLs
+  if(BUILDSYS_CONAN)
+    if (MSVC)
+      file(GLOB CUDA_DLLS "$ENV{CUDA_PATH}/bin/*.dll")
+      file(TO_CMAKE_PATH "${CUDA_DLLS}" CUDA_DLLS)
+      install(FILES ${CUDA_DLLS} DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT dynlibs)
+    endif()
+  endif()
+
 endmacro()
 
 set(_CUDA_LAMBDAS_ENABLED OFF)
