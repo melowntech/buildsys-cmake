@@ -13,7 +13,7 @@ macro(enable_cuda_impl)
   # Install CUDA dynamic libs
   if(BUILDSYS_CONAN)
     # TODO: do not copy unnecessary dynamic libs if possible
-    set(CUDA_DYNLIBS_FILTER "(cudart|cublas|cublasLt|curand|cusolver|cusparse|cudnn_[a-z]_infer)[0-9_]*\\.")
+    set(CUDA_DYNLIBS_FILTER "(cudart|cublas|cublasLt|curand|cusolver|cusparse|cudnn_[a-z]_infer|nvToolsExt)[0-9_]*\\.")
     if (MSVC)
       file(GLOB CUDA_DLLS "${CUDAToolkit_BIN_DIR}/*.dll")
       list(FILTER CUDA_DLLS INCLUDE REGEX ${CUDA_DYNLIBS_FILTER})
