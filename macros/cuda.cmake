@@ -10,12 +10,16 @@ macro(enable_cuda_impl)
   endif()
   add_definitions(-DHAS_CUDA)
 
-  # Install CUDA DLLs
+  # Install CUDA dynamic libs
   if(BUILDSYS_CONAN)
+    # TODO: do not copy unnecessary dynamic libs if possible
     if (MSVC)
-      file(GLOB CUDA_DLLS "$ENV{CUDA_PATH}/bin/*.dll")
+      file(GLOB CUDA_DLLS "${CUDAToolkit_BIN_DIR}/*.dll")
       file(TO_CMAKE_PATH "${CUDA_DLLS}" CUDA_DLLS)
       install(FILES ${CUDA_DLLS} DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT dynlibs)
+    elseif(UNIX AND NOT APPLE)
+      file(GLOB CUDA_SOLIBS "${CUDAToolkit_LIBRARY_DIR}/*.so*")
+      install(FILES ${CUDA_SOLIBS} DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT dynlibs)
     endif()
   endif()
 

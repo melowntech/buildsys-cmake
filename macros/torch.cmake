@@ -15,6 +15,7 @@ macro(enable_torch_impl)
   endif()
 
   if(BUILDSYS_CONAN)
+    # TODO: do not copy unnecessary dynamic libs if possible
     if (MSVC)
       file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
       foreach(_TORCH_DLL_PATH ${TORCH_DLLS})
