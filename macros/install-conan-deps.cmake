@@ -207,21 +207,20 @@ macro(install_conan_deps
       string(REGEX MATCH "^[^\\/]*" conan_folder_ ${conan_file_rel_}) 
       get_filename_component(conan_file_dest_ ${conan_file_rel_} DIRECTORY)
 
-      if (${conan_folder_} STREQUAL "bin")
-        # install *.dll files to bin folder
+      if (${conan_folder_} MATCHES "bin|lib")
         if (WIN32 AND ${conan_file_} MATCHES ".*\.dll$")
+          # install *.dll files to bin folder
           install(FILES ${conan_file_} DESTINATION ${conan_file_dest_} COMPONENT conandeps)
           unset(conan_file_skipped_)
-        endif()
-      elseif (${conan_folder_} STREQUAL "lib")
-        # install *.so* and *.dynlib* files to lib folder
-        if (UNIX AND NOT APPLE AND ${conan_file_} MATCHES ".*\.so$|.*\.so\.[^\\/]*$")
+        elseif ((UNIX AND NOT APPLE) AND ${conan_folder_} STREQUAL "lib" AND ${conan_file_} MATCHES ".*\.so$|.*\.so\.[^\\/]*$")
+          # install *.so* files to lib folder
           find_program(PATCHELF patchelf REQUIRED)
           execute_process(COMMAND ${PATCHELF} ${conan_file_} --set-rpath $ORIGIN
             OUTPUT_QUIET ERROR_QUIET)
           install(FILES ${conan_file_} DESTINATION ${conan_file_dest_} COMPONENT conandeps)
           unset(conan_file_skipped_)
         elseif(APPLE AND ${conan_file_} MATCHES ".*\.dylib$|.*\.dylib\.[^\\/]*$")
+          # install *.dynlib* files to lib folder
           message(WARNING "RPATH of ${conan_file_} may not be set correctly. CPack may fail.")
           install(FILES ${conan_file_} DESTINATION ${conan_file_dest_} COMPONENT conandeps)
           unset(conan_file_skipped_)
