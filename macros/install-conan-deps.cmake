@@ -91,6 +91,9 @@ macro(install_conan_deps
       # update conan profile for linux
       # Use C++ 11 ABI (https://docs.conan.io/1/howtos/manage_gcc_abi.html)
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.libcxx=libstdc++11 ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
+      execute_process(COMMAND ${CONAN_BINARY} profile update env.CC=/usr/bin/gcc ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
+      execute_process(COMMAND ${CONAN_BINARY} profile update env.CXX=/usr/bin/g++ ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
+      execute_process(COMMAND ${CONAN_BINARY} profile update env.FC=/usr/bin/gfortran ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
     elseif(APPLE)
       # update conan profile for apple
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="apple-clang" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
