@@ -400,7 +400,7 @@ macro(setup_build_system)
   set(C++_LIBRARIES)
   set(C++_DEFINITION)
 
-  # # enable C11 by default
+  # enable C11 by default
   enable_c11()
   enable_threads()
 
