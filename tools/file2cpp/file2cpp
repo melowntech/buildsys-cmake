@@ -70,8 +70,10 @@ if version:
     hpp_file.write("    constexpr unsigned int %s_attr_version = %s;\n"
                    % (name[-1], version))
 
-hpp_file.write("    constexpr std::time_t %s_attr_lastModified(%s);\n"
-               % (name[-1], long(lastModified)))
+# skip for generated .pyc files
+if not ifile.endswith(".pyc"):
+    hpp_file.write("    constexpr std::time_t %s_attr_lastModified(%s);\n"
+                % (name[-1], long(lastModified)))
 
 for ns in reversed(name[:-1]):
     hpp_file.write("} // namespace %s\n" % (ns, ))
