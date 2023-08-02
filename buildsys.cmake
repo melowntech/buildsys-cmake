@@ -215,7 +215,6 @@ endmacro()
 
 # enable C++17
 macro(enable_cpp17)
-  set(CMAKE_C_STANDARD 11)
   set(CMAKE_CXX_STANDARD 17)
   if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
     cpp_gcc_overrides()
