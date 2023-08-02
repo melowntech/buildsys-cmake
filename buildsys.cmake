@@ -42,10 +42,10 @@ macro(cpp_msvc_overrides)
   add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/Ot>)
 
   # disable security checks (stack buffer overrun prevention)
-  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELEASE>>:/GS->)
-  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELEASE>>:/O2>)
-  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELWITHDEBINFO>>:/GS->)
-  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RELWITHDEBINFO>>:/O2>)
+  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:Release>>:/GS->)
+  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:Release>>:/O2>)
+  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RelWithDebInfo>>:/GS->)
+  add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX>,$<CONFIG:RelWithDebInfo>>:/O2>)
 
   # # disable warning: class 'type' needs to have dll-interface
   # #   to be used by clients of class 'type2'
@@ -93,11 +93,12 @@ macro(cpp_msvc_overrides)
   # disable linker warning: PDB (debug symbols) not found
   add_link_options(/ignore:4099)
 
-  # eliminate unreferenced functions
-  add_link_options(/OPT:REF)
-
-  # not possible with /OPT:REF
-  add_link_options(/INCREMENTAL:NO)
+  if(BUILDSYS_RELEASE_NDEBUG)
+    # eliminate unreferenced functions
+    add_link_options(/OPT:REF)
+    # not possible with /OPT:REF
+    add_link_options(/INCREMENTAL:NO)
+  endif()
 
   # avoid some especially obtrusive macro definitions in windows.h
   add_definitions(/DWIN32_LEAN_AND_MEAN)
@@ -107,8 +108,52 @@ macro(cpp_msvc_overrides)
   add_definitions(/D_CRT_SECURE_NO_WARNINGS)
 endmacro()
 
+macro(cpp_gcc_overrides)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wall>)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wextra>)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Werror>)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-pedantic-errors>)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wno-date-time>)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wno-misleading-indentation>)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wnon-virtual-dtor>)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wno-unused-function>)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--as-needed")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--as-needed")
+  set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--as-needed")
+endmacro()
+
+macro(cpp_appleclang_overrides)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wall>)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wextra>)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Werror>)
+  add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-stdlib=libc++>)
+endmacro()
+
+# enable C11
+macro(enable_c11)
+  set(CMAKE_C_STANDARD 11)
+  if (CMAKE_C_COMPILER_ID MATCHES GNU)
+    add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wall>)
+    add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wextra>)
+    add_compile_options($<$<COMPILE_LANGUAGE:C>:-Werror>)
+    add_compile_options($<$<COMPILE_LANGUAGE:C>:-pedantic-errors>)
+    if(NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 5.0)
+      # compiler newer than 4.x
+      add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-date-time>)
+    endif()
+  elseif (CMAKE_C_COMPILER_ID MATCHES Clang)
+    # add_compile_options($<$<COMPILE_LANGUAGE:C>:-std=c1x>)
+  elseif (CMAKE_C_COMPILER_ID MATCHES MSVC)
+    cpp_msvc_overrides()
+  else()
+    message(FATAL_ERROR "Unknown C compiler: ${CMAKE_C_COMPILER_ID}.")
+  endif()
+  message(STATUS "Enabled C11 for C (${CMAKE_C_COMPILER_ID})")
+endmacro()
+
 # enable C++11
 macro(enable_cpp11)
+  set(CMAKE_CXX_STANDARD 11)
   if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -pedantic-errors")
     if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
@@ -143,7 +188,6 @@ macro(enable_cpp11)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -Wno-conversion")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-braces")
   elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
-    set(CMAKE_CXX_STANDARD 11)
     cpp_msvc_overrides()
   else()
     message(FATAL_ERROR "Unknown C++ compiler: ${CMAKE_CXX_COMPILER_ID}.")
@@ -151,40 +195,17 @@ macro(enable_cpp11)
   message(STATUS "Enabled C++11 for C++ (${CMAKE_CXX_COMPILER_ID})")
 endmacro()
 
-# enable C11
-macro(enable_c11)
-  if (CMAKE_C_COMPILER_ID MATCHES GNU)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Werror -pedantic-errors")
-    if(NOT CMAKE_C_COMPILER_VERSION VERSION_LESS 5.0)
-      # compiler newer than 4.x
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-date-time")
-    endif()
-  elseif (CMAKE_C_COMPILER_ID MATCHES Clang)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c1x")
-  elseif (CMAKE_C_COMPILER_ID MATCHES MSVC)
-    set(CMAKE_C_STANDARD 11)
-    cpp_msvc_overrides()
-  else()
-    message(FATAL_ERROR "Unknown C compiler: ${CMAKE_C_COMPILER_ID}.")
-  endif()
-  message(STATUS "Enabled C11 for C (${CMAKE_C_COMPILER_ID})")
-endmacro()
-
 # enable C++14
 macro(enable_cpp14)
+  set(CMAKE_CXX_STANDARD 14)
   if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -pedantic-errors")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wnon-virtual-dtor")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-date-time -Wno-misleading-indentation")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-function")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--as-needed")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--as-needed")
-    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--as-needed")
-  elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -stdlib=libc++ -Wno-conversion")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-braces")
+    cpp_gcc_overrides()
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES AppleClang)
+    cpp_appleclang_overrides()
+  elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang AND NOT CMAKE_CXX_COMPILER_ID MATCHES AppleClang)
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wno-conversion>)
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wno-missing-braces>)
   elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
-    set(CMAKE_CXX_STANDARD 14)
     cpp_msvc_overrides()
   else()
     message(FATAL_ERROR "Unknown C++ compiler: ${CMAKE_CXX_COMPILER_ID}.")
@@ -194,21 +215,15 @@ endmacro()
 
 # enable C++17
 macro(enable_cpp17)
+  set(CMAKE_CXX_STANDARD 17)
   if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -pedantic-errors")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wnon-virtual-dtor")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-date-time -Wno-misleading-indentation")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--as-needed")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--as-needed")
-    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--as-needed")
+    cpp_gcc_overrides()
   elseif(CMAKE_CXX_COMPILER_ID MATCHES AppleClang)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++ -Wextra -Wall -Werror")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-inconsistent-missing-override")
+    cpp_appleclang_overrides()
   elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang AND NOT CMAKE_CXX_COMPILER_ID MATCHES AppleClang)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++ -Wno-conversion")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-braces")
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wno-conversion>)
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wno-missing-braces>)
   elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
-    set(CMAKE_CXX_STANDARD 17)
     cpp_msvc_overrides()
   else()
     message(FATAL_ERROR "Unknown C++ compiler: ${CMAKE_CXX_COMPILER_ID}.")
@@ -245,7 +260,7 @@ endmacro()
 
 macro(enable_threads)
   find_package(Threads REQUIRED)
-  set(THREADS_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
+  set(THREADS_LIBRARIES Threads::Threads)
 endmacro()
 
 macro(setup_project NAME VERSION)
@@ -458,6 +473,7 @@ foreach(submodule
     symlink-fixes
     tensorflow
     torch
+    torchvision
     tensorrt
     exclude-from-all
 

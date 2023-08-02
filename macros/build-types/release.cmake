@@ -2,13 +2,21 @@
 
 option(BUILDSYS_RELEASE_NDEBUG "Compile release without debug symbols" OFF)
 
-if(NOT WIN32 AND NOT BUILDSYS_EMBEDDED)
+if(NOT BUILDSYS_EMBEDDED)
   if(NOT BUILDSYS_RELEASE_NDEBUG)
     message(STATUS "Release mode: Compiling with debug symbols by default. To disable set the BUILDSYS_RELEASE_NDEBUG variable.")
-    # update definitions
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g")
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -g")
-    set(CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -g")
+    if (MSVC)
+      add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX,Fortran>,$<CONFIG:Release>>:/Zi>)
+      add_link_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX,Fortran>,$<CONFIG:Release>>:/debug>)
+      add_compile_options($<$<AND:$<COMPILE_LANGUAGE:CUDA>,$<CONFIG:Release>>:-g>)
+      # add_compile_options($<$<AND:$<COMPILE_LANGUAGE:CUDA>,$<CONFIG:Release>>:-G>) # Note: this turns off all optimizations
+      add_compile_options($<$<AND:$<COMPILE_LANGUAGE:CUDA>,$<CONFIG:Release>>:-lineinfo>)
+    else()
+      add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX,Fortran>,$<CONFIG:Release>>:-g>)
+      add_compile_options($<$<AND:$<COMPILE_LANGUAGE:CUDA>,$<CONFIG:Release>>:-g>)
+      # add_compile_options($<$<AND:$<COMPILE_LANGUAGE:CUDA>,$<CONFIG:Release>>:-G>) # Note: this turns off all optimizations
+      add_compile_options($<$<AND:$<COMPILE_LANGUAGE:CUDA>,$<CONFIG:Release>>:-lineinfo>)
+    endif()
   else()
     message(STATUS "Release mode: Not compiling with debug symbols as instructed.")
   endif()

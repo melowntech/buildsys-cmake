@@ -47,7 +47,9 @@ macro(install_conan_deps
     # (enable use of conda without activation) add Library/bin to PATH
     get_filename_component(_conda_env ${Python3_EXECUTABLE} DIRECTORY)
     if (EXISTS ${_conda_env}/Library/bin)
-      set(ENV{PATH} "${_conda_env}/Library/bin;${_conda_env}/Scripts;$ENV{PATH}")
+      if (WIN32)
+        set(ENV{PATH} "${_conda_env}/Library/bin;${_conda_env}/Scripts;$ENV{PATH}")
+      endif()
     endif()
 
     # check if conan exists
@@ -82,15 +84,18 @@ macro(install_conan_deps
         OUTPUT_QUIET ERROR_QUIET)
 
     # update conan profile for windows
-    IF(WIN32)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="Visual Studio" ${CONAN_PROFILE_NAME}
-        OUTPUT_QUIET ERROR_QUIET)
-      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.version=16 ${CONAN_PROFILE_NAME}
-        OUTPUT_QUIET ERROR_QUIET)
-    endif()
-
-    # update conan profile for apple
-    IF(APPLE)
+    if(WIN32)
+      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="Visual Studio" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
+      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.version=16 ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
+    elseif(UNIX AND NOT APPLE)
+      # update conan profile for linux
+      # Use C++ 11 ABI (https://docs.conan.io/1/howtos/manage_gcc_abi.html)
+      execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.libcxx=libstdc++11 ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
+      # execute_process(COMMAND ${CONAN_BINARY} profile update env.CC=/usr/bin/gcc ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
+      # execute_process(COMMAND ${CONAN_BINARY} profile update env.CXX=/usr/bin/g++ ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
+      # execute_process(COMMAND ${CONAN_BINARY} profile update env.FC=/usr/bin/gfortran ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
+    elseif(APPLE)
+      # update conan profile for apple
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler="apple-clang" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.version=14 ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
       execute_process(COMMAND ${CONAN_BINARY} profile update settings.compiler.cppstd="gnu17" ${CONAN_PROFILE_NAME} OUTPUT_QUIET ERROR_QUIET)
@@ -134,7 +139,7 @@ macro(install_conan_deps
       message(STATUS "* Installing conan dependencies (${CONAN_BUILD_TYPE}) from '${CONAN_FILE}' ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
         ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake" -r ${CONAN_REMOTE_NAME}
-        --build missing --profile ${CONAN_PROFILE_NAME}
+        --build cascade --build missing -pr:h ${CONAN_PROFILE_NAME} -pr:b ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
@@ -148,7 +153,7 @@ macro(install_conan_deps
       message(WARNING "Install from remote '${CONAN_REMOTE_NAME}' failed, trying conan-center ...")
       execute_process(COMMAND ${CONAN_BINARY} install -s build_type=${CONAN_BUILD_TYPE}
         ${CONAN_FILE} -if "${CONAN_OUTPUT_DIRECTORY}/cmake"
-        --build missing --profile ${CONAN_PROFILE_NAME}
+        --build cascade --build missing -pr:h ${CONAN_PROFILE_NAME} -pr:b ${CONAN_PROFILE_NAME}
         RESULT_VARIABLE _conan_install_ret)
       if(_conan_install_ret EQUAL "0")
         execute_process(COMMAND ${CONAN_BINARY} info
@@ -166,7 +171,7 @@ macro(install_conan_deps
 
     # remove conan build files
     message(STATUS "* Cleaning conan build files ...")
-    execute_process(COMMAND ${CONAN_BINARY} remove "*" --src --builds --force
+    execute_process(COMMAND ${CONAN_BINARY} remove "*" --builds --force
         RESULT_VARIABLE _conan_remove_builds_ret)
     if(NOT _conan_remove_builds_ret EQUAL "0")
       message(WARNING "Removing conan build files failed!")
@@ -190,6 +195,52 @@ macro(install_conan_deps
 
     # restore PATH environment variable
     set(ENV{PATH} "${ENV_BACKUP}")
+
+    # create cmake install component (see conanfile / imports)
+    if(NOT EXISTS "${CONAN_OUTPUT_DIRECTORY}/cmake/conan_imports_manifest.txt")
+      message(WARNING "Unable to parse conan_imports_manifest.txt, COMPONENT conandeps wonn't be created.")
+    endif()
+    file(STRINGS "${CONAN_OUTPUT_DIRECTORY}/cmake/conan_imports_manifest.txt" conan_imports_ REGEX "^.*: .*")
+    foreach(conan_import_ ${conan_imports_})
+      # parse conan_imports_manifest.txt lines
+      set(conan_file_skipped_ 1)
+      string(REGEX REPLACE ": .*$" "" conan_file_ ${conan_import_}) 
+      file(TO_CMAKE_PATH "${conan_file_}" conan_file_)
+      file(RELATIVE_PATH conan_file_rel_ ${CMAKE_BINARY_DIR} ${conan_file_})
+      string(REGEX MATCH "^[^\\/]*" conan_folder_ ${conan_file_rel_}) 
+      get_filename_component(conan_file_dest_ ${conan_file_rel_} DIRECTORY)
+
+      if (${conan_folder_} MATCHES "bin|lib")
+        if (WIN32 AND ${conan_file_} MATCHES ".*\.dll$")
+          # install *.dll files to bin folder
+          install(FILES ${conan_file_} DESTINATION ${conan_file_dest_} COMPONENT conandeps)
+          unset(conan_file_skipped_)
+        elseif ((UNIX AND NOT APPLE) AND ${conan_folder_} STREQUAL "lib" AND ${conan_file_} MATCHES ".*\.so$|.*\.so\.[^\\/]*$")
+          # install *.so* files to lib folder
+          find_program(PATCHELF patchelf REQUIRED)
+          execute_process(COMMAND ${PATCHELF} ${conan_file_} --set-rpath $ORIGIN
+            OUTPUT_QUIET ERROR_QUIET)
+          install(FILES ${conan_file_} DESTINATION ${conan_file_dest_} COMPONENT conandeps)
+          unset(conan_file_skipped_)
+        elseif(APPLE AND ${conan_file_} MATCHES ".*\.dylib$|.*\.dylib\.[^\\/]*$")
+          # install *.dynlib* files to lib folder
+          message(WARNING "RPATH of ${conan_file_} may not be set correctly. CPack may fail.")
+          install(FILES ${conan_file_} DESTINATION ${conan_file_dest_} COMPONENT conandeps)
+          unset(conan_file_skipped_)
+        endif()
+      elseif (${conan_folder_} STREQUAL "share")
+        # install data files to share folder
+        install(FILES ${conan_file_} DESTINATION ${conan_file_dest_} COMPONENT conandeps)
+        unset(conan_file_skipped_)
+      elseif (${conan_folder_} STREQUAL "licenses")
+        # skip license files
+        message(DEBUG "Warning: Not adding ${conan_file_} to COMPONENT conandeps.")
+        unset(conan_file_skipped_)
+      endif()
+      if(conan_file_skipped_)
+        message(STATUS "Warning: Not adding ${conan_file_} to COMPONENT conandeps.")
+      endif()
+    endforeach()
 
   endif()
 endmacro()
