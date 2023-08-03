@@ -26,7 +26,7 @@ macro(enable_ccache)
         "UseMultiToolTask=true"
         "DebugInformationFormat=OldStyle"
       )
-      set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT $<$<CONFIG:Debug,RelWithDebInfo>:Embedded>)
+      set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT $<$<CONFIG:Debug,RelWithDebInfo>:Embedded>) # /Z7
     endif()
   else()
     message(WARNING "Unable to find ccache for compilation.")
