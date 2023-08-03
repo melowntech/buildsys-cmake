@@ -6,7 +6,9 @@ if(NOT BUILDSYS_EMBEDDED)
   if(NOT BUILDSYS_RELEASE_NDEBUG)
     message(STATUS "Release mode: Compiling with debug symbols by default. To disable set the BUILDSYS_RELEASE_NDEBUG variable.")
     if (MSVC)
-      # Note: /Zi is not compatible with CCache (https://github.com/ccache/ccache/wiki/MS-Visual-Studio)
+      # Note: /Zi is not compatible with CCache
+      # - https://github.com/ccache/ccache/wiki/MS-Visual-Studio
+      # - https://github.com/ccache/ccache/issues/1040
       # add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX,Fortran>,$<CONFIG:Release>>:/Zi>)
       add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX,Fortran>,$<CONFIG:Release>>:/Z7>)
       add_link_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX,Fortran>,$<CONFIG:Release>>:/debug>)
