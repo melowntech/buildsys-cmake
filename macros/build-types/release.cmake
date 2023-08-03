@@ -10,6 +10,7 @@ if(NOT BUILDSYS_EMBEDDED)
       # - https://github.com/ccache/ccache/wiki/MS-Visual-Studio
       # - https://github.com/ccache/ccache/issues/1040
       # add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX,Fortran>,$<CONFIG:Release>>:/Zi>)
+      set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT $<$<CONFIG:Debug,RelWithDebInfo,Release>:Embedded> CACHE STRING "" FORCE) #/Z7
       add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX,Fortran>,$<CONFIG:Release>>:/Z7>)
       add_link_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX,Fortran>,$<CONFIG:Release>>:/debug>)
       add_compile_options($<$<AND:$<COMPILE_LANGUAGE:CUDA>,$<CONFIG:Release>>:-g>)
