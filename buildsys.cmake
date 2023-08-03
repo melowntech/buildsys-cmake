@@ -452,6 +452,7 @@ foreach(submodule
     module
     profiler
     openmp
+    ccache
     cuda
     opencl
     opencv
