@@ -14,11 +14,18 @@ macro(setup_build_system_os_specific)
   add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
-  # use manifest file
-  add_link_options(
-    "LINKER:/MANIFEST:EMBED" 
-    "LINKER:/MANIFESTINPUT:${BUILDSYS_ROOT}/manifest/windows.manifest"
-  )
+  if (CMAKE_GENERATOR STREQUAL "Ninja")
+    configure_file(
+      ${BUILDSYS_ROOT}/manifest/windows.manifest 
+      ${CMAKE_CURRENT_BINARY_DIR}/windows.manifest
+    )
+  else()
+    # use manifest file
+    add_link_options(
+      "LINKER:/MANIFEST:EMBED" 
+      "LINKER:/MANIFESTINPUT:${BUILDSYS_ROOT}/manifest/windows.manifest"
+    )
+  endif()
 endmacro()
 
 set(BUILDSYS_SYMLINKS_FIX_SCRIPT
