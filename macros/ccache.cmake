@@ -14,7 +14,6 @@ macro(enable_ccache)
       set(CMAKE_CUDA_COMPILER_LAUNCHER ${CCACHE_BINARY})
     elseif(WIN32)
       # https://github.com/ccache/ccache/wiki/MS-Visual-Studio
-      # Note: /Zi debug info is not supported, use /Z7 (https://github.com/ccache/ccache/issues/1040)
       file(COPY_FILE
         ${CCACHE_BINARY} ${CMAKE_BINARY_DIR}/cl.exe
         ONLY_IF_DIFFERENT
@@ -26,6 +25,8 @@ macro(enable_ccache)
         "UseMultiToolTask=true"
         "DebugInformationFormat=OldStyle"
       )
+      # Note: /Zi debug info is not supported, use /Z7 (https://github.com/ccache/ccache/issues/1040)
+      add_compile_options($<$<AND:$<COMPILE_LANGUAGE:C,CXX,Fortran>,$<CONFIG:Debug,RelWithDebInfo>>:/Z7>)
       set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT $<$<CONFIG:Debug,RelWithDebInfo>:Embedded>) # /Z7
     endif()
   else()
